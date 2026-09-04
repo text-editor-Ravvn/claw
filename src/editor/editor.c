@@ -1,9 +1,13 @@
+#include <stdlib.h>
+#include <stdio.h>
 #include "editor.h"
 #include "input.h"
 #include "render.h"
 #include "cursor.h"
 #include "rawmode.h"
 #include "buffer.h"
+#include "fileio.h"
+char *currentFile = NULL;
 
 void editorInit(void)
 {
@@ -42,6 +46,14 @@ void editorRun(void)
     case '\n':
         insertNewLine();
         break;
+    
+    case CTRL_KEY('s'):
+    printf("\nSAVE PRESSED\n");
+
+    if(currentFile)
+        saveFile(currentFile);
+
+    break;
 
     case 127:
         deleteChar();

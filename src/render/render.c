@@ -12,8 +12,7 @@ void refreshScreen(void)
     printf("\033[2J");
     printf("\033[H");
 
-    printf("Claw Editor v0.4\n");
-    printf("Press q to quit\n\n");
+    printf("Claw Editor v0.5\n\n");
 
     for (int i = 0; i < buffer.numRows; i++)
     {
