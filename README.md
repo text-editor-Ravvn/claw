@@ -7,12 +7,12 @@ Claw is being developed as part of a larger project to build a Linux-based opera
 
 ## Current Status
 
-Development Stage: Early Prototype
+Development Stage: Functional Prototype
 
 Current Version:
 
 ```text
-v0.3
+v0.5
 ```
 
 Completed Features:
@@ -22,21 +22,27 @@ Completed Features:
 - Arrow key navigation
 - Cursor state management
 - Screen rendering
-- Text buffer initialization
+- Dynamic text buffer
 - Character insertion
-- Backspace deletion
-- Basic editor loop
+- Character deletion
+- Multi-line editing
+- Dynamic row creation
+- Enter key support
+- Line splitting
+- Line merging
+- File loading
+- File saving
+- Filename tracking
+- Real file editing
 
 In Progress:
 
-- Multi-line editing
-- Enter key support
-- Row management
+- Status bar
+- Modified file tracking
+- File information display
 
 Planned:
 
-- File open/save
-- Status bar
 - Multiple keyboard profiles
 - Git integration
 - Syntax highlighting
@@ -103,6 +109,9 @@ buffer/
 
 render/
     render.c
+
+fileio/
+    fileio.c
 ```
 
 ---
@@ -115,10 +124,16 @@ Compile:
 make
 ```
 
-Run:
+Run Empty Editor:
 
 ```bash
 ./claw
+```
+
+Open Existing File:
+
+```bash
+./claw notes.txt
 ```
 
 Clean Build Files:
@@ -150,8 +165,15 @@ make rebuild
 
 ```text
 Printable Keys -> Insert Character
-Backspace      -> Delete Character
-q              -> Quit Editor
+Delete          -> Delete Character
+Return          -> New Line
+```
+
+### File Operations
+
+```text
+Ctrl + S        -> Save File
+q               -> Quit Editor
 ```
 
 ---
@@ -165,10 +187,13 @@ Keyboard
 Input Engine
     │
     ▼
-Command Processing
+Editor Core
     │
     ▼
 Text Buffer
+    │
+    ▼
+File I/O Layer
     │
     ▼
 Renderer
@@ -226,42 +251,56 @@ COMPLETED
 
 ### Milestone 4
 
-- Enter key support
+Features:
+
 - Multi-line editing
-- Row management
+- Dynamic row creation
+- Enter key support
+- Vertical cursor navigation
+- Line splitting
+- Line merging
 
 Status:
 
 ```text
-NEXT
+COMPLETED
 ```
 
 ---
 
 ### Milestone 5
 
-- Open files
+Features:
+
+- Open existing files
 - Save files
 - Create new files
+- File buffer loading
+- Filename tracking
+- Real file editing
 
 Status:
 
 ```text
-PLANNED
+COMPLETED
 ```
 
 ---
 
 ### Milestone 6
 
+Features:
+
 - Status bar
-- File information
-- Cursor information
+- Current filename display
+- Modified (*) indicator
+- Line number display
+- Column number display
 
 Status:
 
 ```text
-PLANNED
+NEXT
 ```
 
 ---
@@ -295,6 +334,29 @@ PLANNED
 
 ---
 
+## Implemented Buffer Features
+
+### Character Editing
+
+- Insert characters at cursor position
+- Delete characters using Backspace/Delete
+- Dynamic row resizing
+
+### Multi-Line Editing
+
+- Create new lines using Enter
+- Split lines at cursor position
+- Merge lines using Backspace
+
+### File Operations
+
+- Open files into editor buffer
+- Save editor buffer to disk
+- Preserve multi-line file structure
+- Track active filename
+
+---
+
 ## Future Features
 
 - Syntax highlighting
@@ -304,6 +366,21 @@ PLANNED
 - Theme support
 - Integrated terminal
 - Language Server Protocol (LSP)
+
+---
+
+## Development Progress
+
+| Version | Status | Description |
+|----------|----------|----------|
+| v0.1 | Complete | Project setup |
+| v0.2 | Complete | Raw terminal mode |
+| v0.3 | Complete | Text buffer editing |
+| v0.4 | Complete | Multi-line editing |
+| v0.5 | Complete | File open/save |
+| v0.6 | Next | Status bar |
+| v0.7 | Planned | Multi-keymap support |
+| v0.8 | Planned | Git integration |
 
 ---
 
