@@ -35,7 +35,8 @@ static int appendRow(Buffer *target, const char *chars, size_t size)
     if (!rowChars)
         return 0;
 
-    memcpy(rowChars, chars, size);
+    if (size > 0)
+        memcpy(rowChars, chars, size);
     rowChars[size] = '\0';
     target->rows[target->numRows].size = (int)size;
     target->rows[target->numRows].chars = rowChars;
@@ -84,6 +85,9 @@ int openFile(const char *filename)
         lastWasNewline = 0;
     }
 
+    if (ferror(fp))
+        goto failure;
+
     if (size > 0 || loaded.numRows == 0)
     {
         if (!appendRow(&loaded, line, size))
@@ -110,7 +114,18 @@ failure:
 int saveFile(const char *filename)
 {
     /* Binary output preserves embedded NUL bytes and the final newline choice. */
-    FILE *fp = fopen(filename, "wb");
+    char temporaryName[4096];
+    int nameLength = snprintf(
+        temporaryName,
+        sizeof(temporaryName),
+        "%s.claw.tmp",
+        filename
+    );
+
+    if (nameLength < 0 || (size_t)nameLength >= sizeof(temporaryName))
+        return 0;
+
+    FILE *fp = fopen(temporaryName, "wb");
 
     if (!fp)
         return 0;
@@ -125,6 +140,7 @@ int saveFile(const char *filename)
         ) != (size_t)buffer.rows[i].size)
         {
             fclose(fp);
+            remove(temporaryName);
             return 0;
         }
 
@@ -133,14 +149,30 @@ int saveFile(const char *filename)
             if (fputc('\n', fp) == EOF)
             {
                 fclose(fp);
+                remove(temporaryName);
                 return 0;
             }
         }
     }
 
     if (fclose(fp) != 0)
+    {
+        remove(temporaryName);
         return 0;
+    }
 
+    if (rename(temporaryName, filename) != 0)
+    {
+#ifdef _WIN32
+        /* Windows cannot replace an existing file with rename(). */
+        if (remove(filename) == 0 && rename(temporaryName, filename) == 0)
+            goto saved;
+#endif
+        remove(temporaryName);
+        return 0;
+    }
+
+saved:
     buffer.modified = 0;
     return 1;
 }

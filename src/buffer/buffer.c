@@ -14,7 +14,10 @@ void bufferInit(void)
     buffer.rows = malloc(sizeof(Row));
 
     if (!buffer.rows)
+    {
+        buffer.numRows = 0;
         return;
+    }
 
     buffer.rows[0].size = 0;
 
@@ -24,6 +27,7 @@ void bufferInit(void)
     {
         free(buffer.rows);
         buffer.rows = NULL;
+        buffer.numRows = 0;
         return;
     }
 

@@ -59,6 +59,8 @@ line, cursor column, and the latest save or quit message.
 - Transactional file loading
 - Dirty-buffer tracking
 - ANSI terminal rendering
+- Correct terminal line endings and cursor placement
+- Visual-column handling for tabs and control bytes
 - Buffer and file regression tests
 
 ## Repository Guide
@@ -187,15 +189,120 @@ length, so file data can contain NUL bytes without using C string length as the
 source of truth. The editor owns the command loop, while rendering reads the
 current buffer and cursor state without mutating document data.
 
-## Roadmap
+## Development Phases
 
-1. Add terminal-size detection and viewport scrolling.
-2. Improve status messages and add a modified-file indicator workflow.
-3. Add undo and redo.
-4. Add search and replace.
-5. Implement configurable keymaps.
-6. Add Git status and diff integration.
-7. Add syntax highlighting and plugin support.
+### Phase 1: Project Foundation
+
+Status: Complete
+
+- Set up the C project, headers, source layout, Makefile, and Linux workflow.
+- Define the main editor, input, buffer, rendering, and file I/O boundaries.
+
+### Phase 2: Terminal Input
+
+Status: Complete
+
+- Add POSIX raw terminal mode.
+- Read individual key presses without echo.
+- Decode printable characters, arrows, Escape, Backspace, and Delete.
+- Restore terminal settings safely when the editor exits.
+
+### Phase 3: Text Buffer
+
+Status: Complete
+
+- Store documents as dynamically sized rows.
+- Insert and delete characters.
+- Split lines with Enter.
+- Merge lines with Backspace and Forward Delete.
+- Clamp cursor movement to valid rows and columns.
+- Track unsaved changes.
+
+### Phase 4: File Editing
+
+Status: Complete
+
+- Open a file from the command line.
+- Load long lines without a fixed 1024-byte limit.
+- Preserve embedded NUL bytes and final-newline state.
+- Save through a temporary file to protect the original on write failure.
+- Report open and save failures to the user.
+
+### Phase 5: Rendering and Editing Safety
+
+Status: Complete
+
+- Draw the document and status bar with ANSI terminal sequences.
+- Keep header and document lines aligned with CRLF output.
+- Translate buffer byte positions into visual terminal columns.
+- Render tabs consistently and prevent control bytes from executing terminal
+  commands.
+- Require quit confirmation when edits are unsaved.
+
+### Phase 6: Testing and Documentation
+
+Status: In progress
+
+- Maintain buffer and file round-trip regression tests.
+- Add input-sequence, rendering, and editor-lifecycle tests.
+- Run AddressSanitizer and UndefinedBehaviorSanitizer builds on Linux.
+- Keep source comments, API notes, and this project guide current.
+
+## Future Phases
+
+### Phase 7: Terminal Viewport
+
+- Query terminal width and height.
+- Add vertical and horizontal scrolling for large files and long lines.
+- Clip rows to the visible viewport.
+- Keep the cursor visible while scrolling.
+- Handle terminal resize signals without corrupting the screen.
+
+### Phase 8: Complete Editor Workflow
+
+- Add a command prompt for opening, saving as, and closing files.
+- Add a real status message timeout and clearer error messages.
+- Add a help overlay showing all controls.
+- Add filename validation and safer new-file creation.
+
+### Phase 9: Undo, Redo, and Search
+
+- Add undo and redo history for every buffer mutation.
+- Add incremental text search.
+- Add search-and-replace with confirmation.
+- Add matching-bracket and line navigation helpers.
+
+### Phase 10: Configuration and Keymaps
+
+- Define the configuration file format.
+- Load defaults from `config/default.conf`.
+- Load user settings from `config/claw.conf`.
+- Implement Linux, macOS, and Windows-style keymap profiles.
+- Allow users to customize commands without recompiling.
+
+### Phase 11: Git and Developer Tools
+
+- Detect the current Git repository and branch.
+- Show working-tree status in the status bar.
+- Display diffs for the current file.
+- Add commands for staging and committing changes.
+- Add logging and diagnostic utilities.
+
+### Phase 12: Editor Quality
+
+- Add syntax highlighting with configurable themes.
+- Add bracket matching and automatic indentation.
+- Add multiple buffers or tabs.
+- Add a plugin interface.
+- Add optional language-server integration.
+- Improve accessibility, Unicode width handling, and terminal compatibility.
+
+## Current Roadmap Summary
+
+The next recommended milestone is Phase 7, terminal viewport support. It will
+remove the main remaining visual limitation: large files and wrapped lines can
+extend beyond the visible terminal. After that, Phase 8 should make file and
+command workflows easier to use before larger features are added.
 
 ## License
 

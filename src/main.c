@@ -10,7 +10,8 @@ int main(int argc, char *argv[])
     {
         /* Loading is optional; without an argument Claw starts a new file. */
         currentFile = argv[1];
-        openFile(argv[1]);
+        if (!openFile(argv[1]))
+            editorSetStatusMessage("Could not open the requested file");
     }
 
     /* The editor owns terminal input until the command loop returns. */

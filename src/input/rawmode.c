@@ -3,11 +3,16 @@
 #include <stdlib.h>
 
 static struct termios original;
+static int rawModeEnabled = 0;
 
 void disableRawMode(void)
 {
     /* Restore cooked terminal behavior before the process leaves. */
-    tcsetattr(STDIN_FILENO,TCSAFLUSH,&original);
+    if (rawModeEnabled)
+    {
+        tcsetattr(STDIN_FILENO, TCSAFLUSH, &original);
+        rawModeEnabled = 0;
+    }
 }
 
 void enableRawMode(void)
@@ -27,5 +32,6 @@ void enableRawMode(void)
     raw.c_cc[VMIN] = 1;
     raw.c_cc[VTIME] = 0;
 
-    tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
+    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == 0)
+        rawModeEnabled = 1;
 }

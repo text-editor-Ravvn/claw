@@ -1,7 +1,25 @@
 #include <unistd.h>
 #include <sys/select.h>
+#include <errno.h>
 
 #include "input.h"
+
+static int readEscapeByte(char *value)
+{
+    fd_set readSet;
+    struct timeval timeout = {0, 100000};
+    int ready;
+
+    FD_ZERO(&readSet);
+    FD_SET(STDIN_FILENO, &readSet);
+
+    do
+    {
+        ready = select(STDIN_FILENO + 1, &readSet, NULL, NULL, &timeout);
+    } while (ready < 0 && errno == EINTR);
+
+    return ready > 0 && read(STDIN_FILENO, value, 1) == 1;
+}
 
 int readKey(void)
 {
@@ -16,22 +34,9 @@ int readKey(void)
         char seq[2];
 
         /* A short timeout lets a standalone Escape remain a usable key. */
-        fd_set readSet;
-        struct timeval timeout = {0, 100000};
-
-        FD_ZERO(&readSet);
-        FD_SET(STDIN_FILENO, &readSet);
-        if (select(STDIN_FILENO + 1, &readSet, NULL, NULL, &timeout) <= 0)
+        if (!readEscapeByte(&seq[0]))
             return '\x1b';
-        if (read(STDIN_FILENO, &seq[0], 1) != 1)
-            return '\x1b';
-
-        FD_ZERO(&readSet);
-        FD_SET(STDIN_FILENO, &readSet);
-        timeout.tv_usec = 100000;
-        if (select(STDIN_FILENO + 1, &readSet, NULL, NULL, &timeout) <= 0)
-            return '\x1b';
-        if (read(STDIN_FILENO, &seq[1], 1) != 1)
+        if (!readEscapeByte(&seq[1]))
             return '\x1b';
 
         if (seq[0] == '[')
@@ -54,7 +59,7 @@ int readKey(void)
             if (seq[1] == '3')
             {
                 char terminator;
-                if (read(STDIN_FILENO, &terminator, 1) == 1 && terminator == '~')
+                if (readEscapeByte(&terminator) && terminator == '~')
                     return DELETE_KEY;
             }
         }

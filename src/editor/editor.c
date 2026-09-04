@@ -22,7 +22,7 @@ void editorInit(void)
 
 void editorRun(void)
 {
-    /* Each iteration redraws current state, waits for one command, then applies it. */
+    /* Redraw current state, wait for one command, then apply it. */
     while(1)
     {
         refreshScreen();
@@ -31,6 +31,9 @@ void editorRun(void)
 
         if (key == -1)
             return;
+
+        if (key != CTRL_KEY('q'))
+            quitRequested = 0;
 
       switch(key)
 {
@@ -66,7 +69,7 @@ void editorRun(void)
     break;
 
     case CTRL_KEY('q'):
-        /* Require confirmation rather than silently discarding unsaved edits. */
+        /* Require confirmation rather than discarding unsaved edits. */
         if (buffer.modified && !quitRequested)
         {
             quitRequested = 1;
@@ -103,4 +106,9 @@ void editorShutdown(void)
 const char *editorStatusMessage(void)
 {
     return statusMessage;
+}
+
+void editorSetStatusMessage(const char *message)
+{
+    snprintf(statusMessage, sizeof(statusMessage), "%s", message);
 }

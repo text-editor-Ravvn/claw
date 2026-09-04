@@ -9,5 +9,6 @@ void editorInit(void);
 void editorRun(void);
 void editorShutdown(void);
 const char *editorStatusMessage(void);
+void editorSetStatusMessage(const char *message);
 
 #endif
