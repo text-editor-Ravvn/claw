@@ -24,6 +24,9 @@ void moveCursorRight(void)
 
 void moveCursorUp(void)
 {
+    if (buffer.numRows == 0 || !buffer.rows)
+        return;
+
     if (cursor.y > 0)
         cursor.y--;
 
@@ -35,6 +38,9 @@ void moveCursorUp(void)
 
 void moveCursorDown(void)
 {
+    if (buffer.numRows == 0 || !buffer.rows)
+        return;
+
     if (cursor.y < buffer.numRows - 1)
         cursor.y++;
 

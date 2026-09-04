@@ -1,0 +1,6 @@
+*.o
+claw
+buffer_test
+file_test
+file_test_input.tmp
+*.exe

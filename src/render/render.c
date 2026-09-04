@@ -26,13 +26,12 @@ void refreshScreen(void)
             );
         }
 
-        printf("\n");
+        printf("\r\n");
     }
 
-    printf("\n");
+    printf("\r\n");
 
-    printf("Cursor X: %d\n", cursor.x);
-    printf("Cursor Y: %d\n", cursor.y);
-
+    printf("-- Claw -- Cursor: (%d, %d) --\r\n", cursor.x, cursor.y);
+    printf("\033[%d;%dH", cursor.y + 3, cursor.x + 1);
     fflush(stdout);
 }

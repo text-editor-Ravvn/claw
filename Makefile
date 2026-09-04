@@ -7,6 +7,7 @@ CC = gcc
 TARGET = claw
 
 CFLAGS = -Wall -Wextra -std=c11 -g -Iinclude
+SANITIZER_FLAGS = -fsanitize=address,undefined -fno-omit-frame-pointer
 
 # Current implemented modules only
 
@@ -48,6 +49,17 @@ run: all
 debug: clean
 	$(CC) $(CFLAGS) $(SRC) -o $(TARGET)
 
+asan: clean
+      $(CC) $(CFLAGS) $(SANITIZER_FLAGS) $(SRC) -o $(TARGET)
+
+test:
+      $(CC) $(CFLAGS) tests/buffer_test.c src/buffer/buffer.c src/buffer/row.c src/buffer/cursor.c -o buffer_test
+      ./buffer_test
+      $(CC) $(CFLAGS) tests/file_test.c src/fileio/fileio.c src/buffer/buffer.c src/buffer/row.c src/buffer/cursor.c -o file_test
+      ./file_test
+      rm -f buffer_test
+      rm -f file_test
+
 # ==========================================
 # Clean
 # ==========================================
@@ -55,6 +67,7 @@ debug: clean
 clean:
 	rm -f $(OBJ)
 	rm -f $(TARGET)
+      rm -f buffer_test file_test
 
 # ==========================================
 # Rebuild
@@ -62,4 +75,4 @@ clean:
 
 rebuild: clean all
 
-.PHONY: all run clean rebuild debug
+.PHONY: all run clean rebuild debug asan test

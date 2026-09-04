@@ -1,399 +1,125 @@
-# claw
-A lightweight, Git-aware text editor written entirely in C for Linux-based operating systems.
+# Claw Text Editor
 
-Claw is being developed as part of a larger project to build a Linux-based operating system from scratch. The goal is to create a fast, modular, and extensible text editor that supports multiple keyboard layouts, Git integration, and future plugin support.
-
----
+Claw is a lightweight terminal text editor written in C for Linux. It is a
+small, native codebase intended for experimentation with editor internals,
+terminal input, file buffers, and future Git integration.
 
 ## Current Status
 
-Development Stage: Functional Prototype
+Version: `v0.5`
+Stage: Functional prototype
 
-Current Version:
+Implemented:
 
-```text
-v0.5
-```
+- POSIX raw terminal input
+- Arrow-key cursor navigation
+- Character insertion and backspace deletion
+- Forward Delete support
+- Multi-line editing with line splitting and merging
+- Dynamic text buffers and row resizing
+- File opening and saving
+- Long-line and embedded-NUL file handling
+- Preservation of whether a file ends with a newline
+- Visible cursor positioning
+- Automated buffer and file I/O regression tests
 
-Completed Features:
+Not yet implemented:
 
-- Raw terminal mode
-- Real-time keyboard input
-- Arrow key navigation
-- Cursor state management
-- Screen rendering
-- Dynamic text buffer
-- Character insertion
-- Character deletion
-- Multi-line editing
-- Dynamic row creation
-- Enter key support
-- Line splitting
-- Line merging
-- File loading
-- File saving
-- Filename tracking
-- Real file editing
-
-In Progress:
-
-- Status bar
-- Modified file tracking
-- File information display
-
-Planned:
-
-- Multiple keyboard profiles
-- Git integration
+- Status bar and modified-file indicator
+- Undo and redo
+- Search and replace
 - Syntax highlighting
-- Plugin system
+- Configurable keymaps
+- Git integration
 
----
+## Requirements
 
-## Project Goals
+- Linux or another POSIX terminal environment
+- GCC
+- GNU Make
 
-Claw aims to provide:
+## Build and Run
 
-- Lightweight architecture
-- Native C implementation
-- Git awareness
-- Windows-style shortcuts
-- macOS-style shortcuts
-- Linux-style shortcuts
-- Configurable key bindings
-- Extensible plugin architecture
-
----
-
-## Project Structure
-
-```text
-claw/
-│
-├── README.md
-├── LICENSE
-├── Makefile
-├── .gitignore
-│
-├── docs/
-├── assets/
-├── config/
-├── keymaps/
-├── tests/
-├── include/
-├── src/
-├── plugins/
-└── build/
-```
-
----
-
-## Current Source Structure
-
-```text
-src/
-
-main.c
-
-editor/
-    editor.c
-
-input/
-    input.c
-    rawmode.c
-
-buffer/
-    buffer.c
-    row.c
-    cursor.c
-
-render/
-    render.c
-
-fileio/
-    fileio.c
-```
-
----
-
-## Build Instructions
-
-Compile:
+Build the editor:
 
 ```bash
 make
 ```
 
-Run Empty Editor:
+Start with an empty buffer:
 
 ```bash
 ./claw
 ```
 
-Open Existing File:
+Open a file:
 
 ```bash
 ./claw notes.txt
 ```
 
-Clean Build Files:
+Clean generated files and rebuild:
 
 ```bash
 make clean
-```
-
-Rebuild:
-
-```bash
 make rebuild
 ```
 
----
+Build with AddressSanitizer and UndefinedBehaviorSanitizer:
 
-## Current Controls
-
-### Navigation
-
-```text
-↑  Move Cursor Up
-↓  Move Cursor Down
-←  Move Cursor Left
-→  Move Cursor Right
+```bash
+make asan
 ```
 
-### Editing
+Run the regression tests:
 
-```text
-Printable Keys -> Insert Character
-Delete          -> Delete Character
-Return          -> New Line
+```bash
+make test
 ```
 
-### File Operations
+## Controls
+
+| Key | Action |
+| --- | --- |
+| Arrow keys | Move the cursor |
+| Printable characters | Insert text |
+| Enter | Split the current line |
+| Backspace | Delete before the cursor or merge with the previous line |
+| Delete | Delete after the cursor or merge with the next line |
+| Ctrl-S | Save the current file |
+| Ctrl-Q | Quit |
+
+The editor exits when standard input reaches EOF. Files are written in binary
+mode so line contents, including embedded NUL bytes, are preserved.
+
+## Project Layout
 
 ```text
-Ctrl + S        -> Save File
-q               -> Quit Editor
+include/       Public C interfaces
+src/buffer/    Rows, buffer mutations, and cursor movement
+src/editor/    Editor initialization and input loop
+src/fileio/    File loading and saving
+src/input/     Key decoding and POSIX raw mode
+src/render/    Terminal screen rendering
+tests/         Regression tests
+config/        Editor configuration drafts
+keymaps/       Keyboard profile drafts
+docs/          Design notes and roadmap
 ```
-
----
-
-## Architecture
-
-```text
-Keyboard
-    │
-    ▼
-Input Engine
-    │
-    ▼
-Editor Core
-    │
-    ▼
-Text Buffer
-    │
-    ▼
-File I/O Layer
-    │
-    ▼
-Renderer
-    │
-    ▼
-Terminal
-```
-
----
 
 ## Development Roadmap
 
-### Milestone 1
-
-- Project setup
-- Editor loop
-- Rendering engine
-
-Status:
-
-```text
-COMPLETED
-```
-
----
-
-### Milestone 2
-
-- Raw mode
-- Keyboard input
-- Cursor movement
-- Arrow key navigation
-
-Status:
-
-```text
-COMPLETED
-```
-
----
-
-### Milestone 3
-
-- Text buffer
-- Character insertion
-- Character deletion
-
-Status:
-
-```text
-COMPLETED
-```
-
----
-
-### Milestone 4
-
-Features:
-
-- Multi-line editing
-- Dynamic row creation
-- Enter key support
-- Vertical cursor navigation
-- Line splitting
-- Line merging
-
-Status:
-
-```text
-COMPLETED
-```
-
----
-
-### Milestone 5
-
-Features:
-
-- Open existing files
-- Save files
-- Create new files
-- File buffer loading
-- Filename tracking
-- Real file editing
-
-Status:
-
-```text
-COMPLETED
-```
-
----
-
-### Milestone 6
-
-Features:
-
-- Status bar
-- Current filename display
-- Modified (*) indicator
-- Line number display
-- Column number display
-
-Status:
-
-```text
-NEXT
-```
-
----
-
-### Milestone 7
-
-- Keymap engine
-- Windows profile
-- macOS profile
-- Linux profile
-
-Status:
-
-```text
-PLANNED
-```
-
----
-
-### Milestone 8
-
-- Git integration
-- Git status
-- Git diff
-
-Status:
-
-```text
-PLANNED
-```
-
----
-
-## Implemented Buffer Features
-
-### Character Editing
-
-- Insert characters at cursor position
-- Delete characters using Backspace/Delete
-- Dynamic row resizing
-
-### Multi-Line Editing
-
-- Create new lines using Enter
-- Split lines at cursor position
-- Merge lines using Backspace
-
-### File Operations
-
-- Open files into editor buffer
-- Save editor buffer to disk
-- Preserve multi-line file structure
-- Track active filename
-
----
-
-## Future Features
-
-- Syntax highlighting
-- Undo / Redo
-- Search and replace
-- Plugin support
-- Theme support
-- Integrated terminal
-- Language Server Protocol (LSP)
-
----
-
-## Development Progress
-
-| Version | Status | Description |
-|----------|----------|----------|
-| v0.1 | Complete | Project setup |
-| v0.2 | Complete | Raw terminal mode |
-| v0.3 | Complete | Text buffer editing |
-| v0.4 | Complete | Multi-line editing |
-| v0.5 | Complete | File open/save |
-| v0.6 | Next | Status bar |
-| v0.7 | Planned | Multi-keymap support |
-| v0.8 | Planned | Git integration |
-
----
+1. Add a status bar with filename, cursor position, and save state.
+2. Add viewport scrolling and terminal-size detection.
+3. Add undo and redo.
+4. Add search and replace.
+5. Add configurable keymaps and Git-aware workflows.
+6. Add syntax highlighting and plugin support.
 
 ## License
 
 MIT License
 
----
-
 ## Author
 
 Aryan Gupta
-
-Project: Claw Text Editor
-Language: C
-Platform: Linux

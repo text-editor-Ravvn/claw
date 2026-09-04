@@ -24,6 +24,9 @@ void editorRun(void)
 
         int key = readKey();
 
+        if (key == -1)
+            return;
+
       switch(key)
 {
     case ARROW_UP:
@@ -48,19 +51,21 @@ void editorRun(void)
         break;
     
     case CTRL_KEY('s'):
-    printf("\nSAVE PRESSED\n");
-
-    if(currentFile)
+    if (currentFile)
         saveFile(currentFile);
 
     break;
+
+    case CTRL_KEY('q'):
+        return;
 
     case 127:
         deleteChar();
         break;
 
-    case 'q':
-        return;
+    case DELETE_KEY:
+        deleteForward();
+        break;
 
     default:
 

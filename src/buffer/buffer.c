@@ -7,12 +7,36 @@ Buffer buffer;
 void bufferInit(void)
 {
     buffer.numRows = 1;
+    buffer.endsWithNewline = 0;
 
     buffer.rows = malloc(sizeof(Row));
+
+    if (!buffer.rows)
+        return;
 
     buffer.rows[0].size = 0;
 
     buffer.rows[0].chars = malloc(1);
 
+    if (!buffer.rows[0].chars)
+    {
+        free(buffer.rows);
+        buffer.rows = NULL;
+        return;
+    }
+
     buffer.rows[0].chars[0] = '\0';
+}
+
+void bufferFree(void)
+{
+    if (!buffer.rows)
+        return;
+
+    for (int i = 0; i < buffer.numRows; i++)
+        free(buffer.rows[i].chars);
+
+    free(buffer.rows);
+    buffer.rows = NULL;
+    buffer.numRows = 0;
 }

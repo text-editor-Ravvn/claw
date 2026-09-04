@@ -6,7 +6,8 @@ enum EditorKey
     ARROW_LEFT = 1000,
     ARROW_RIGHT,
     ARROW_UP,
-    ARROW_DOWN
+    ARROW_DOWN,
+    DELETE_KEY
 };
 
 int readKey(void);

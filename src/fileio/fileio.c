@@ -1,85 +1,137 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 #include "buffer.h"
+#include "cursor.h"
 
 extern Buffer buffer;
 
-void openFile(const char *filename)
+static void freeRows(Buffer *target)
 {
-    FILE *fp = fopen(filename, "r");
+    for (int i = 0; i < target->numRows; i++)
+        free(target->rows[i].chars);
+
+    free(target->rows);
+}
+
+static int appendRow(Buffer *target, const char *chars, size_t size)
+{
+    if (size > INT_MAX)
+        return 0;
+
+    Row *rows = realloc(target->rows, sizeof(Row) * (target->numRows + 1));
+
+    if (!rows)
+        return 0;
+
+    target->rows = rows;
+
+    char *rowChars = malloc(size + 1);
+
+    if (!rowChars)
+        return 0;
+
+    memcpy(rowChars, chars, size);
+    rowChars[size] = '\0';
+    target->rows[target->numRows].size = (int)size;
+    target->rows[target->numRows].chars = rowChars;
+    target->numRows++;
+    return 1;
+}
+
+int openFile(const char *filename)
+{
+    FILE *fp = fopen(filename, "rb");
+    Buffer loaded = {0, NULL, 0};
+    char *line = NULL;
+    size_t size = 0;
+    size_t capacity = 0;
+    int lastWasNewline = 0;
+    int value;
 
     if (!fp)
-        return;
+        return 0;
 
-    char line[1024];
-
-    buffer.numRows = 0;
-    free(buffer.rows);
-    buffer.rows = NULL;
-
-    while (fgets(line, sizeof(line), fp))
+    while ((value = fgetc(fp)) != EOF)
     {
-        size_t len = strlen(line);
-
-        if (len > 0 && line[len - 1] == '\n')
+        if (value == '\n')
         {
-            line[len - 1] = '\0';
-            len--;
+            if (!appendRow(&loaded, line, size))
+                goto failure;
+            size = 0;
+            lastWasNewline = 1;
+            continue;
         }
 
-        buffer.rows = realloc(
-            buffer.rows,
-            sizeof(Row) * (buffer.numRows + 1)
-        );
+        if (size == capacity)
+        {
+            size_t newCapacity = capacity ? capacity * 2 : 128;
+            char *newLine = realloc(line, newCapacity);
 
-        buffer.rows[buffer.numRows].size = (int)len;
+            if (!newLine)
+                goto failure;
 
-        buffer.rows[buffer.numRows].chars =
-            malloc(len + 1);
+            line = newLine;
+            capacity = newCapacity;
+        }
 
-        strcpy(
-            buffer.rows[buffer.numRows].chars,
-            line
-        );
-
-        buffer.numRows++;
+        line[size++] = (char)value;
+        lastWasNewline = 0;
     }
 
-    fclose(fp);
-
-    if (buffer.numRows == 0)
+    if (size > 0 || loaded.numRows == 0)
     {
-        buffer.numRows = 1;
-
-        buffer.rows = malloc(sizeof(Row));
-
-        buffer.rows[0].size = 0;
-
-        buffer.rows[0].chars = malloc(1);
-
-        buffer.rows[0].chars[0] = '\0';
+        if (!appendRow(&loaded, line, size))
+            goto failure;
     }
+
+    loaded.endsWithNewline = lastWasNewline;
+    free(line);
+    fclose(fp);
+    bufferFree();
+    buffer = loaded;
+    cursor.x = 0;
+    cursor.y = 0;
+    return 1;
+
+failure:
+    free(line);
+    freeRows(&loaded);
+    fclose(fp);
+    return 0;
 }
-void saveFile(const char *filename)
+
+int saveFile(const char *filename)
 {
-    FILE *fp = fopen(filename, "w");
+    FILE *fp = fopen(filename, "wb");
 
     if (!fp)
-        return;
+        return 0;
 
     for (int i = 0; i < buffer.numRows; i++)
     {
-        fwrite(
+        if (fwrite(
             buffer.rows[i].chars,
             1,
             buffer.rows[i].size,
             fp
-        );
+        ) != (size_t)buffer.rows[i].size)
+        {
+            fclose(fp);
+            return 0;
+        }
 
-        fputc('\n', fp);
+        if (i < buffer.numRows - 1 || buffer.endsWithNewline)
+        {
+            if (fputc('\n', fp) == EOF)
+            {
+                fclose(fp);
+                return 0;
+            }
+        }
     }
 
-    fclose(fp);
+    return fclose(fp) == 0;
 }

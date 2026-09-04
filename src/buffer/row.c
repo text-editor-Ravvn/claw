@@ -16,10 +16,12 @@ void insertChar(char c)
     if (cursor.x > row->size)
         cursor.x = row->size;
 
-    row->chars = realloc(
-        row->chars,
-        row->size + 2
-    );
+    char *newChars = realloc(row->chars, (size_t)row->size + 2);
+
+    if (!newChars)
+        return;
+
+    row->chars = newChars;
 
     memmove(
         &row->chars[cursor.x + 1],
@@ -71,10 +73,15 @@ void deleteChar(void)
 
     int oldSize = previous->size;
 
-    previous->chars = realloc(
+    char *newChars = realloc(
         previous->chars,
-        previous->size + current->size + 1
+        (size_t)previous->size + current->size + 1
     );
+
+    if (!newChars)
+        return;
+
+    previous->chars = newChars;
 
     memcpy(
         &previous->chars[previous->size],
@@ -95,15 +102,63 @@ void deleteChar(void)
 
     buffer.numRows--;
 
-    buffer.rows = realloc(
-        buffer.rows,
-        sizeof(Row) * buffer.numRows
-    );
+    Row *newRows = realloc(buffer.rows, sizeof(Row) * buffer.numRows);
+
+    if (newRows)
+        buffer.rows = newRows;
 
     cursor.y--;
 
     cursor.x = oldSize;
 }
+
+void deleteForward(void)
+{
+    if (cursor.y < 0 || cursor.y >= buffer.numRows || !buffer.rows)
+        return;
+
+    Row *row = &buffer.rows[cursor.y];
+
+    if (cursor.x < row->size)
+    {
+        memmove(
+            &row->chars[cursor.x],
+            &row->chars[cursor.x + 1],
+            (size_t)(row->size - cursor.x)
+        );
+        row->size--;
+        return;
+    }
+
+    if (cursor.y < buffer.numRows - 1)
+    {
+        Row *next = &buffer.rows[cursor.y + 1];
+        int oldSize = row->size;
+        char *newChars = realloc(
+            row->chars,
+            (size_t)row->size + next->size + 1
+        );
+
+        if (!newChars)
+            return;
+
+        row->chars = newChars;
+        memcpy(&row->chars[row->size], next->chars, (size_t)next->size);
+        row->size += next->size;
+        row->chars[row->size] = '\0';
+        free(next->chars);
+
+        for (int i = cursor.y + 1; i < buffer.numRows - 1; i++)
+            buffer.rows[i] = buffer.rows[i + 1];
+
+        buffer.numRows--;
+        Row *newRows = realloc(buffer.rows, sizeof(Row) * buffer.numRows);
+        if (newRows)
+            buffer.rows = newRows;
+        cursor.x = oldSize;
+    }
+}
+
 void insertNewLine(void)
 {
     if (cursor.y >= buffer.numRows)
@@ -111,10 +166,18 @@ void insertNewLine(void)
 
     Row *current = &buffer.rows[cursor.y];
 
+    if (cursor.x < 0)
+        cursor.x = 0;
+    if (cursor.x > current->size)
+        cursor.x = current->size;
+
     int leftSize = cursor.x;
     int rightSize = current->size - cursor.x;
 
-    char *rightPart = malloc(rightSize + 1);
+    char *rightPart = malloc((size_t)rightSize + 1);
+
+    if (!rightPart)
+        return;
 
     memcpy(
         rightPart,
@@ -128,10 +191,18 @@ void insertNewLine(void)
 
     current->chars[leftSize] = '\0';
 
-    buffer.rows = realloc(
+    Row *newRows = realloc(
         buffer.rows,
         sizeof(Row) * (buffer.numRows + 1)
     );
+
+    if (!newRows)
+    {
+        free(rightPart);
+        return;
+    }
+
+    buffer.rows = newRows;
 
     for (int i = buffer.numRows; i > cursor.y + 1; i--)
     {
