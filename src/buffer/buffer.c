@@ -6,8 +6,10 @@ Buffer buffer;
 
 void bufferInit(void)
 {
+    /* Always start with one empty row so editing has a valid target. */
     buffer.numRows = 1;
     buffer.endsWithNewline = 0;
+    buffer.modified = 0;
 
     buffer.rows = malloc(sizeof(Row));
 
@@ -30,6 +32,7 @@ void bufferInit(void)
 
 void bufferFree(void)
 {
+    /* Rows own their character arrays, so release them before the row list. */
     if (!buffer.rows)
         return;
 

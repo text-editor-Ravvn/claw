@@ -6,11 +6,13 @@ static struct termios original;
 
 void disableRawMode(void)
 {
+    /* Restore cooked terminal behavior before the process leaves. */
     tcsetattr(STDIN_FILENO,TCSAFLUSH,&original);
 }
 
 void enableRawMode(void)
 {
+    /* Configure stdin for immediate, non-echoed character input. */
     if (tcgetattr(STDIN_FILENO, &original) == -1)
         return;
 

@@ -8,6 +8,7 @@ extern Buffer buffer;
 
 void insertChar(char c)
 {
+    /* Grow the row, shift its suffix right, then place the new byte. */
     if (cursor.y >= buffer.numRows)
         return;
 
@@ -36,10 +37,12 @@ void insertChar(char c)
     row->chars[row->size] = '\0';
 
     cursor.x++;
+    buffer.modified = 1;
 }
 
 void deleteChar(void)
 {
+    /* Backspace removes left; at column zero it joins with the prior row. */
     if (cursor.y >= buffer.numRows)
         return;
 
@@ -59,6 +62,7 @@ void deleteChar(void)
         row->chars[row->size] = '\0';
 
         cursor.x--;
+        buffer.modified = 1;
 
         return;
     }
@@ -110,10 +114,12 @@ void deleteChar(void)
     cursor.y--;
 
     cursor.x = oldSize;
+    buffer.modified = 1;
 }
 
 void deleteForward(void)
 {
+    /* Delete right; at row end it joins the following row. */
     if (cursor.y < 0 || cursor.y >= buffer.numRows || !buffer.rows)
         return;
 
@@ -127,6 +133,7 @@ void deleteForward(void)
             (size_t)(row->size - cursor.x)
         );
         row->size--;
+        buffer.modified = 1;
         return;
     }
 
@@ -156,11 +163,13 @@ void deleteForward(void)
         if (newRows)
             buffer.rows = newRows;
         cursor.x = oldSize;
+        buffer.modified = 1;
     }
 }
 
 void insertNewLine(void)
 {
+    /* Move the text after the cursor into a newly inserted row. */
     if (cursor.y >= buffer.numRows)
         return;
 
@@ -218,4 +227,5 @@ void insertNewLine(void)
     cursor.y++;
 
     cursor.x = 0;
+    buffer.modified = 1;
 }

@@ -1,0 +1,1 @@
+/* Placeholder for diagnostic and event logging. */

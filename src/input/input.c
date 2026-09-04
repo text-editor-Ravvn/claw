@@ -5,6 +5,7 @@
 
 int readKey(void)
 {
+    /* Read one byte, then recognize the terminal's multi-byte key sequences. */
     char c;
 
     if (read(STDIN_FILENO, &c, 1) != 1)
@@ -14,6 +15,7 @@ int readKey(void)
     {
         char seq[2];
 
+        /* A short timeout lets a standalone Escape remain a usable key. */
         fd_set readSet;
         struct timeval timeout = {0, 100000};
 

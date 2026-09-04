@@ -1,0 +1,1 @@
+/* Placeholder for creating Git commits from the editor. */

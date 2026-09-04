@@ -1,0 +1,1 @@
+/* Placeholder retained for future extraction of editor status logic. */

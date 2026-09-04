@@ -7,12 +7,14 @@ extern Buffer buffer;
 
 void moveCursorLeft(void)
 {
+    /* Horizontal movement is limited to the beginning of the current row. */
     if (cursor.x > 0)
         cursor.x--;
 }
 
 void moveCursorRight(void)
 {
+    /* The cursor may sit immediately after the final character. */
     if (cursor.y >= buffer.numRows)
         return;
 
@@ -24,6 +26,7 @@ void moveCursorRight(void)
 
 void moveCursorUp(void)
 {
+    /* Preserve the column where possible, clamping on shorter rows. */
     if (buffer.numRows == 0 || !buffer.rows)
         return;
 
@@ -38,6 +41,7 @@ void moveCursorUp(void)
 
 void moveCursorDown(void)
 {
+    /* Preserve the column where possible, clamping on shorter rows. */
     if (buffer.numRows == 0 || !buffer.rows)
         return;
 

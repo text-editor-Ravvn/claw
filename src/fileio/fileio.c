@@ -10,6 +10,7 @@ extern Buffer buffer;
 
 static void freeRows(Buffer *target)
 {
+    /* Used for transactional loads so a failed load cannot leak partial rows. */
     for (int i = 0; i < target->numRows; i++)
         free(target->rows[i].chars);
 
@@ -18,6 +19,7 @@ static void freeRows(Buffer *target)
 
 static int appendRow(Buffer *target, const char *chars, size_t size)
 {
+    /* Append a NUL-terminated editor row without using strlen on file bytes. */
     if (size > INT_MAX)
         return 0;
 
@@ -43,8 +45,9 @@ static int appendRow(Buffer *target, const char *chars, size_t size)
 
 int openFile(const char *filename)
 {
+    /* Load into a temporary buffer and replace the active document only at EOF. */
     FILE *fp = fopen(filename, "rb");
-    Buffer loaded = {0, NULL, 0};
+    Buffer loaded = {0, NULL, 0, 0};
     char *line = NULL;
     size_t size = 0;
     size_t capacity = 0;
@@ -88,6 +91,7 @@ int openFile(const char *filename)
     }
 
     loaded.endsWithNewline = lastWasNewline;
+    loaded.modified = 0;
     free(line);
     fclose(fp);
     bufferFree();
@@ -105,6 +109,7 @@ failure:
 
 int saveFile(const char *filename)
 {
+    /* Binary output preserves embedded NUL bytes and the final newline choice. */
     FILE *fp = fopen(filename, "wb");
 
     if (!fp)
@@ -133,5 +138,9 @@ int saveFile(const char *filename)
         }
     }
 
-    return fclose(fp) == 0;
+    if (fclose(fp) != 0)
+        return 0;
+
+    buffer.modified = 0;
+    return 1;
 }

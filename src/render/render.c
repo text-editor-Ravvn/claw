@@ -3,12 +3,16 @@
 #include "render.h"
 #include "cursor.h"
 #include "buffer.h"
+#include "editor.h"
+#include "statusbar.h"
 
 extern Buffer buffer;
 extern Cursor cursor;
+extern char *currentFile;
 
 void refreshScreen(void)
 {
+    /* ANSI sequences clear the old frame before drawing the current document. */
     printf("\033[2J");
     printf("\033[H");
 
@@ -29,9 +33,7 @@ void refreshScreen(void)
         printf("\r\n");
     }
 
-    printf("\r\n");
-
-    printf("-- Claw -- Cursor: (%d, %d) --\r\n", cursor.x, cursor.y);
+    refreshStatusBar(currentFile, buffer.modified, cursor.x, cursor.y, editorStatusMessage());
     printf("\033[%d;%dH", cursor.y + 3, cursor.x + 1);
     fflush(stdout);
 }

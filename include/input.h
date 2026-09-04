@@ -1,5 +1,6 @@
 #ifndef INPUT_H
 #define INPUT_H
+/* Convert an alphabetic key into its terminal control-code value. */
 #define CTRL_KEY(k) ((k) & 0x1f)
 enum EditorKey
 {

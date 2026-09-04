@@ -1,0 +1,1 @@
+/* Placeholder for terminal color and theme definitions. */

@@ -1,0 +1,1 @@
+/* Placeholder for routing decoded commands to editor actions. */
