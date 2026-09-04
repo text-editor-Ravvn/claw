@@ -122,4 +122,4 @@ MIT License
 
 ## Author
 
-Aryan Gupta
+Aryan Gupta & Pranav Chauhan
