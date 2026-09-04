@@ -1,6 +1,6 @@
 #ifndef INPUT_H
 #define INPUT_H
-
+#define CTRL_KEY(k) ((k) & 0x1f)
 enum EditorKey
 {
     ARROW_LEFT = 1000,
