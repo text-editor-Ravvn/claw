@@ -13,7 +13,7 @@ Development Stage: Functional Prototype
 Current Version:
 
 ```text
-v0.5
+v0.7
 ```
 
 Completed Features:
@@ -25,54 +25,48 @@ Completed Features:
 - Screen rendering
 - Dynamic text buffer
 - Character insertion
-- Backspace deletion
-- Delete key support
+- Character deletion
 - Multi-line editing
 - Dynamic row creation
 - Enter key support
 - Line splitting
 - Line merging
-- Horizontal cursor navigation
-- Vertical cursor navigation
 - File loading
 - File saving
 - Filename tracking
-- Modified buffer tracking
 - Real file editing
-- New file creation
-- Existing file editing
-- Unsaved changes detection
-- Exit confirmation
-- ANSI terminal rendering
-- POSIX terminal support
-- Global command support (claw)
+
 - Status bar
+- Modified file tracking
 - Current filename display
-- Modified file indicator
-- Line number display
-- Column number display
-
-In Progress:
-
-- Status messages
-- Screen refresh optimization
-- Terminal resize handling
-- Cursor rendering improvements
-- Terminal compatibility improvements
-
-Planned:
+- Line and column display
 
 - Vertical scrolling
 - Horizontal scrolling
-- Viewport rendering
-- Multiple keyboard profiles
-- Configurable key bindings
-- Syntax highlighting
-- Search and replace
-- Undo / Redo
-- Git integration
-- Plugin system
+- Viewport management
+- Terminal size detection
+- Dynamic viewport rendering
 
+- Welcome screen
+- Centered startup screen
+- Empty line (~) rendering
+- Window resize support
+
+- File statistics display
+
+In Progress:
+
+- Search system (Ctrl+F)
+- Search navigation
+- Match highlighting
+
+Planned:
+
+- Multiple keyboard profiles
+- Linux keymap profile
+- Git integration
+- Syntax highlighting
+- Plugin system
 ---
 
 ## Project Goals
@@ -99,54 +93,49 @@ Claw aims to provide:
 ```text
 claw/
 
-├── README.md
-├── LICENSE
 ├── Makefile
-├── .gitignore
-│
-├── docs/
-│
-├── assets/
-│
-├── tests/
-│
+├── README.md
+
 ├── include/
+│   ├── buffer.h
+│   ├── cursor.h
 │   ├── editor.h
+│   ├── fileio.h
 │   ├── input.h
 │   ├── rawmode.h
 │   ├── render.h
-│   ├── buffer.h
-│   ├── cursor.h
-│   ├── row.h
-│   ├── fileio.h
-│   └── statusbar.h
-│
-├── src/
-│   │
-│   ├── main.c
-│   │
-│   ├── editor/
-│   │   └── editor.c
-│   │
-│   ├── input/
-│   │   ├── input.c
-│   │   └── rawmode.c
-│   │
-│   ├── buffer/
-│   │   ├── buffer.c
-│   │   ├── row.c
-│   │   └── cursor.c
-│   │
-│   ├── render/
-│   │   └── render.c
-│   │
-│   ├── fileio/
-│   │   └── fileio.c
-│   │
-│   └── ui/
-│       └── statusbar.c
-│
-└── build/
+│   ├── statusbar.h
+│   └── viewport.h
+
+└── src/
+
+    ├── main.c
+
+    ├── buffer/
+    │   ├── buffer.c
+    │   └── row.c
+
+    ├── cursor/
+    │   └── cursor.c
+
+    ├── editor/
+    │   └── editor.c
+
+    ├── fileio/
+    │   └── fileio.c
+
+    ├── input/
+    │   ├── input.c
+    │   └── rawmode.c
+
+    ├── render/
+    │   └── render.c
+
+    ├── statusbar/
+    │   └── statusbar.c
+
+    └── viewport/
+        └── viewport.c
 ```
 
 ---
@@ -154,32 +143,34 @@ claw/
 ## Current Source Structure
 
 ```text
-## Current Source Structure
 
 src/
 
-├── main.c                 Entry point
+├── main.c                 Entry point and application startup
 │
 ├── editor/
-│   └── editor.c           Core editor loop
+│   └── editor.c           Core editor loop and command handling
 │
 ├── input/
-│   ├── input.c            Keyboard input handling
+│   ├── input.c            Keyboard input processing and key decoding
 │   └── rawmode.c          Terminal raw mode management
 │
 ├── buffer/
-│   ├── buffer.c           Text buffer management
-│   ├── row.c              Row operations
-│   └── cursor.c           Cursor movement logic
+│   ├── buffer.c           Text buffer initialization and memory management
+│   ├── row.c              Row insertion, deletion, splitting, and merging
+│   └── cursor.c           Cursor movement and position management
 │
 ├── render/
-│   └── render.c           Screen rendering engine
+│   └── render.c           Screen rendering and viewport drawing
 │
 ├── fileio/
-│   └── fileio.c           File loading and saving
+│   └── fileio.c           File loading, saving, and persistence
 │
-└── ui/
-    └── statusbar.c        Status bar rendering
+├── statusbar/
+│   └── statusbar.c        Status bar and editor information display
+│
+└── viewport/
+    └── viewport.c         Scrolling, viewport tracking, and window sizing
 ```
 
 ---
@@ -272,8 +263,11 @@ claw notes.txt
 
 ```text
 ↑  Move Cursor Up
+
 ↓  Move Cursor Down
+
 ←  Move Cursor Left
+
 →  Move Cursor Right
 ```
 
@@ -281,8 +275,11 @@ claw notes.txt
 
 ```text
 Printable Keys  -> Insert Character
+
 Backspace       -> Delete Character Left
+
 Delete          -> Delete Character Right
+
 Enter           -> Create New Line
 ```
 
@@ -290,18 +287,36 @@ Enter           -> Create New Line
 
 ```text
 Ctrl + S        -> Save File
+
 Ctrl + X        -> Quit Editor
 
 Ctrl + X twice  -> Force Quit
                   (when unsaved changes exist)
 ```
 
+### Viewport Navigation
+
+```text
+Arrow Keys      -> Navigate Through File
+
+Auto Vertical Scroll
+
+Auto Horizontal Scroll
+
+Window Resize Support
+```
+
 ### Status Information
 
 ```text
 Status Bar      -> Current File Information
+
 [Modified]      -> Unsaved Changes Indicator
+
+Lines           -> Total Line Count
+
 Ln              -> Current Line Number
+
 Col             -> Current Column Number
 ```
 ---
@@ -309,303 +324,311 @@ Col             -> Current Column Number
 ## Architecture
 
 ```text
-┌─────────────────┐
-│    Terminal     │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  Input Engine   │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│   Editor Core   │
-└────────┬────────┘
-         │
-   ┌─────┴─────┐
-   ▼           ▼
-┌───────┐ ┌─────────┐
-│Buffer │ │ File I/O│
-└───┬───┘ └────┬────┘
-    │          │
-    ▼          ▼
-┌─────────────────┐
-│    Renderer     │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│   Status Bar    │
-└─────────────────┘
+                     ┌──────────────┐
+                     │   Keyboard   │
+                     └──────┬───────┘
+                            │
+                            ▼
+                     ┌──────────────┐
+                     │ Input Engine │
+                     └──────┬───────┘
+                            │
+                            ▼
+                     ┌──────────────┐
+                     │ Editor Core  │
+                     └──────┬───────┘
+                            │
+        ┌───────────────────┼───────────────────┐
+        │                   │                   │
+        ▼                   ▼                   ▼
+ ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+ │   Cursor    │    │   Buffer    │    │  Viewport   │
+ │   Engine    │    │   Engine    │    │   Engine    │
+ └──────┬──────┘    └──────┬──────┘    └──────┬──────┘
+        │                  │                  │
+        └──────────┬───────┴──────────┬───────┘
+                   │                  │
+                   ▼                  ▼
+           ┌─────────────┐    ┌─────────────┐
+           │  File I/O   │    │ Status Bar  │
+           │   Layer     │    │   System    │
+           └──────┬──────┘    └──────┬──────┘
+                  │                  │
+                  └────────┬─────────┘
+                           │
+                           ▼
+                    ┌─────────────┐
+                    │  Renderer   │
+                    └──────┬──────┘
+                           │
+                           ▼
+                    ┌─────────────┐
+                    │  Terminal   │
+                    └─────────────┘
 ```
 
 ### Component Overview
 
 Input Engine
+
 - Captures keyboard input
 - Processes control keys
 - Handles arrow key navigation
 - Manages terminal raw mode
 
 Editor Core
+
 - Controls the editor event loop
 - Coordinates editor subsystems
 - Processes editing commands
 - Maintains editor state
 
+Cursor Engine
+
+- Tracks cursor position
+- Handles cursor movement
+- Maintains row and column state
+- Supports viewport-aware navigation
+
 Text Buffer
+
 - Stores document contents
 - Manages rows and characters
 - Supports insertion and deletion
 - Tracks file modifications
 
+Viewport Engine
+
+- Tracks visible file area
+- Handles vertical scrolling
+- Handles horizontal scrolling
+- Adapts to terminal resizing
+
 Renderer
+
 - Draws editor contents
+- Renders the welcome screen
 - Updates cursor position
-- Renders status bar
 - Refreshes terminal display
 
+Status Bar System
+
+- Displays file information
+- Shows modification status
+- Displays line count
+- Shows cursor position
+
 File I/O Layer
+
 - Loads files into memory
 - Saves buffer contents to disk
 - Tracks active filename
 - Preserves document structure
 
 Terminal Layer
+
 - Provides user interaction
 - Displays editor output
 - Receives keyboard events
+- Hosts the editor interface
 ```
 
 ---
 
-### Development Roadmap
+## Development Roadmap
 
-### Milestone 1
+### Milestone 1 — Foundation
+
+**Status:** Completed
 
 Features:
 
-- Project setup
-- Editor loop
-- Rendering engine
-
-Status:
-
-```text
-COMPLETED
-```
+- Project structure setup
+- Build system configuration
+- Editor startup sequence
+- Basic screen rendering
 
 ---
 
-### Milestone 2
+### Milestone 2 — Input System
+
+**Status:** Completed
 
 Features:
 
-- Raw terminal mode
-- Keyboard input
-- Cursor movement
+- Terminal raw mode
+- Keyboard input processing
+- Special key detection
 - Arrow key navigation
 
-Status:
-
-```text
-COMPLETED
-```
-
 ---
 
-### Milestone 3
+### Milestone 3 — Text Buffer
+
+**Status:** Completed
 
 Features:
 
 - Dynamic text buffer
 - Character insertion
 - Character deletion
-- Cursor state management
-
-Status:
-
-```text
-COMPLETED
-```
+- Memory-safe row management
 
 ---
 
-### Milestone 4
+### Milestone 4 — Multi-Line Editing
+
+**Status:** Completed
 
 Features:
 
-- Multi-line editing
-- Dynamic row creation
-- Enter key support
+- New line creation
 - Line splitting
 - Line merging
-- Vertical cursor navigation
-
-Status:
-
-```text
-COMPLETED
-```
+- Multi-line cursor navigation
 
 ---
 
-### Milestone 5
+### Milestone 5 — File Operations
+
+**Status:** Completed
 
 Features:
 
-- File loading
-- File saving
+- Open existing files
+- Save files
+- Create new files
 - Filename tracking
-- Real file editing
-- Modified buffer tracking
-
-Status:
-
-```text
-COMPLETED
-```
+- Modified state tracking
 
 ---
 
-### Milestone 6
+### Milestone 6 — User Interface
+
+**Status:** Completed
 
 Features:
 
 - Status bar
 - Current filename display
-- Modified file indicator
-- Line number display
-- Column number display
-- Exit confirmation
-
-Status:
-
-```text
-COMPLETED
-```
+- Modified indicator
+- Cursor position display
+- Line statistics
 
 ---
 
-### Milestone 7
+### Milestone 7 — Viewport System
+
+**Status:** Completed
 
 Features:
 
-- Scrolling and viewport support
-- Large file handling
-- Terminal resize handling
-- Screen refresh optimization
-
-Status:
-
-```text
-NEXT
-```
+- Vertical scrolling
+- Horizontal scrolling
+- Viewport tracking
+- Window resize support
+- Welcome screen
+- Tilde rendering
 
 ---
 
-### Milestone 8
+### Milestone 8 — Search System
+
+**Status:** In Progress
 
 Features:
 
-- Search and replace
-- Search all files
+- Ctrl + F search
+- Search prompt
+- Find next match
+- Find previous match
+- Match highlighting
+
+---
+
+### Milestone 9 — Editing Enhancements
+
+**Status:** Planned
+
+Features:
+
+- Undo support
+- Redo support
+- Clipboard operations
+- Improved text navigation
+
+---
+
+### Milestone 10 — Syntax Highlighting
+
+**Status:** Planned
+
+Features:
+
+- C syntax highlighting
+- Keyword detection
+- Comment highlighting
+- String highlighting
+
+---
+
+### Milestone 11 — Productivity Features
+
+**Status:** Planned
+
+Features:
+
 - Go to line
-- Navigation improvements
-
-Status:
-
-```text
-PLANNED
-```
+- Command palette
+- Recent files
+- Search and replace
 
 ---
 
-### Milestone 9
+### Milestone 12 — Git Integration
+
+**Status:** Planned
 
 Features:
 
-- Undo / Redo
-- Persistent history
-- Advanced editing operations
-
-Status:
-
-```text
-PLANNED
-```
-
----
-
-### Milestone 10
-
-Features:
-
-- Multiple keyboard profiles
-- Configurable key bindings
-- Linux keymap profile
-
-Status:
-
-```text
-PLANNED
-```
-
----
-
-### Milestone 11
-
-Features:
-
-- Syntax highlighting
-- Tree-sitter integration
-- Language detection
-
-Status:
-
-```text
-PLANNED
-```
-
----
-
-### Milestone 12
-
-Features:
-
-- Git integration
 - Git status
-- Git diff
-- Commit workflow
-
-Status:
-
-```text
-PLANNED
-```
+- Git diff viewer
+- Branch information
+- Change indicators
 
 ---
 
-### Milestone 13
+### Milestone 13 — Plugin System
+
+**Status:** Planned
 
 Features:
 
-- Plugin system
-- Python plugins
-- Custom scripting support
+- Plugin API
+- External extensions
+- Custom commands
+- Editor customization
 
-Status:
+---
 
-```text
-PLANNED
+### Milestone 14 — Claw v1.0
+
+**Status:** Future Goal
+
+Features:
+
+- Stable release
+- Optimized performance
+- Large file support
+- Complete documentation
+- Production-ready architecture
 ```
 
 ---
 
-## Implemented Buffer Features
+# Implemented Features
 
-### Character Editing
+## Character Editing
 
 - Insert characters at cursor position
 - Delete characters using Backspace
@@ -614,7 +637,7 @@ PLANNED
 - In-line text editing
 - Cursor-aware insertion
 
-### Cursor Management
+## Cursor Management
 
 - Horizontal cursor movement
 - Vertical cursor movement
@@ -622,7 +645,7 @@ PLANNED
 - Row boundary handling
 - Column preservation during navigation
 
-### Multi-Line Editing
+## Multi-Line Editing
 
 - Create new lines using Enter
 - Split lines at cursor position
@@ -631,7 +654,7 @@ PLANNED
 - Dynamic row deletion
 - Multi-line buffer navigation
 
-### Buffer Management
+## Buffer Management
 
 - Dynamic memory allocation
 - Dynamic row storage
@@ -639,7 +662,7 @@ PLANNED
 - Modification tracking
 - Active document management
 
-### File Operations
+## File Operations
 
 - Open files into editor buffer
 - Save editor buffer to disk
@@ -650,17 +673,38 @@ PLANNED
 - Detect unsaved changes
 - Exit confirmation for modified files
 
-### Rendering
+## Viewport System
+
+- Vertical scrolling
+- Horizontal scrolling
+- Viewport tracking
+- Dynamic visible-area rendering
+- Window resize support
+- Cursor-follow scrolling
+- Terminal dimension detection
+
+## Rendering
 
 - Full-screen terminal rendering
 - Cursor rendering
 - Real-time screen refresh
 - Status bar rendering
+- Welcome screen rendering
+- Tilde (`~`) line rendering
 - Filename display
 - Modified file indicator
+- Line count display
 - Line and column display
 
-### Terminal Support
+## Status Bar
+
+- Current filename display
+- Modified state indicator
+- Total line count
+- Current line number
+- Current column number
+
+## Terminal Support
 
 - Raw terminal mode
 - Real-time keyboard input
@@ -669,9 +713,17 @@ PLANNED
 - Arrow key processing
 - Control key handling
 
+## User Interface
+
+- Centered welcome screen
+- Version display
+- Keyboard shortcut hints
+- Responsive layout
+- Dynamic viewport updates
+
 ---
 
-## Development Progress
+# Development Progress
 
 | Version | Status | Description |
 |----------|----------|----------|
@@ -681,13 +733,14 @@ PLANNED
 | v0.4 | Complete | Multi-line editing and cursor navigation |
 | v0.5 | Complete | File loading, saving, and filename tracking |
 | v0.6 | Complete | Status bar, modified tracking, and file information display |
-| v0.7 | Next | Scrolling and viewport support |
-| v0.8 | Planned | Search and replace |
+| v0.7 | Complete | Viewport system, vertical/horizontal scrolling, welcome screen, and editor polish |
+| v0.8 | In Progress | Search system (Ctrl + F) |
 | v0.9 | Planned | Undo / Redo system |
 | v1.0 | Planned | Multiple keyboard profiles and configurable key bindings |
 | v1.1 | Planned | Syntax highlighting |
-| v1.2 | Planned | Git integration |
-| v1.3 | Planned | Plugin system |
+| v1.2 | Planned | Search and Replace |
+| v1.3 | Planned | Git integration |
+| v1.4 | Planned | Plugin system |
 
 ---
 
