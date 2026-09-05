@@ -14,7 +14,6 @@ SRC = src/main.c \
       src/ui/statusbar.c \
       src/fileio/fileio.c \
 	  src/viewport/viewport.c \
-	  src/search/search.c
 
 OBJ = $(SRC:.c=.o)
 
