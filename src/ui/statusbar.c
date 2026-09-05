@@ -1,46 +1,54 @@
 #include <stdio.h>
-
 #include "statusbar.h"
 #include "buffer.h"
 #include "cursor.h"
 #include "editor.h"
-
+#include "viewport.h"
+#include <string.h>
 extern Buffer buffer;
 extern Cursor cursor;
 extern char *currentFile;
 
 void drawStatusBar(void)
 {
+    char left[256];
+    char right[64];
+
+    snprintf(
+    left,
+    sizeof(left),
+    " Claw v%s | %s%s | %d Lines",
+    CLAW_VERSION,
+    currentFile ? currentFile : "[No Name]",
+    buffer.modified ? " [Modified]" : "",
+    buffer.numRows
+);
+
+    snprintf(
+        right,
+        sizeof(right),
+        "Ln %d, Col %d",
+        cursor.y + 1,
+        cursor.x + 1
+    );
+
+    int leftLen = strlen(left);
+    int rightLen = strlen(right);
+
     printf("\033[7m");
 
-    /* Version */
-    printf(" Claw v%s ", CLAW_VERSION);
+    printf("%s", left);
 
-    /* File name */
-    if (currentFile)
-        printf("| %s ", currentFile);
-    else
-        printf("| [No Name] ");
+    int padding =
+        viewport.screenCols -
+        leftLen -
+        rightLen;
 
-    /* Modified indicator */
-    if (buffer.modified)
-        printf("| [Modified] ");
+    while (padding-- > 0)
+        putchar(' ');
 
-    /* Cursor position */
-    printf("| Ln %d, Col %d",
-           cursor.y + 1,
-           cursor.x + 1);
+    printf("%s", right);
 
     printf("\033[K");
     printf("\033[m");
-
-    /* Message line */
-    const char *msg = editorStatusMessage();
-
-    if (msg && *msg)
-    {
-        printf("\r\n");
-        printf("%s", msg);
-        printf("\033[K");
-    }
 }
