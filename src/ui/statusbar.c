@@ -13,21 +13,28 @@ void drawStatusBar(void)
 {
     printf("\033[7m");
 
+    /* Version */
+    printf(" Claw v%s ", CLAW_VERSION);
+
+    /* File name */
     if (currentFile)
-        printf(" %s ", currentFile);
+        printf("| %s ", currentFile);
     else
-        printf(" [No Name] ");
+        printf("| [No Name] ");
 
+    /* Modified indicator */
     if (buffer.modified)
-        printf(" [Modified] ");
+        printf("| [Modified] ");
 
-    printf(" | Ln %d, Col %d",
+    /* Cursor position */
+    printf("| Ln %d, Col %d",
            cursor.y + 1,
            cursor.x + 1);
 
     printf("\033[K");
     printf("\033[m");
 
+    /* Message line */
     const char *msg = editorStatusMessage();
 
     if (msg && *msg)
