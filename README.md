@@ -1,314 +1,706 @@
-# Claw Text Editor
+# Claw
 
-Claw is a lightweight terminal text editor written in C for Linux and other
-POSIX systems. The project is a functional prototype with a small codebase
-that is easy to study and extend.
+A lightweight terminal text editor written entirely in C.
 
-## Quick Start
+Claw is being developed as part of a larger project to build a Linux-based operating system from scratch. The goal is to create a fast, modular, and extensible text editor while remaining simple, lightweight, and easy to understand.
 
-Requirements:
+---
 
-- Linux or another POSIX terminal
-- GCC
-- GNU Make
+## Current Status
 
-Build and run:
+Development Stage: Functional Prototype
+
+Current Version:
+
+```text
+v0.5
+```
+
+Completed Features:
+
+- Raw terminal mode
+- Real-time keyboard input
+- Arrow key navigation
+- Cursor state management
+- Screen rendering
+- Dynamic text buffer
+- Character insertion
+- Backspace deletion
+- Delete key support
+- Multi-line editing
+- Dynamic row creation
+- Enter key support
+- Line splitting
+- Line merging
+- Horizontal cursor navigation
+- Vertical cursor navigation
+- File loading
+- File saving
+- Filename tracking
+- Modified buffer tracking
+- Real file editing
+- New file creation
+- Existing file editing
+- Unsaved changes detection
+- Exit confirmation
+- ANSI terminal rendering
+- POSIX terminal support
+- Global command support (claw)
+- Status bar
+- Current filename display
+- Modified file indicator
+- Line number display
+- Column number display
+
+In Progress:
+
+- Status messages
+- Screen refresh optimization
+- Terminal resize handling
+- Cursor rendering improvements
+- Terminal compatibility improvements
+
+Planned:
+
+- Vertical scrolling
+- Horizontal scrolling
+- Viewport rendering
+- Multiple keyboard profiles
+- Configurable key bindings
+- Syntax highlighting
+- Search and replace
+- Undo / Redo
+- Git integration
+- Plugin system
+
+---
+
+## Project Goals
+
+Claw aims to provide:
+
+- Lightweight architecture
+- Native C implementation
+- Fast and responsive editing
+- Efficient text buffer management
+- Reliable file handling
+- Keyboard-driven workflow
+- Multiple keyboard profiles
+- Configurable key bindings
+- Syntax highlighting
+- Git integration
+- Extensible plugin architecture
+- Foundation for future operating system development
+
+---
+
+## Project Structure
+
+```text
+claw/
+
+├── README.md
+├── LICENSE
+├── Makefile
+├── .gitignore
+│
+├── docs/
+│
+├── assets/
+│
+├── tests/
+│
+├── include/
+│   ├── editor.h
+│   ├── input.h
+│   ├── rawmode.h
+│   ├── render.h
+│   ├── buffer.h
+│   ├── cursor.h
+│   ├── row.h
+│   ├── fileio.h
+│   └── statusbar.h
+│
+├── src/
+│   │
+│   ├── main.c
+│   │
+│   ├── editor/
+│   │   └── editor.c
+│   │
+│   ├── input/
+│   │   ├── input.c
+│   │   └── rawmode.c
+│   │
+│   ├── buffer/
+│   │   ├── buffer.c
+│   │   ├── row.c
+│   │   └── cursor.c
+│   │
+│   ├── render/
+│   │   └── render.c
+│   │
+│   ├── fileio/
+│   │   └── fileio.c
+│   │
+│   └── ui/
+│       └── statusbar.c
+│
+└── build/
+```
+
+---
+
+## Current Source Structure
+
+```text
+## Current Source Structure
+
+src/
+
+├── main.c                 Entry point
+│
+├── editor/
+│   └── editor.c           Core editor loop
+│
+├── input/
+│   ├── input.c            Keyboard input handling
+│   └── rawmode.c          Terminal raw mode management
+│
+├── buffer/
+│   ├── buffer.c           Text buffer management
+│   ├── row.c              Row operations
+│   └── cursor.c           Cursor movement logic
+│
+├── render/
+│   └── render.c           Screen rendering engine
+│
+├── fileio/
+│   └── fileio.c           File loading and saving
+│
+└── ui/
+    └── statusbar.c        Status bar rendering
+```
+
+---
+
+## Build Instructions
+
+### Requirements
+
+- GCC or Clang
+- Make
+- POSIX-compatible terminal
+
+### Compile
 
 ```bash
 make
+```
+
+### Run Empty Editor
+
+```bash
 ./claw
+```
+
+### Open Existing File
+
+```bash
 ./claw notes.txt
 ```
 
-Useful development commands:
+### Save Changes
 
-```bash
-make test       # Build and run buffer and file I/O tests
-make asan       # Build with AddressSanitizer and UBSan
-make debug      # Clean and build a debug executable
-make rebuild    # Clean all generated files and rebuild
-make clean      # Remove objects, executables, and test binaries
+```text
+Ctrl + S
 ```
 
-## Controls
+### Exit Editor
 
-| Key | Action |
-| --- | --- |
-| Arrow keys | Move the cursor |
-| Printable characters | Insert text, including lowercase `q` |
-| Enter | Split the current line |
-| Backspace | Delete before the cursor or join with the previous line |
-| Delete | Delete after the cursor or join with the next line |
-| Ctrl-S | Save the current file |
-| Ctrl-X | Quit; press twice when edits are unsaved |
+```text
+Ctrl + X
+```
 
-The editor uses raw terminal input and restores the terminal when it exits.
-The status bar shows the current filename, saved or modified state, cursor
-line, cursor column, and the latest save or quit message.
+If unsaved changes exist:
 
-## Current Features
+```text
+Press Ctrl + X twice to force quit
+```
 
-- Dynamic rows and character insertion
-- Multi-line editing and row merging
-- Cursor movement with bounds checking
-- Forward Delete and Backspace
-- Binary-safe file loading and saving
-- Long-line support
-- Embedded NUL-byte preservation
-- Preservation of a file's final-newline state
-- Transactional file loading
-- Dirty-buffer tracking
-- ANSI terminal rendering
-- Correct terminal line endings and cursor placement
-- Visual-column handling for tabs and control bytes
-- Buffer and file regression tests
+### Clean Build Files
 
-## Repository Guide
+```bash
+make clean
+```
 
-### Root Files
+### Rebuild
 
-- `README.md`: This project guide, including commands, controls, architecture,
-  and roadmap.
-- `Makefile`: GCC build rules for the editor, tests, debug builds, sanitizer
-  builds, cleanup, and rebuilding.
-- `LICENSE`: Project license file. Add the approved license text before release.
-- `.gitignore`: Keeps object files, executables, test binaries, and temporary
-  test files out of version control.
-- `notes.txt`: Small sample text file for manual editor testing.
-- `test.txt`: Additional sample text file for manual testing.
-- `claw`: Generated editor executable; it is not source code and is ignored by
-  Git when generated locally.
+```bash
+make rebuild
+```
 
-### Public Headers in `include/`
+### Install Globally
 
-- `buffer.h`: Defines `Row` and `Buffer`, plus initialization, cleanup, and
-  editing functions.
-- `cursor.h`: Defines the zero-based `Cursor` and movement functions.
-- `editor.h`: Declares editor startup, input-loop, shutdown, and status APIs.
-- `fileio.h`: Declares binary-safe file open and save functions.
-- `input.h`: Defines control-key conversion, decoded key values, and `readKey`.
-- `rawmode.h`: Declares POSIX terminal raw-mode setup and restoration.
-- `render.h`: Declares full-screen redraw support.
-- `statusbar.h`: Declares status-bar rendering.
-- `command.h`: Reserved for future command definitions and dispatch APIs.
-- `config.h`: Reserved for future configuration APIs.
-- `git.h`: Reserved for future Git status, diff, and commit APIs.
-- `keymap.h`: Reserved for future configurable keyboard profiles.
-- `utils.h`: Reserved for shared file, string, and logging utilities.
+```bash
+sudo ln -sf "$(pwd)/claw" /usr/local/bin/claw
+```
 
-### Active Source Files in `src/`
+Verify installation:
 
-- `main.c`: Program entry point. Initializes Claw, optionally opens the file
-  passed on the command line, runs the editor, and shuts it down.
-- `editor/editor.c`: Main editor lifecycle and command loop. Handles movement,
-  insertion, deletion, saving, quit confirmation, and status messages.
-- `input/input.c`: Reads stdin and decodes ordinary characters, arrow keys,
-  Escape, and the Delete escape sequence.
-- `input/rawmode.c`: Configures POSIX raw terminal mode and restores the
-  original terminal settings.
-- `buffer/buffer.c`: Creates the initial one-row buffer and frees all rows.
-- `buffer/row.c`: Inserts characters, deletes characters, splits rows, joins
-  rows, resizes allocations, and marks successful edits as modified.
-- `buffer/cursor.c`: Moves the cursor while clamping it to valid rows and
-  columns.
-- `fileio/fileio.c`: Loads files dynamically and saves them without losing
-  embedded NUL bytes or final-newline information.
-- `render/render.c`: Clears the terminal, draws document rows, draws the status
-  bar, and places the visible terminal cursor.
-- `ui/statusbar.c`: Displays filename, saved/modified state, cursor position,
-  and transient messages.
+```bash
+which claw
+```
 
-### Future Source Scaffolds
+Run from anywhere:
 
-These files contain comments describing their intended responsibility but are
-not currently compiled by the Makefile:
+```bash
+claw
+```
 
-- `command/actions.c`: Future editor actions invoked by named commands.
-- `command/command.c`: Future command definitions and metadata.
-- `command/dispatcher.c`: Future command routing.
-- `editor/editor_stauts.c`: Future extracted editor-status logic. The filename
-  currently contains the historical `stauts` spelling.
-- `fileio/load.c`: Future standalone loading module.
-- `fileio/save.c`: Future standalone saving module.
-- `git/git.c`: Shared Git repository operations.
-- `git/status.c`: Git working-tree status.
-- `git/diff.c`: Git diff display.
-- `git/commit.c`: Git commit creation.
-- `input/keyboard.c`: Higher-level keyboard mapping.
-- `keymap/bindings.c`: Key-to-command binding storage.
-- `keymap/keymap.c`: Keyboard profile management.
-- `keymap/parser.c`: Keymap configuration parsing.
-- `render/colors.c`: Terminal colors and themes.
-- `render/screen.c`: Terminal-size and viewport helpers.
-- `ui/help.c`: Interactive help screen.
-- `ui/welcome.c`: Startup welcome screen.
-- `utils/file_utils.c`: Shared filesystem helpers.
-- `utils/logger.c`: Diagnostic and event logging.
-- `utils/string_utils.c`: Shared string helpers.
+Open a file from anywhere:
 
-### Configuration and Keymaps
+```bash
+claw notes.txt
+```
 
-- `config/claw.conf`: Reserved for user-specific settings.
-- `config/default.conf`: Reserved for default settings.
-- `keymaps/linus.conf`: Reserved for Linux-style bindings.
-- `keymaps/mac.conf`: Reserved for macOS-style bindings.
-- `keymaps/windows.conf`: Reserved for Windows-style bindings.
+---
 
-### Documentation Files
+## Current Controls
 
-- `docs/api.md`: Reserved for public C API notes.
-- `docs/architecture.md`: Describes future module data flow and boundaries.
-- `docs/keymaps.md`: Reserved for the keymap file format.
-- `docs/roadmap.md`: Points to the active roadmap in this README.
+### Navigation
 
-### Tests
+```text
+↑  Move Cursor Up
+↓  Move Cursor Down
+←  Move Cursor Left
+→  Move Cursor Right
+```
 
-- `tests/buffer_test.c`: Tests insertion, line splitting, Backspace, Forward
-  Delete, and row merging.
-- `tests/file_test.c`: Tests embedded NUL bytes and exact file round trips.
-- `tests/input_test.c`: Reserved for future key-decoding tests.
-- `tests/git_test.c`: Reserved for future Git integration tests.
+### Editing
+
+```text
+Printable Keys  -> Insert Character
+Backspace       -> Delete Character Left
+Delete          -> Delete Character Right
+Enter           -> Create New Line
+```
+
+### File Operations
+
+```text
+Ctrl + S        -> Save File
+Ctrl + X        -> Quit Editor
+
+Ctrl + X twice  -> Force Quit
+                  (when unsaved changes exist)
+```
+
+### Status Information
+
+```text
+Status Bar      -> Current File Information
+[Modified]      -> Unsaved Changes Indicator
+Ln              -> Current Line Number
+Col             -> Current Column Number
+```
+---
 
 ## Architecture
 
-The runtime flow is:
-
 ```text
-main
-  -> editorInit
-  -> openFile (optional)
-  -> editorRun
-       -> readKey
-       -> buffer/cursor operation
-       -> refreshScreen
-  -> editorShutdown
+┌─────────────────┐
+│    Terminal     │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Input Engine   │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│   Editor Core   │
+└────────┬────────┘
+         │
+   ┌─────┴─────┐
+   ▼           ▼
+┌───────┐ ┌─────────┐
+│Buffer │ │ File I/O│
+└───┬───┘ └────┬────┘
+    │          │
+    ▼          ▼
+┌─────────────────┐
+│    Renderer     │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│   Status Bar    │
+└─────────────────┘
 ```
 
-The `Buffer` owns an array of `Row` values. Each row owns a byte array and a
-length, so file data can contain NUL bytes without using C string length as the
-source of truth. The editor owns the command loop, while rendering reads the
-current buffer and cursor state without mutating document data.
+### Component Overview
 
-## Development Phases
+Input Engine
+- Captures keyboard input
+- Processes control keys
+- Handles arrow key navigation
+- Manages terminal raw mode
 
-### Phase 1: Project Foundation
+Editor Core
+- Controls the editor event loop
+- Coordinates editor subsystems
+- Processes editing commands
+- Maintains editor state
 
-Status: Complete
+Text Buffer
+- Stores document contents
+- Manages rows and characters
+- Supports insertion and deletion
+- Tracks file modifications
 
-- Set up the C project, headers, source layout, Makefile, and Linux workflow.
-- Define the main editor, input, buffer, rendering, and file I/O boundaries.
+Renderer
+- Draws editor contents
+- Updates cursor position
+- Renders status bar
+- Refreshes terminal display
 
-### Phase 2: Terminal Input
+File I/O Layer
+- Loads files into memory
+- Saves buffer contents to disk
+- Tracks active filename
+- Preserves document structure
 
-Status: Complete
+Terminal Layer
+- Provides user interaction
+- Displays editor output
+- Receives keyboard events
+```
 
-- Add POSIX raw terminal mode.
-- Read individual key presses without echo.
-- Decode printable characters, arrows, Escape, Backspace, and Delete.
-- Restore terminal settings safely when the editor exits.
+---
 
-### Phase 3: Text Buffer
+### Development Roadmap
 
-Status: Complete
+### Milestone 1
 
-- Store documents as dynamically sized rows.
-- Insert and delete characters.
-- Split lines with Enter.
-- Merge lines with Backspace and Forward Delete.
-- Clamp cursor movement to valid rows and columns.
-- Track unsaved changes.
+Features:
 
-### Phase 4: File Editing
+- Project setup
+- Editor loop
+- Rendering engine
 
-Status: Complete
+Status:
 
-- Open a file from the command line.
-- Load long lines without a fixed 1024-byte limit.
-- Preserve embedded NUL bytes and final-newline state.
-- Save through a temporary file to protect the original on write failure.
-- Report open and save failures to the user.
+```text
+COMPLETED
+```
 
-### Phase 5: Rendering and Editing Safety
+---
 
-Status: Complete
+### Milestone 2
 
-- Draw the document and status bar with ANSI terminal sequences.
-- Keep header and document lines aligned with CRLF output.
-- Translate buffer byte positions into visual terminal columns.
-- Render tabs consistently and prevent control bytes from executing terminal
-  commands.
-- Require quit confirmation when edits are unsaved.
+Features:
 
-### Phase 6: Testing and Documentation
+- Raw terminal mode
+- Keyboard input
+- Cursor movement
+- Arrow key navigation
 
-Status: In progress
+Status:
 
-- Maintain buffer and file round-trip regression tests.
-- Add input-sequence, rendering, and editor-lifecycle tests.
-- Run AddressSanitizer and UndefinedBehaviorSanitizer builds on Linux.
-- Keep source comments, API notes, and this project guide current.
+```text
+COMPLETED
+```
 
-## Future Phases
+---
 
-### Phase 7: Terminal Viewport
+### Milestone 3
 
-- Query terminal width and height.
-- Add vertical and horizontal scrolling for large files and long lines.
-- Clip rows to the visible viewport.
-- Keep the cursor visible while scrolling.
-- Handle terminal resize signals without corrupting the screen.
+Features:
 
-### Phase 8: Complete Editor Workflow
+- Dynamic text buffer
+- Character insertion
+- Character deletion
+- Cursor state management
 
-- Add a command prompt for opening, saving as, and closing files.
-- Add a real status message timeout and clearer error messages.
-- Add a help overlay showing all controls.
-- Add filename validation and safer new-file creation.
+Status:
 
-### Phase 9: Undo, Redo, and Search
+```text
+COMPLETED
+```
 
-- Add undo and redo history for every buffer mutation.
-- Add incremental text search.
-- Add search-and-replace with confirmation.
-- Add matching-bracket and line navigation helpers.
+---
 
-### Phase 10: Configuration and Keymaps
+### Milestone 4
 
-- Define the configuration file format.
-- Load defaults from `config/default.conf`.
-- Load user settings from `config/claw.conf`.
-- Implement Linux, macOS, and Windows-style keymap profiles.
-- Allow users to customize commands without recompiling.
+Features:
 
-### Phase 11: Git and Developer Tools
+- Multi-line editing
+- Dynamic row creation
+- Enter key support
+- Line splitting
+- Line merging
+- Vertical cursor navigation
 
-- Detect the current Git repository and branch.
-- Show working-tree status in the status bar.
-- Display diffs for the current file.
-- Add commands for staging and committing changes.
-- Add logging and diagnostic utilities.
+Status:
 
-### Phase 12: Editor Quality
+```text
+COMPLETED
+```
 
-- Add syntax highlighting with configurable themes.
-- Add bracket matching and automatic indentation.
-- Add multiple buffers or tabs.
-- Add a plugin interface.
-- Add optional language-server integration.
-- Improve accessibility, Unicode width handling, and terminal compatibility.
+---
 
-## Current Roadmap Summary
+### Milestone 5
 
-The next recommended milestone is Phase 7, terminal viewport support. It will
-remove the main remaining visual limitation: large files and wrapped lines can
-extend beyond the visible terminal. After that, Phase 8 should make file and
-command workflows easier to use before larger features are added.
+Features:
+
+- File loading
+- File saving
+- Filename tracking
+- Real file editing
+- Modified buffer tracking
+
+Status:
+
+```text
+COMPLETED
+```
+
+---
+
+### Milestone 6
+
+Features:
+
+- Status bar
+- Current filename display
+- Modified file indicator
+- Line number display
+- Column number display
+- Exit confirmation
+
+Status:
+
+```text
+COMPLETED
+```
+
+---
+
+### Milestone 7
+
+Features:
+
+- Scrolling and viewport support
+- Large file handling
+- Terminal resize handling
+- Screen refresh optimization
+
+Status:
+
+```text
+NEXT
+```
+
+---
+
+### Milestone 8
+
+Features:
+
+- Search and replace
+- Search all files
+- Go to line
+- Navigation improvements
+
+Status:
+
+```text
+PLANNED
+```
+
+---
+
+### Milestone 9
+
+Features:
+
+- Undo / Redo
+- Persistent history
+- Advanced editing operations
+
+Status:
+
+```text
+PLANNED
+```
+
+---
+
+### Milestone 10
+
+Features:
+
+- Multiple keyboard profiles
+- Configurable key bindings
+- Linux keymap profile
+
+Status:
+
+```text
+PLANNED
+```
+
+---
+
+### Milestone 11
+
+Features:
+
+- Syntax highlighting
+- Tree-sitter integration
+- Language detection
+
+Status:
+
+```text
+PLANNED
+```
+
+---
+
+### Milestone 12
+
+Features:
+
+- Git integration
+- Git status
+- Git diff
+- Commit workflow
+
+Status:
+
+```text
+PLANNED
+```
+
+---
+
+### Milestone 13
+
+Features:
+
+- Plugin system
+- Python plugins
+- Custom scripting support
+
+Status:
+
+```text
+PLANNED
+```
+
+---
+
+## Implemented Buffer Features
+
+### Character Editing
+
+- Insert characters at cursor position
+- Delete characters using Backspace
+- Delete characters using Delete key
+- Dynamic row resizing
+- In-line text editing
+- Cursor-aware insertion
+
+### Cursor Management
+
+- Horizontal cursor movement
+- Vertical cursor movement
+- Cursor position tracking
+- Row boundary handling
+- Column preservation during navigation
+
+### Multi-Line Editing
+
+- Create new lines using Enter
+- Split lines at cursor position
+- Merge lines using Backspace
+- Dynamic row creation
+- Dynamic row deletion
+- Multi-line buffer navigation
+
+### Buffer Management
+
+- Dynamic memory allocation
+- Dynamic row storage
+- Automatic buffer growth
+- Modification tracking
+- Active document management
+
+### File Operations
+
+- Open files into editor buffer
+- Save editor buffer to disk
+- Create new files
+- Edit existing files
+- Preserve multi-line file structure
+- Track active filename
+- Detect unsaved changes
+- Exit confirmation for modified files
+
+### Rendering
+
+- Full-screen terminal rendering
+- Cursor rendering
+- Real-time screen refresh
+- Status bar rendering
+- Filename display
+- Modified file indicator
+- Line and column display
+
+### Terminal Support
+
+- Raw terminal mode
+- Real-time keyboard input
+- ANSI escape sequence rendering
+- POSIX terminal support
+- Arrow key processing
+- Control key handling
+
+---
+
+## Development Progress
+
+| Version | Status | Description |
+|----------|----------|----------|
+| v0.1 | Complete | Project setup and editor framework |
+| v0.2 | Complete | Raw terminal mode and keyboard input |
+| v0.3 | Complete | Dynamic text buffer and editing |
+| v0.4 | Complete | Multi-line editing and cursor navigation |
+| v0.5 | Complete | File loading, saving, and filename tracking |
+| v0.6 | Complete | Status bar, modified tracking, and file information display |
+| v0.7 | Next | Scrolling and viewport support |
+| v0.8 | Planned | Search and replace |
+| v0.9 | Planned | Undo / Redo system |
+| v1.0 | Planned | Multiple keyboard profiles and configurable key bindings |
+| v1.1 | Planned | Syntax highlighting |
+| v1.2 | Planned | Git integration |
+| v1.3 | Planned | Plugin system |
+
+---
 
 ## License
 
-The repository contains a `LICENSE` placeholder. Add the final approved license
-text before distributing the project.
+MIT License
+
+---
 
 ## Author
 
-Aryan Gupta & Pranav Chauhan
+Aryan Gupta & Pranav Chauhan 
+
+Project: Claw Text Editor
+Language: C
+Platform: Linux
