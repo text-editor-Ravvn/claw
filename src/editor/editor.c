@@ -16,7 +16,7 @@ void editorInit(void)
 {
     /* Raw mode must be active before the first screen refresh or key read. */
     enableRawMode();
-
+    printf("\033[2 q");
     bufferInit();
 }
 
@@ -28,11 +28,12 @@ void editorRun(void)
         refreshScreen();
 
         int key = readKey();
+        
 
         if (key == -1)
             return;
 
-        if (key != CTRL_KEY('q'))
+        if (key != CTRL_KEY('x'))
             quitRequested = 0;
 
       switch(key)
@@ -68,15 +69,21 @@ void editorRun(void)
 
     break;
 
-    case CTRL_KEY('q'):
-        /* Require confirmation rather than discarding unsaved edits. */
-        if (buffer.modified && !quitRequested)
-        {
-            quitRequested = 1;
-            snprintf(statusMessage, sizeof(statusMessage), "Unsaved changes. Press Ctrl-Q again to quit.");
-            break;
-        }
-        return;
+    case CTRL_KEY('x'):
+    if (buffer.modified && !quitRequested)
+    {
+        quitRequested = 1;
+
+        snprintf(
+            statusMessage,
+            sizeof(statusMessage),
+            "Unsaved changes. Press Ctrl-X again to quit."
+        );
+
+        break;
+    }
+
+    return;
 
     case 127:
         deleteChar();
@@ -98,8 +105,13 @@ void editorRun(void)
 
 void editorShutdown(void)
 {
-    /* Explicit cleanup complements the atexit terminal restoration fallback. */
     disableRawMode();
+
+    printf("\033[?25h");   // show cursor
+    printf("\033[2J");     // clear screen
+    printf("\033[H");      // move to top-left
+    fflush(stdout);
+
     bufferFree();
 }
 

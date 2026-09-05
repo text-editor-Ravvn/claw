@@ -40,7 +40,7 @@ make clean      # Remove objects, executables, and test binaries
 | Backspace | Delete before the cursor or join with the previous line |
 | Delete | Delete after the cursor or join with the next line |
 | Ctrl-S | Save the current file |
-| Ctrl-Q | Quit; press twice when edits are unsaved |
+| Ctrl-X | Quit; press twice when edits are unsaved |
 
 The editor uses raw terminal input and restores the terminal when it exits.
 The status bar shows the current filename, saved or modified state, cursor

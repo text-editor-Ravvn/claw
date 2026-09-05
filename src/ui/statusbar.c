@@ -1,19 +1,39 @@
 #include <stdio.h>
 
 #include "statusbar.h"
+#include "buffer.h"
+#include "cursor.h"
+#include "editor.h"
 
-void refreshStatusBar(const char *filename, int modified, int cursorX, int cursorY, const char *message)
+extern Buffer buffer;
+extern Cursor cursor;
+extern char *currentFile;
+
+void drawStatusBar(void)
 {
-	/* Reverse video separates editor metadata from document text. */
-	const char *displayName = filename ? filename : "[No Name]";
+    printf("\033[7m");
 
-	printf("\033[7m %-30s %s  Ln %d, Col %d ",
-		displayName,
-		modified ? "[Modified]" : "[Saved]",
-		cursorY + 1,
-		cursorX + 1);
-	printf("\033[K\033[0m\r\n");
+    if (currentFile)
+        printf(" %s ", currentFile);
+    else
+        printf(" [No Name] ");
 
-	if (message && message[0] != '\0')
-		printf("%s\033[K\r\n", message);
+    if (buffer.modified)
+        printf(" [Modified] ");
+
+    printf(" | Ln %d, Col %d",
+           cursor.y + 1,
+           cursor.x + 1);
+
+    printf("\033[K");
+    printf("\033[m");
+
+    const char *msg = editorStatusMessage();
+
+    if (msg && *msg)
+    {
+        printf("\r\n");
+        printf("%s", msg);
+        printf("\033[K");
+    }
 }

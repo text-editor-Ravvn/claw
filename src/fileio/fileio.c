@@ -162,17 +162,25 @@ int saveFile(const char *filename)
     }
 
     if (rename(temporaryName, filename) != 0)
-    {
+{
 #ifdef _WIN32
-        /* Windows cannot replace an existing file with rename(). */
-        if (remove(filename) == 0 && rename(temporaryName, filename) == 0)
-            goto saved;
-#endif
-        remove(temporaryName);
-        return 0;
+
+    /* Windows cannot replace an existing file with rename(). */
+
+    if (remove(filename) == 0 && rename(temporaryName, filename) == 0)
+    {
+        buffer.modified = 0;
+        return 1;
     }
 
-saved:
-    buffer.modified = 0;
-    return 1;
+#endif
+
+    remove(temporaryName);
+
+    return 0;
+}
+
+buffer.modified = 0;
+
+return 1;
 }
