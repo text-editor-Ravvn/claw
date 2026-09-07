@@ -87,16 +87,48 @@ void refreshScreen(void)
                 len = viewport.screenCols;
 
             if (len > 0)
+{
+    for (int j = 0; j < len; j++)
+    {
+        int fileCol =
+            viewport.colOffset + j;
+
+        int highlight = 0;
+
+        if (searchState.matchCount > 0)
+        {
+            int matchRow =
+                searchState.matchRows[
+                    searchState.currentMatch
+                ];
+
+            int matchCol =
+                searchState.matchCols[
+                    searchState.currentMatch
+                ];
+
+            if (fileRow == matchRow &&
+                fileCol >= matchCol &&
+                fileCol < matchCol +
+                          searchState.length)
             {
-                fwrite(
-                    &buffer.rows[fileRow].chars[
-                        viewport.colOffset
-                    ],
-                    1,
-                    len,
-                    stdout
-                );
+                highlight = 1;
             }
+        }
+
+        if (highlight)
+            printf("\033[30;43m");
+
+        putchar(
+            buffer.rows[fileRow].chars[
+                fileCol
+            ]
+        );
+
+        if (highlight)
+            printf("\033[m");
+    }
+    }
         }
         else
         {
