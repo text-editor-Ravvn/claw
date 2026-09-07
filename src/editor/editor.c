@@ -10,6 +10,7 @@
 #include "statusbar.h"
 #include "viewport.h"
 #include "search.h"
+#include <string.h>
 char *currentFile = NULL;
 static char statusMessage[128] = "";
 static int quitRequested = 0;
@@ -32,6 +33,66 @@ void editorRun(void)
     refreshScreen();
 
     int key = readKey();
+    if (searchState.active)
+{
+    if (key == 27)
+    {
+        closeSearchPrompt();
+        editorSetStatusMessage(
+            "Search cancelled"
+        );
+        continue;
+    }
+
+    if (key == '\r' || key == '\n')
+    {
+        closeSearchPrompt();
+
+        char message[256];
+
+        snprintf(
+            message,
+            sizeof(message),
+            "Searching for: %s",
+            searchState.query
+        );
+
+        editorSetStatusMessage(
+            message
+        );
+
+        continue;
+    }
+
+    if (key == 127)
+    {
+        if (searchState.length > 0)
+        {
+            searchState.length--;
+
+            searchState.query[
+                searchState.length
+            ] = '\0';
+        }
+
+        continue;
+    }
+
+    if (key >= 32 &&
+        key <= 126 &&
+        searchState.length < 127)
+    {
+        searchState.query[
+            searchState.length++
+        ] = key;
+
+        searchState.query[
+            searchState.length
+        ] = '\0';
+    }
+
+    continue;
+}
 
     if (key == -1)
         return;

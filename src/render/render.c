@@ -6,6 +6,7 @@
 #include "cursor.h"
 #include "statusbar.h"
 #include "viewport.h"
+#include "search.h"
 
 extern Buffer buffer;
 extern Cursor cursor;
@@ -108,9 +109,24 @@ void refreshScreen(void)
     printf("\033[K");
 
     drawStatusBar();
+
     printf("\r\n");
     printf("\033[K");
-    printf("%s", editorStatusMessage());
+
+    if (searchState.active)
+    {
+    printf(
+        "Search: %s",
+        searchState.query
+    );
+    }
+    else
+    {
+    printf(
+        "%s",
+        editorStatusMessage()
+    );
+    }
 
     int screenRow =
         cursor.y - viewport.rowOffset + 1;
