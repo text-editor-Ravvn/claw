@@ -108,6 +108,9 @@ void refreshScreen(void)
     printf("\033[K");
 
     drawStatusBar();
+    printf("\r\n");
+    printf("\033[K");
+    printf("%s", editorStatusMessage());
 
     int screenRow =
         cursor.y - viewport.rowOffset + 1;

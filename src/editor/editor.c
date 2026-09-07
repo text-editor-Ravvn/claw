@@ -9,6 +9,7 @@
 #include "fileio.h"
 #include "statusbar.h"
 #include "viewport.h"
+#include "search.h"
 char *currentFile = NULL;
 static char statusMessage[128] = "";
 static int quitRequested = 0;
@@ -71,6 +72,10 @@ void editorRun(void)
             else
                 snprintf(statusMessage, sizeof(statusMessage),
                          "Could not save %s", currentFile);
+            break;
+
+        case CTRL_KEY('f'):
+            openSearchPrompt();
             break;
 
         case CTRL_KEY('x'):
