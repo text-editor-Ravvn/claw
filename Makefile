@@ -15,6 +15,7 @@ SRC = src/main.c \
       src/fileio/fileio.c \
 	  src/viewport/viewport.c \
 	  src/search/search.c \
+	  src/history/history.c
 
 OBJ = $(SRC:.c=.o)
 

@@ -11,6 +11,7 @@
 #include "viewport.h"
 #include "search.h"
 #include <string.h>
+#include "history.h"
 char *currentFile = NULL;
 static char statusMessage[128] = "";
 static int quitRequested = 0;
@@ -21,6 +22,7 @@ void editorInit(void)
     enableRawMode();
     printf("\033[2 q");
     bufferInit();
+    historyInit();
     viewportInit();
 }
 
