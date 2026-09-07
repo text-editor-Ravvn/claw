@@ -59,6 +59,11 @@ void deleteChar(void)
     /* Normal backspace inside a line */
     if (cursor.x > 0)
     {
+        historyPushDelete(
+    cursor.y,
+    cursor.x - 1,
+    row->chars[cursor.x - 1]
+    );
         memmove(
             &row->chars[cursor.x - 1],
             &row->chars[cursor.x],
@@ -135,6 +140,11 @@ void deleteForward(void)
 
     if (cursor.x < row->size)
     {
+        historyPushDelete(
+    cursor.y,
+    cursor.x,
+    row->chars[cursor.x]
+    );
         memmove(
             &row->chars[cursor.x],
             &row->chars[cursor.x + 1],

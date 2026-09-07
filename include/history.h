@@ -4,6 +4,7 @@
 #define HISTORY_MAX 1000
 
 #define ACTION_INSERT 1
+#define ACTION_DELETE 2
 
 typedef struct
 {
@@ -19,6 +20,11 @@ typedef struct
 void historyInit(void);
 
 void historyPushInsert(
+    int row,
+    int col,
+    char ch
+);
+void historyPushDelete(
     int row,
     int col,
     char ch

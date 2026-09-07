@@ -63,5 +63,47 @@ int historyUndo(void)
         return 1;
     }
 
+    if (action.type ==
+        ACTION_DELETE)
+    {
+        cursor.y =
+            action.row;
+
+        cursor.x =
+            action.col;
+
+        insertChar(
+            action.ch
+        );
+
+        cursor.x =
+            action.col + 1;
+
+        return 1;
+    }
+
     return 0;
+}
+void historyPushDelete(
+    int row,
+    int col,
+    char ch
+)
+{
+    if (historyCount >= HISTORY_MAX)
+        return;
+
+    history[historyCount].type =
+        ACTION_DELETE;
+
+    history[historyCount].row =
+        row;
+
+    history[historyCount].col =
+        col;
+
+    history[historyCount].ch =
+        ch;
+
+    historyCount++;
 }
