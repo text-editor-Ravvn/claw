@@ -138,6 +138,10 @@ void editorRun(void)
         previousMatch();
         break;
 
+        case CTRL_KEY('z'):
+        historyUndo();
+        break;
+
         case CTRL_KEY('x'):
             if (buffer.modified && !quitRequested)
             {

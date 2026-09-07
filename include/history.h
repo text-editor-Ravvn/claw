@@ -3,6 +3,8 @@
 
 #define HISTORY_MAX 1000
 
+#define ACTION_INSERT 1
+
 typedef struct
 {
     int type;
@@ -15,5 +17,13 @@ typedef struct
 } EditAction;
 
 void historyInit(void);
+
+void historyPushInsert(
+    int row,
+    int col,
+    char ch
+);
+
+int historyUndo(void);
 
 #endif

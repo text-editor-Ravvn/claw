@@ -3,14 +3,22 @@
 
 #include "buffer.h"
 #include "cursor.h"
+#include "history.h"
 
 extern Buffer buffer;
 
 void insertChar(char c)
 {
-    /* Grow the row, shift its suffix right, then place the new byte. */
     if (cursor.y >= buffer.numRows)
         return;
+
+    historyPushInsert(
+        cursor.y,
+        cursor.x,
+        c
+    );
+
+    /* Grow the row, shift its suffix right, then place the new byte. */
 
     Row *row = &buffer.rows[cursor.y];
 
