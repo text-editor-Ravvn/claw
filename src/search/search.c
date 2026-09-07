@@ -29,38 +29,128 @@ void closeSearchPrompt(void)
 
 void performSearch(void)
 {
+    searchState.matchCount = 0;
+    searchState.currentMatch = 0;
+
     if (searchState.length == 0)
         return;
 
-    for (int row = 0; row < buffer.numRows; row++)
+    for (int row = 0;
+         row < buffer.numRows;
+         row++)
     {
-        char *match =
-            strstr(
-                buffer.rows[row].chars,
-                searchState.query
-            );
+        char *start =
+            buffer.rows[row].chars;
 
-        if (match)
+        while (1)
         {
-            cursor.y = row;
+            char *match =
+                strstr(
+                    start,
+                    searchState.query
+                );
 
-            cursor.x =
+            if (!match)
+                break;
+
+            if (searchState.matchCount < 256)
+            {
+                searchState.matchRows[
+                    searchState.matchCount
+                ] = row;
+
+                searchState.matchCols[
+                    searchState.matchCount
+                ] =
                 (int)(
                     match -
                     buffer.rows[row].chars
                 );
 
-            scrollEditor();
+                searchState.matchCount++;
+            }
 
-            editorSetStatusMessage(
-                "Match found"
-            );
-
-            return;
+            start =
+                match + 1;
         }
     }
 
+    if (searchState.matchCount == 0)
+    {
+        editorSetStatusMessage(
+            "No matches found"
+        );
+        return;
+    }
+
+    cursor.y =
+        searchState.matchRows[0];
+
+    cursor.x =
+        searchState.matchCols[0];
+
+    scrollEditor();
+
     editorSetStatusMessage(
-        "No matches found"
+        "Match found"
+    );
+}
+void nextMatch(void)
+{
+    if (searchState.matchCount == 0)
+        return;
+
+    searchState.currentMatch++;
+
+    if (searchState.currentMatch >=
+        searchState.matchCount)
+    {
+        searchState.currentMatch = 0;
+    }
+
+    cursor.y =
+        searchState.matchRows[
+            searchState.currentMatch
+        ];
+
+    cursor.x =
+        searchState.matchCols[
+            searchState.currentMatch
+        ];
+
+    scrollEditor();
+
+    editorSetStatusMessage(
+        "Next match"
+    );
+}
+
+void previousMatch(void)
+{
+    if (searchState.matchCount == 0)
+        return;
+
+    searchState.currentMatch--;
+
+    if (searchState.currentMatch < 0)
+    {
+        searchState.currentMatch =
+            searchState.matchCount - 1;
+    }
+
+    cursor.y =
+        searchState.matchRows[
+            searchState.currentMatch
+        ];
+
+    cursor.x =
+        searchState.matchCols[
+            searchState.currentMatch
+        ];
+
+    scrollEditor();
+
+    editorSetStatusMessage(
+        "Previous match"
     );
 }

@@ -128,6 +128,14 @@ void editorRun(void)
             openSearchPrompt();
             break;
 
+        case 'n':
+        nextMatch();
+        break;
+
+        case 'p':
+        previousMatch();
+        break;
+
         case CTRL_KEY('x'):
             if (buffer.modified && !quitRequested)
             {
