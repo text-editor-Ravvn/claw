@@ -142,6 +142,10 @@ void editorRun(void)
         historyUndo();
         break;
 
+        case CTRL_KEY('y'):
+        historyRedo();
+        break;
+
         case CTRL_KEY('x'):
             if (buffer.modified && !quitRequested)
             {

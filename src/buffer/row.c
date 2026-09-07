@@ -187,6 +187,10 @@ void deleteForward(void)
 
 void insertNewLine(void)
 {
+    historyPushNewLine(
+    cursor.y,
+    cursor.x
+);
     /* Move the text after the cursor into a newly inserted row. */
     if (cursor.y >= buffer.numRows)
         return;

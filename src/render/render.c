@@ -7,6 +7,7 @@
 #include "statusbar.h"
 #include "viewport.h"
 #include "search.h"
+#include <string.h>
 
 extern Buffer buffer;
 extern Cursor cursor;
@@ -28,51 +29,56 @@ void refreshScreen(void)
 
         printf("\033[K");
 
-        if (showWelcome)
-        {
-            if (i == viewport.screenRows / 3)
-            {
-                int padding =
-            (viewport.screenCols - 16) / 2;
+       if (showWelcome)
+{
+    const char *welcomeLines[] =
+    {
+        "Claw Text Editor",
+        "",
+        "Version 0.9",
+        "",
+        "Ctrl+S    Save File",
+        "Ctrl+F    Search",
+        "Ctrl+Z    Undo",
+        "Ctrl+Y    Redo",
+        "Ctrl+X    Quit Editor"
+    };
 
-            for (int j = 0; j < padding; j++)
+    int lineCount =
+        sizeof(welcomeLines) /
+        sizeof(welcomeLines[0]);
+
+    int startRow =
+        (viewport.screenRows - 2 - lineCount) / 2;
+
+    /* Width of longest line */
+    int blockWidth = 21;
+
+    if (i >= startRow &&
+        i < startRow + lineCount)
+    {
+        const char *line =
+            welcomeLines[i - startRow];
+
+        int padding =
+            (viewport.screenCols - blockWidth) / 2;
+
+        if (padding < 0)
+            padding = 0;
+
+        for (int j = 0; j < padding; j++)
             putchar(' ');
 
-            printf("Claw Text Editor");
-            }
-            else if (i == viewport.screenRows / 3 + 2)
-            {
-            int padding = (viewport.screenCols - 12) / 2;
+        printf("%s", line);
+    }
+    else
+    {
+        putchar(' ');
+    }
 
-            for (int j = 0; j < padding; j++)
-                putchar(' ');
-
-            printf("Version %s", CLAW_VERSION);
-            }
-            else if (i == viewport.screenRows / 3 + 4)
-            {
-                 int padding =(viewport.screenCols - 17) / 2;
-
-            for (int j = 0; j < padding; j++)
-            putchar(' ');
-                printf("Ctrl+S  Save File");
-            }
-            else if (i == viewport.screenRows / 3 + 5)
-            {
-                int padding =(viewport.screenCols - 18) / 2;
-
-                for (int j = 0; j < padding; j++)
-                putchar(' ');
-                printf("Ctrl+X  Quit Editor");
-            }
-            else
-            {
-                printf("~");
-            }
-
-            printf("\r\n");
-            continue;
-        }
+    printf("\r\n");
+    continue;
+}
 
         if (fileRow < buffer.numRows)
         {
