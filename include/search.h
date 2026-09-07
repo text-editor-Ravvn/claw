@@ -12,5 +12,6 @@ extern SearchState searchState;
 
 void openSearchPrompt(void);
 void closeSearchPrompt(void);
+void performSearch(void);
 
 #endif

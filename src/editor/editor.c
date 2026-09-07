@@ -46,22 +46,11 @@ void editorRun(void)
 
     if (key == '\r' || key == '\n')
     {
-        closeSearchPrompt();
+    performSearch();
 
-        char message[256];
+    closeSearchPrompt();
 
-        snprintf(
-            message,
-            sizeof(message),
-            "Searching for: %s",
-            searchState.query
-        );
-
-        editorSetStatusMessage(
-            message
-        );
-
-        continue;
+    continue;
     }
 
     if (key == 127)
