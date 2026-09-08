@@ -40,17 +40,17 @@ void refreshScreen(void)
        if (showWelcome)
 {
     const char *welcomeLines[] =
-    {
-        "Claw Text Editor",
-        "",
-        "Version " CLAW_VERSION,
-        "",
-        "Ctrl+S    Save File",
-        "Ctrl+F    Search",
-        "Ctrl+Z    Undo",
-        "Ctrl+Y    Redo",
-        "Ctrl+X    Quit Editor"
-    };
+{
+    "Claw Text Editor",
+    "",
+    ("Version " CLAW_VERSION),
+    "",
+    "Ctrl+S    Save File",
+    "Ctrl+F    Search",
+    "Ctrl+Z    Undo",
+    "Ctrl+Y    Redo",
+    "Ctrl+X    Quit Editor"
+};
 
     int lineCount =
         sizeof(welcomeLines) /
