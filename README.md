@@ -8,12 +8,12 @@ Claw is being developed as part of a larger project to build a Linux-based opera
 
 ## Current Status
 
-Development Stage: Advanced Functional Prototype
+Development Stage: Feature-Complete Editor Core
 
 Current Version:
 
 ```text
-v0.9
+v1.0
 ```
 
 ## Completed Features
@@ -128,46 +128,41 @@ v0.9
 - Control key handling
 - Dynamic terminal resizing
 
+### Editor Configuration
+
+- INI-style configuration file parser
+- User configuration file support (XDG and local fallback)
+- Configurable tab width (1–16 spaces)
+- Toggleable line number display
+- Toggleable welcome screen
+- Toggleable status bar
+- Startup preference loading
+- Layered settings (defaults → user overrides)
+- Custom key binding system
+- Keymap file support with multiple profiles
+- Command dispatch architecture
+- Tab key insertion support
+
 ## In Progress
 
-### v1.0 — Editor Configuration System
+### v1.1 — Syntax Highlighting
 
-- User configuration file support
-- Custom key binding system
-- Configurable tab width
-- Line number display toggle
-- Startup preference loading
-- Editor behavior customization
-- Persistent user settings
-- Configuration parser implementation
-
-### Research & Design
-
-- Configuration file format
-- Key binding architecture
-- Settings persistence layer
-- Runtime configuration management
-- Backward compatibility planning
+- C language syntax highlighting
+- Keyword highlighting
+- Number highlighting
+- String highlighting
+- Comment highlighting
+- File extension detection
+- Colorized rendering engine
 
 ### Current Focus
 
-- Designing editor settings infrastructure
-- Defining configuration file syntax
-- Implementing settings loader
-- Building customizable key mapping system
-- Preparing foundation for future editor extensions
+- Designing syntax highlighting architecture
+- Defining highlight rule format
+- Implementing file type detection
+- Building colorized rendering pipeline
 
 ## Planned Features
-
-### v1.0 — Editor Configuration System
-
-- User configuration file support
-- Custom key bindings
-- Configurable tab width
-- Line number toggle
-- Startup preferences
-- Persistent editor settings
-- Runtime configuration loading
 
 ### v1.1 — Syntax Highlighting
 
@@ -307,15 +302,19 @@ claw/
 
 ├── include/
 │   ├── buffer.h
+│   ├── command.h
+│   ├── config.h
 │   ├── cursor.h
 │   ├── editor.h
 │   ├── fileio.h
 │   ├── history.h
 │   ├── input.h
+│   ├── keymap.h
 │   ├── rawmode.h
 │   ├── render.h
 │   ├── search.h
 │   ├── statusbar.h
+│   ├── utils.h
 │   └── viewport.h
 │
 ├── src/
@@ -324,6 +323,12 @@ claw/
 │   │   ├── buffer.c
 │   │   ├── cursor.c
 │   │   └── row.c
+│   │
+│   ├── command/
+│   │   └── command.c
+│   │
+│   ├── config/
+│   │   └── config.c
 │   │
 │   ├── editor/
 │   │   └── editor.c
@@ -338,6 +343,10 @@ claw/
 │   │   ├── input.c
 │   │   └── rawmode.c
 │   │
+│   ├── keymap/
+│   │   ├── keymap.c
+│   │   └── parser.c
+│   │
 │   ├── render/
 │   │   └── render.c
 │   │
@@ -347,10 +356,23 @@ claw/
 │   ├── ui/
 │   │   └── statusbar.c
 │   │
+│   ├── utils/
+│   │   └── string_utils.c
+│   │
 │   ├── viewport/
 │   │   └── viewport.c
 │   │
 │   └── main.c
+│
+├── config/
+│   ├── default.conf
+│   └── claw.conf
+│
+├── keymaps/
+│   ├── default.conf
+│   ├── linus.conf
+│   ├── mac.conf
+│   └── windows.conf
 │
 ├── tests/
 │   ├── buffer_test.c
@@ -388,20 +410,33 @@ src/
 │   ├── row.c              Row insertion, deletion, splitting, and merging
 │   └── cursor.c           Cursor movement and position management
 │
+├── config/
+│   └── config.c           Configuration file parser and settings management
+│
+├── command/
+│   └── command.c          Command dispatch from key bindings to editor actions
+│
+├── keymap/
+│   ├── keymap.c           Key binding table, defaults, and lookup
+│   └── parser.c           Keymap file parser and key string decoder
+│
 ├── render/
-│   └── render.c           Screen rendering, welcome screen, and highlighting
+│   └── render.c           Screen rendering, line numbers, and highlighting
 │
 ├── fileio/
 │   └── fileio.c           File loading, saving, and persistence
 │
 ├── viewport/
-│   └── viewport.c         Scrolling, viewport tracking, and window sizing
+│   └── viewport.c         Scrolling, viewport tracking, and gutter sizing
 │
 ├── search/
 │   └── search.c           Search prompt, match detection, and navigation
 │
 ├── history/
 │   └── history.c          Undo/Redo system and edit history management
+│
+├── utils/
+│   └── string_utils.c     Shared string manipulation and parsing helpers
 │
 └── ui/
     └── statusbar.c        Status bar and editor information display
@@ -510,6 +545,8 @@ claw notes.txt
 ```text
 Printable Keys  -> Insert Character
 
+Tab             -> Insert Spaces (configurable width)
+
 Backspace       -> Delete Character Left
 
 Delete          -> Delete Character Right
@@ -594,6 +631,18 @@ Col             -> Current Column Number
                              │
                              ▼
                     ┌─────────────────┐
+                    │  Keymap Engine  │
+                    │   keymap.c      │
+                    └────────┬────────┘
+                             │
+                             ▼
+                    ┌─────────────────┐
+                    │ Command System  │
+                    │   command.c     │
+                    └────────┬────────┘
+                             │
+                             ▼
+                    ┌─────────────────┐
                     │   Editor Core   │
                     │    editor.c     │
                     └────────┬────────┘
@@ -629,6 +678,11 @@ Col             -> Current Column Number
            │   Status Bar    │
            │  statusbar.c    │
            └─────────────────┘
+
+           ┌─────────────────┐
+           │  Config Engine  │
+           │   config.c      │
+           └─────────────────┘
 ```
 
 ### Component Responsibilities
@@ -636,8 +690,8 @@ Col             -> Current Column Number
 #### Editor Core (`editor.c`)
 
 - Main application loop
-- Command dispatching
-- Keyboard shortcut handling
+- Subsystem initialization
+- Configuration and keymap loading
 - Subsystem coordination
 
 #### Input Engine (`input.c`, `rawmode.c`)
@@ -646,6 +700,26 @@ Col             -> Current Column Number
 - Key decoding
 - Escape sequence handling
 - Terminal mode management
+
+#### Keymap Engine (`keymap.c`, `parser.c`)
+
+- Key-to-action binding table
+- Default binding registration
+- Keymap file loading and parsing
+- Key code lookup
+
+#### Command System (`command.c`)
+
+- Action-to-function dispatch
+- Central command routing
+- Editor function invocation
+
+#### Config Engine (`config.c`)
+
+- INI-style configuration file parser
+- Settings defaults and typed accessors
+- XDG and local config file loading
+- Layered configuration (defaults → user overrides)
 
 #### Text Buffer (`buffer.c`, `row.c`, `cursor.c`)
 
@@ -673,7 +747,7 @@ Col             -> Current Column Number
 - Vertical scrolling
 - Horizontal scrolling
 - Cursor visibility tracking
-- Window size management
+- Window size and gutter management
 
 #### File I/O Layer (`fileio.c`)
 
@@ -686,6 +760,7 @@ Col             -> Current Column Number
 
 - Screen drawing
 - Welcome screen rendering
+- Line number gutter rendering
 - Search highlighting
 - Cursor positioning
 
@@ -695,7 +770,12 @@ Col             -> Current Column Number
 - Modified state indicator
 - Line and column tracking
 - Editor status messages
-```
+
+#### Utility Layer (`string_utils.c`)
+
+- String trimming
+- Boolean parsing
+- Shared helper functions
 
 ---
 
@@ -804,18 +884,23 @@ Col             -> Current Column Number
 ---
 
 ### Milestone 10 — Configuration System
-**Status:** Next
+**Status:** Complete
 
-- Configuration file support
-- Custom key bindings
-- Editor preferences
-- Startup settings
-- User customization
+- INI-style configuration file parser
+- Custom key binding system with keymap files
+- Configurable tab width
+- Toggleable line number display
+- Toggleable welcome screen
+- Toggleable status bar
+- XDG config loading with local fallback
+- Layered settings (defaults → user overrides)
+- Command dispatch architecture
+- Tab key insertion support
 
 ---
 
 ### Milestone 11 — Syntax Highlighting
-**Status:** Planned
+**Status:** Next
 
 - C language highlighting
 - Keyword detection
@@ -862,6 +947,21 @@ i
 ---
 
 ## Implemented Features
+
+### Editor Configuration
+
+- INI-style configuration file parser
+- User config support with XDG and local fallback
+- Configurable tab width (1–16 spaces)
+- Toggleable line number display
+- Toggleable welcome screen
+- Toggleable status bar
+- Startup preference loading
+- Layered settings (defaults → user overrides)
+- Custom key binding system
+- Keymap file support with multiple profiles
+- Command dispatch from key bindings to actions
+- Tab key insertion support
 
 ### Character Editing
 
@@ -946,6 +1046,7 @@ i
 - Full-screen terminal rendering
 - Real-time screen refresh
 - Cursor rendering
+- Line number gutter rendering
 - Search result highlighting
 - Welcome screen display
 - Dynamic viewport rendering
@@ -995,8 +1096,8 @@ i
 | v0.7 | Complete | Viewport engine, vertical scrolling, and horizontal scrolling |
 | v0.8 | Complete | Search system with highlighting, match navigation, and cursor jump |
 | v0.9 | Complete | Full Undo/Redo system with edit history and multi-line support |
-| v1.0 | Next | Configuration system, editor settings, and custom key bindings |
-| v1.1 | Planned | Syntax highlighting and language-aware rendering |
+| v1.0 | Complete | Configuration system, editor settings, and custom key bindings |
+| v1.1 | Next | Syntax highlighting and language-aware rendering |
 | v1.2 | Planned | Search and replace functionality |
 | v1.3 | Planned | Git integration and repository awareness |
 | v1.4 | Planned | Plugin system and editor extensibility |

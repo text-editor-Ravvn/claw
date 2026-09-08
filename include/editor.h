@@ -1,6 +1,6 @@
 #ifndef EDITOR_H
 #define EDITOR_H
-#define CLAW_VERSION "0.9"
+#define CLAW_VERSION "1.0"
 /* Path of the file currently being edited, or NULL for a new buffer. */
 extern char *currentFile;
 

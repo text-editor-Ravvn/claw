@@ -15,7 +15,12 @@ SRC = src/main.c \
       src/fileio/fileio.c \
 	  src/viewport/viewport.c \
 	  src/search/search.c \
-	  src/history/history.c
+	  src/history/history.c \
+	  src/config/config.c \
+	  src/utils/string_utils.c \
+	  src/keymap/keymap.c \
+	  src/keymap/parser.c \
+	  src/command/command.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -39,9 +44,9 @@ asan: clean
 	$(CC) $(CFLAGS) $(SANITIZER_FLAGS) $(SRC) -o $(TARGET)
 
 test:
-	$(CC) $(CFLAGS) tests/buffer_test.c src/buffer/buffer.c src/buffer/row.c src/buffer/cursor.c -o buffer_test
+	$(CC) $(CFLAGS) tests/buffer_test.c src/buffer/buffer.c src/buffer/row.c src/buffer/cursor.c src/history/history.c -o buffer_test
 	./buffer_test
-	$(CC) $(CFLAGS) tests/file_test.c src/fileio/fileio.c src/buffer/buffer.c src/buffer/row.c src/buffer/cursor.c -o file_test
+	$(CC) $(CFLAGS) tests/file_test.c src/fileio/fileio.c src/buffer/buffer.c src/buffer/row.c src/buffer/cursor.c src/history/history.c -o file_test
 	./file_test
 	rm -f buffer_test file_test
 

@@ -9,6 +9,9 @@ typedef struct
     int rowOffset;
     int colOffset;
 
+    /* Width of the line-number gutter (0 when line numbers are hidden). */
+    int gutterWidth;
+
 } Viewport;
 
 extern Viewport viewport;

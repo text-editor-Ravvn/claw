@@ -12,6 +12,10 @@
 #include "search.h"
 #include <string.h>
 #include "history.h"
+#include "config.h"
+#include "keymap.h"
+#include "command.h"
+
 char *currentFile = NULL;
 static char statusMessage[128] = "";
 static int quitRequested = 0;
@@ -21,6 +25,62 @@ void editorInit(void)
     /* Raw mode must be active before the first screen refresh or key read. */
     enableRawMode();
     printf("\033[2 q");
+
+    /* Load configuration before anything that reads settings.
+       Order: compiled-in defaults → bundled defaults → user config.
+       User config is searched at XDG_CONFIG_HOME/claw/claw.conf first
+       (typically ~/.config/claw/claw.conf), then falls back to the
+       relative config/ directory for development convenience. */
+    configInit();
+    configLoad("config/default.conf");
+
+    {
+        char userConfigPath[512];
+        int loaded = 0;
+
+        /* Try $XDG_CONFIG_HOME/claw/claw.conf first. */
+        const char *xdg = getenv("XDG_CONFIG_HOME");
+
+        if (xdg && strlen(xdg) > 0)
+        {
+            snprintf(userConfigPath, sizeof(userConfigPath),
+                     "%s/claw/claw.conf", xdg);
+            loaded = configLoad(userConfigPath);
+        }
+
+        /* Fall back to ~/.config/claw/claw.conf. */
+        if (!loaded)
+        {
+            const char *home = getenv("HOME");
+
+            if (home && strlen(home) > 0)
+            {
+                snprintf(userConfigPath, sizeof(userConfigPath),
+                         "%s/.config/claw/claw.conf", home);
+                loaded = configLoad(userConfigPath);
+            }
+        }
+
+        /* Final fallback: relative config/claw.conf (dev mode). */
+        if (!loaded)
+            configLoad("config/claw.conf");
+    }
+
+    /* Set up key bindings from defaults, then overlay the chosen keymap. */
+    keymapInit();
+
+    const char *mapName = configKeymapName();
+
+    if (mapName && strlen(mapName) > 0)
+    {
+        char keymapPath[256];
+
+        snprintf(keymapPath, sizeof(keymapPath),
+                 "keymaps/%s.conf", mapName);
+
+        keymapLoad(keymapPath);
+    }
+
     bufferInit();
     historyInit();
     viewportInit();
@@ -88,9 +148,37 @@ void editorRun(void)
     if (key == -1)
         return;
 
-    if (key != CTRL_KEY('x'))
+    /* Check if this key has a command binding. */
+    int action = keymapLookup(key);
+
+    /* Reset quit confirmation on any key except quit. */
+    if (action != CMD_QUIT)
         quitRequested = 0;
 
+    /* Handle quit specially because of the confirmation flow. */
+    if (action == CMD_QUIT)
+    {
+        if (buffer.modified && !quitRequested)
+        {
+            quitRequested = 1;
+            snprintf(statusMessage,
+                     sizeof(statusMessage),
+                     "Unsaved changes. Press Ctrl-X again to quit.");
+            scrollEditor();
+            continue;
+        }
+        return;
+    }
+
+    /* Dispatch bound commands. */
+    if (action != CMD_NONE)
+    {
+        commandExecute(action);
+        scrollEditor();
+        continue;
+    }
+
+    /* Keys that are not bound to commands — editing and navigation. */
     switch (key)
     {
         case ARROW_UP:
@@ -114,48 +202,15 @@ void editorRun(void)
             insertNewLine();
             break;
 
-        case CTRL_KEY('s'):
-            if (currentFile && saveFile(currentFile))
-                snprintf(statusMessage, sizeof(statusMessage),
-                         "Saved %s", currentFile);
-            else if (!currentFile)
-                snprintf(statusMessage, sizeof(statusMessage),
-                         "No filename to save");
-            else
-                snprintf(statusMessage, sizeof(statusMessage),
-                         "Could not save %s", currentFile);
+        case '\t':
+        {
+            int width = configTabWidth();
+
+            for (int i = 0; i < width; i++)
+                insertChar(' ');
+
             break;
-
-        case CTRL_KEY('f'):
-            openSearchPrompt();
-            break;
-
-        case 'n':
-        nextMatch();
-        break;
-
-        case 'p':
-        previousMatch();
-        break;
-
-        case CTRL_KEY('z'):
-        historyUndo();
-        break;
-
-        case CTRL_KEY('y'):
-        historyRedo();
-        break;
-
-        case CTRL_KEY('x'):
-            if (buffer.modified && !quitRequested)
-            {
-                quitRequested = 1;
-                snprintf(statusMessage,
-                         sizeof(statusMessage),
-                         "Unsaved changes. Press Ctrl-X again to quit.");
-                break;
-            }
-            return;
+        }
 
         case 127:
             deleteChar();

@@ -7,6 +7,7 @@
 #include "statusbar.h"
 #include "viewport.h"
 #include "search.h"
+#include "config.h"
 #include <string.h>
 
 extern Buffer buffer;
@@ -19,9 +20,16 @@ void refreshScreen(void)
     printf("\033[H");
 
     int showWelcome =
-        (currentFile == NULL &&
+        (configShowWelcome() &&
+         currentFile == NULL &&
          buffer.numRows == 1 &&
          buffer.rows[0].size == 0);
+
+    int gutter = viewport.gutterWidth;
+    int textCols = viewport.screenCols - gutter;
+
+    if (textCols < 1)
+        textCols = 1;
 
     for (int i = 0; i < viewport.screenRows - 2; i++)
     {
@@ -35,7 +43,7 @@ void refreshScreen(void)
     {
         "Claw Text Editor",
         "",
-        "Version 0.9",
+        "Version " CLAW_VERSION,
         "",
         "Ctrl+S    Save File",
         "Ctrl+F    Search",
@@ -80,6 +88,21 @@ void refreshScreen(void)
     continue;
 }
 
+        /* Draw line number gutter. */
+        if (gutter > 0)
+        {
+            if (fileRow < buffer.numRows)
+            {
+                printf("\033[90m%*d \033[m",
+                       gutter - 1,
+                       fileRow + 1);
+            }
+            else
+            {
+                printf("%*s", gutter, "");
+            }
+        }
+
         if (fileRow < buffer.numRows)
         {
             int len =
@@ -89,8 +112,8 @@ void refreshScreen(void)
             if (len < 0)
                 len = 0;
 
-            if (len > viewport.screenCols)
-                len = viewport.screenCols;
+            if (len > textCols)
+                len = textCols;
 
             if (len > 0)
 {
@@ -146,7 +169,10 @@ void refreshScreen(void)
 
     printf("\033[K");
 
-    drawStatusBar();
+    if (configShowStatusBar())
+        drawStatusBar();
+    else
+        printf("\033[K");
 
     printf("\r\n");
     printf("\033[K");
@@ -170,7 +196,7 @@ void refreshScreen(void)
         cursor.y - viewport.rowOffset + 1;
 
     int screenCol =
-        cursor.x - viewport.colOffset + 1;
+        cursor.x - viewport.colOffset + gutter + 1;
 
     if (screenRow < 1)
         screenRow = 1;

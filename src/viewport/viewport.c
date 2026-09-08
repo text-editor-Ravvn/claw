@@ -3,8 +3,11 @@
 
 #include "viewport.h"
 #include "cursor.h"
+#include "config.h"
+#include "buffer.h"
 #define HSCROLL_MARGIN 10
 extern Cursor cursor;
+extern Buffer buffer;
 Viewport viewport;
 
 static void getWindowSize(int *rows, int *cols)
@@ -31,6 +34,7 @@ void viewportInit(void)
 
     viewport.rowOffset = 0;
     viewport.colOffset = 0;
+    viewport.gutterWidth = 0;
 }
 
 void scrollEditor(void)
@@ -62,18 +66,50 @@ if (cursor.x < viewport.colOffset + HSCROLL_MARGIN)
 /* Move viewport right */
 if (cursor.x >= viewport.colOffset +
                 viewport.screenCols -
+                viewport.gutterWidth -
                 HSCROLL_MARGIN)
 {
     viewport.colOffset =
         cursor.x -
         viewport.screenCols +
+        viewport.gutterWidth +
         HSCROLL_MARGIN;
 }
 }
+
+static int digitCount(int n)
+{
+    int count = 1;
+
+    while (n >= 10)
+    {
+        n /= 10;
+        count++;
+    }
+
+    return count;
+}
+
 void viewportUpdateSize(void)
 {
     getWindowSize(
         &viewport.screenRows,
         &viewport.screenCols
     );
+
+    /* Compute gutter width: digits for the largest line number + separator. */
+    if (configShowLineNumbers())
+    {
+        int digits = digitCount(buffer.numRows);
+
+        if (digits < 3)
+            digits = 3;
+
+        /* digits + one space + separator bar + one space */
+        viewport.gutterWidth = digits + 2;
+    }
+    else
+    {
+        viewport.gutterWidth = 0;
+    }
 }
