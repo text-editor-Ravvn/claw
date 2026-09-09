@@ -35,6 +35,10 @@ void commandExecute(int action)
         case CMD_SEARCH:
             openSearchPrompt();
             break;
+        
+        case CMD_REPLACE:
+            openReplacePrompt();
+            break;
 
         case CMD_UNDO:
             historyUndo();
@@ -42,6 +46,10 @@ void commandExecute(int action)
 
         case CMD_REDO:
             historyRedo();
+            break;
+
+        case CMD_REPLACE_ALL:
+            replaceAllMatches();
             break;
 
         case CMD_NEXT_MATCH:

@@ -22,6 +22,14 @@ void keymapInit(void) {
   bindings[bindingCount].key = CTRL_KEY('f');
   bindingCount++;
 
+  bindings[bindingCount].action = CMD_REPLACE;
+  bindings[bindingCount].key = CTRL_KEY('r');
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_REPLACE_ALL;
+  bindings[bindingCount].key = CTRL_KEY('a');
+  bindingCount++;
+
   bindings[bindingCount].action = CMD_UNDO;
   bindings[bindingCount].key = CTRL_KEY('z');
   bindingCount++;

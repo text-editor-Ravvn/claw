@@ -5,12 +5,23 @@
 enum EditorAction
 {
     CMD_NONE = 0,
+
     CMD_SAVE,
+
     CMD_QUIT,
+
     CMD_SEARCH,
+
+    CMD_REPLACE,
+
+    CMD_REPLACE_ALL,
+
     CMD_UNDO,
+
     CMD_REDO,
+
     CMD_NEXT_MATCH,
+
     CMD_PREV_MATCH
 };
 

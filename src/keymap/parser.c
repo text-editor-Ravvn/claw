@@ -37,6 +37,12 @@ static int parseActionName(const char *name)
     if (strcmp(name, "search") == 0)
         return CMD_SEARCH;
 
+    if (strcmp(name, "replace") == 0)
+        return CMD_REPLACE;
+
+    if (strcmp(name, "replace_all") == 0)
+        return CMD_REPLACE_ALL;
+
     if (strcmp(name, "undo") == 0)
         return CMD_UNDO;
 

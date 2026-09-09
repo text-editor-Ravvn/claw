@@ -102,46 +102,105 @@ void editorRun(void)
     if (key == 27)
     {
         closeSearchPrompt();
+
         editorSetStatusMessage(
-            "Search cancelled"
+            searchState.replaceMode
+                ? "Replace cancelled"
+                : "Search cancelled"
         );
+
         continue;
     }
-
-    if (key == '\r' || key == '\n')
-    {
-    performSearch();
+    if (searchState.replaceMode &&
+    key == CTRL_KEY('a'))
+{
+    replaceAllMatches();
 
     closeSearchPrompt();
 
     continue;
+}
+
+    if (key == '\r' || key == '\n')
+{
+    if (searchState.replaceMode)
+    {
+        replaceCurrentMatch();
+
+        if (searchState.matchCount == 0)
+        {
+            closeSearchPrompt();
+        }
+
+        continue;
     }
+    else
+    {
+        performSearch();
+
+        closeSearchPrompt();
+
+        continue;
+    }
+}
 
     if (key == 127)
     {
-        if (searchState.length > 0)
+        if (searchState.replaceMode)
         {
-            searchState.length--;
+            if (searchState.replacementLength > 0)
+            {
+                searchState.replacementLength--;
 
-            searchState.query[
-                searchState.length
-            ] = '\0';
+                searchState.replacement[
+                    searchState.replacementLength
+                ] = '\0';
+            }
+        }
+        else
+        {
+            if (searchState.length > 0)
+            {
+                searchState.length--;
+
+                searchState.query[
+                    searchState.length
+                ] = '\0';
+            }
         }
 
         continue;
     }
 
-    if (key >= 32 &&
-        key <= 126 &&
-        searchState.length < 127)
+    if (searchState.replaceMode)
     {
-        searchState.query[
-            searchState.length++
-        ] = key;
+        if (key >= 32 &&
+            key <= 126 &&
+            searchState.replacementLength < 127)
+        {
+            searchState.replacement[
+                searchState.replacementLength++
+            ] = key;
 
-        searchState.query[
-            searchState.length
-        ] = '\0';
+            searchState.replacement[
+                searchState.replacementLength
+            ] = '\0';
+        }
+    }
+    else
+    {
+        if (key >= 32 &&
+            key <= 126 &&
+            searchState.length < 127)
+        {
+            searchState.query[
+                searchState.length++
+            ] = key;
+
+            searchState.query[
+                searchState.length
+            ] = '\0';
+        }
     }
 
     continue;

@@ -4,3 +4,4 @@ buffer_test
 file_test
 file_test_input.tmp
 *.exe
+for fututre we have to prevent ctrl n and p without calling ctrl f

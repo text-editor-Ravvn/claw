@@ -40,7 +40,7 @@ void refreshScreen(void)
 
        if (showWelcome)
 {
-    const char *welcomeLines[] =
+   const char *welcomeLines[] =
 {
     "Claw Text Editor",
     "",
@@ -48,26 +48,43 @@ void refreshScreen(void)
     "",
     "Ctrl+S    Save File",
     "Ctrl+F    Search",
+    "Ctrl+R    Replace",
     "Ctrl+Z    Undo",
     "Ctrl+Y    Redo",
     "Ctrl+X    Quit Editor"
 };
 
-    int lineCount =
-        sizeof(welcomeLines) /
-        sizeof(welcomeLines[0]);
+int lineCount =
+    sizeof(welcomeLines) /
+    sizeof(welcomeLines[0]);
 
-    int startRow =
-        (viewport.screenRows - 2 - lineCount) / 2;
+int startRow =
+    (viewport.screenRows - 2 - lineCount) / 2;
 
-    /* Width of longest line */
-    int blockWidth = 21;
+if (i >= startRow &&
+    i < startRow + lineCount)
+{
+    int index = i - startRow;
+    const char *line = welcomeLines[index];
 
-    if (i >= startRow &&
-        i < startRow + lineCount)
+    if (index == 0 || index == 2)
     {
-        const char *line =
-            welcomeLines[i - startRow];
+        int len = (int)strlen(line);
+
+        int padding =
+            (viewport.screenCols - len) / 2;
+
+        if (padding < 0)
+            padding = 0;
+
+        for (int j = 0; j < padding; j++)
+            putchar(' ');
+
+        printf("%s", line);
+    }
+    else
+    {
+        int blockWidth = 24;
 
         int padding =
             (viewport.screenCols - blockWidth) / 2;
@@ -80,13 +97,14 @@ void refreshScreen(void)
 
         printf("%s", line);
     }
-    else
-    {
-        putchar(' ');
-    }
+}
+else
+{
+    putchar(' ');
+}
 
-    printf("\r\n");
-    continue;
+printf("\r\n");
+continue;
 }
 
         /* Draw line number gutter. */
@@ -211,12 +229,22 @@ void refreshScreen(void)
     printf("\r\n");
     printf("\033[K");
 
-    if (searchState.active)
+   if (searchState.active)
+{
+    if (searchState.replaceMode)
+    {
+        printf(
+            "Replace: %s",
+            searchState.replacement
+        );
+    }
+    else
     {
     printf(
         "Search: %s",
         searchState.query
     );
+    }
     }
     else
     {
