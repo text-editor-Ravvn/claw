@@ -13,7 +13,7 @@ Development Stage: Feature-Complete Editor Core
 Current Version:
 
 ```text
-v1.0
+v1.1
 ```
 
 ## Completed Features
@@ -900,19 +900,28 @@ Col             -> Current Column Number
 ---
 
 ### Milestone 11 — Syntax Highlighting
-**Status:** Next
+**Status:** Complete
 
 - C language highlighting
 - Keyword detection
+- Type keyword detection
 - String highlighting
-- Number highlighting
-- Comment highlighting
-- File type detection
+- Character literal highlighting
+- Number highlighting (decimal, hex, suffixes)
+- Single-line comment highlighting
+- Multi-line comment highlighting
+- Preprocessor directive highlighting
+- Operator highlighting
+- File type detection from extension
+- Language name display in status bar
+- Lazy per-row highlight caching
+- 256-color ANSI dark theme palette
+- Extensible language definition architecture
 
 ---
 
 ### Milestone 12 — Search & Replace
-**Status:** Planned
+**Status:** Next
 
 - Replace current match
 - Replace all matches
@@ -1048,6 +1057,7 @@ i
 - Cursor rendering
 - Line number gutter rendering
 - Search result highlighting
+- Syntax highlighting with 256-color ANSI palette
 - Welcome screen display
 - Dynamic viewport rendering
 - ANSI escape sequence rendering
@@ -1059,6 +1069,7 @@ i
 - Total line count
 - Current line number display
 - Current column number display
+- Detected language name display
 - Editor status messages
 
 ### User Interface
@@ -1081,6 +1092,24 @@ i
 - POSIX terminal support
 - Safe terminal restoration on exit
 
+### Syntax Highlighting
+
+- C language syntax highlighting (.c, .h, .cc, .cpp, .hpp)
+- Keyword highlighting (if, else, while, for, return, struct, etc.)
+- Type keyword highlighting (int, char, void, size_t, etc.)
+- String literal highlighting with escape sequence support
+- Character literal highlighting
+- Number highlighting (decimal, hexadecimal, suffixes)
+- Single-line comment highlighting (//)
+- Multi-line comment highlighting (/* ... */)
+- Preprocessor directive highlighting (#include, #define, etc.)
+- Operator highlighting (+, -, *, /, =, <, >, etc.)
+- File type detection from filename extension
+- Language name display in status bar
+- Lazy per-row highlight caching with invalidation on edit
+- 256-color ANSI dark theme color palette
+- Extensible SyntaxDef architecture for future languages
+
 ---
 
 ## Development Progress
@@ -1097,8 +1126,8 @@ i
 | v0.8 | Complete | Search system with highlighting, match navigation, and cursor jump |
 | v0.9 | Complete | Full Undo/Redo system with edit history and multi-line support |
 | v1.0 | Complete | Configuration system, editor settings, and custom key bindings |
-| v1.1 | Next | Syntax highlighting and language-aware rendering |
-| v1.2 | Planned | Search and replace functionality |
+| v1.1 | Complete | Syntax highlighting and language-aware rendering |
+| v1.2 | Next | Search and replace functionality |
 | v1.3 | Planned | Git integration and repository awareness |
 | v1.4 | Planned | Plugin system and editor extensibility |
 | v1.5 | Planned | Advanced editing tools and productivity enhancements |

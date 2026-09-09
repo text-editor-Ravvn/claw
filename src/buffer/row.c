@@ -44,6 +44,11 @@ void insertChar(char c)
 
     row->chars[row->size] = '\0';
 
+    /* Invalidate syntax highlight cache. */
+    free(row->hl);
+    row->hl = NULL;
+    row->hlSize = 0;
+
     cursor.x++;
     buffer.modified = 1;
 }
@@ -73,6 +78,11 @@ void deleteChar(void)
         row->size--;
 
         row->chars[row->size] = '\0';
+
+        /* Invalidate syntax highlight cache. */
+        free(row->hl);
+        row->hl = NULL;
+        row->hlSize = 0;
 
         cursor.x--;
         buffer.modified = 1;
@@ -110,7 +120,13 @@ void deleteChar(void)
 
     previous->chars[previous->size] = '\0';
 
+    /* Invalidate the merged row's highlight cache. */
+    free(previous->hl);
+    previous->hl = NULL;
+    previous->hlSize = 0;
+
     free(current->chars);
+    free(current->hl);
 
     for (int i = cursor.y; i < buffer.numRows - 1; i++)
     {
@@ -151,6 +167,11 @@ void deleteForward(void)
             (size_t)(row->size - cursor.x)
         );
         row->size--;
+
+        /* Invalidate syntax highlight cache. */
+        free(row->hl);
+        row->hl = NULL;
+        row->hlSize = 0;
         buffer.modified = 1;
         return;
     }
@@ -171,7 +192,14 @@ void deleteForward(void)
         memcpy(&row->chars[row->size], next->chars, (size_t)next->size);
         row->size += next->size;
         row->chars[row->size] = '\0';
+
+        /* Invalidate the merged row's highlight cache. */
+        free(row->hl);
+        row->hl = NULL;
+        row->hlSize = 0;
+
         free(next->chars);
+        free(next->hl);
 
         for (int i = cursor.y + 1; i < buffer.numRows - 1; i++)
             buffer.rows[i] = buffer.rows[i + 1];
@@ -222,6 +250,11 @@ void insertNewLine(void)
 
     current->chars[leftSize] = '\0';
 
+    /* Invalidate the truncated row's highlight cache. */
+    free(current->hl);
+    current->hl = NULL;
+    current->hlSize = 0;
+
     Row *newRows = realloc(
         buffer.rows,
         sizeof(Row) * (buffer.numRows + 1)
@@ -241,8 +274,9 @@ void insertNewLine(void)
     }
 
     buffer.rows[cursor.y + 1].size = rightSize;
-
     buffer.rows[cursor.y + 1].chars = rightPart;
+    buffer.rows[cursor.y + 1].hl = NULL;
+    buffer.rows[cursor.y + 1].hlSize = 0;
 
     buffer.numRows++;
 

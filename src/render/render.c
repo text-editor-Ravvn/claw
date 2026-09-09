@@ -8,6 +8,7 @@
 #include "viewport.h"
 #include "search.h"
 #include "config.h"
+#include "highlight.h"
 #include <string.h>
 
 extern Buffer buffer;
@@ -117,6 +118,14 @@ void refreshScreen(void)
 
             if (len > 0)
 {
+    /* Lazily compute highlighting for this row if needed. */
+    Row *row = &buffer.rows[fileRow];
+
+    if (!row->hl)
+        highlightRow(row, fileRow);
+
+    int prevColor = -1;
+
     for (int j = 0; j < len; j++)
     {
         int fileCol =
@@ -146,17 +155,42 @@ void refreshScreen(void)
         }
 
         if (highlight)
-            printf("\033[30;43m");
+        {
+            if (prevColor != HL_MATCH)
+            {
+                printf("%s", highlightColor(HL_MATCH));
+                prevColor = HL_MATCH;
+            }
+        }
+        else if (row->hl && fileCol < row->size)
+        {
+            int hlType = row->hl[fileCol];
+
+            if (hlType != prevColor)
+            {
+                printf("%s", highlightColor(hlType));
+                prevColor = hlType;
+            }
+        }
+        else
+        {
+            if (prevColor != HL_NORMAL)
+            {
+                printf("\033[m");
+                prevColor = HL_NORMAL;
+            }
+        }
 
         putchar(
             buffer.rows[fileRow].chars[
                 fileCol
             ]
         );
-
-        if (highlight)
-            printf("\033[m");
     }
+
+    /* Reset color at end of row. */
+    if (prevColor != HL_NORMAL && prevColor != -1)
+        printf("\033[m");
     }
         }
         else

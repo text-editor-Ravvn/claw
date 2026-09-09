@@ -4,6 +4,7 @@
 #include "cursor.h"
 #include "editor.h"
 #include "viewport.h"
+#include "highlight.h"
 #include <string.h>
 extern Buffer buffer;
 extern Cursor cursor;
@@ -17,10 +18,11 @@ void drawStatusBar(void)
     snprintf(
     left,
     sizeof(left),
-    " Claw v%s | %s%s | %d Lines",
+    " Claw v%s | %s%s | %s | %d Lines",
     CLAW_VERSION,
     currentFile ? currentFile : "[No Name]",
     buffer.modified ? " [Modified]" : "",
+    highlightLanguageName(),
     buffer.numRows
 );
 

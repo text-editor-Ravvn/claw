@@ -20,7 +20,8 @@ SRC = src/main.c \
 	  src/utils/string_utils.c \
 	  src/keymap/keymap.c \
 	  src/keymap/parser.c \
-	  src/command/command.c
+	  src/command/command.c \
+	  src/highlight/highlight.c
 
 OBJ = $(SRC:.c=.o)
 

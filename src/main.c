@@ -1,5 +1,6 @@
 #include "editor.h"
 #include "fileio.h"
+#include "highlight.h"
 
 int main(int argc, char *argv[])
 {
@@ -12,6 +13,8 @@ int main(int argc, char *argv[])
         currentFile = argv[1];
         if (!openFile(argv[1]))
             editorSetStatusMessage("Could not open the requested file");
+        else
+            highlightInit();
     }
 
     /* The editor owns terminal input until the command loop returns. */

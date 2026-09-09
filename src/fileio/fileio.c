@@ -12,7 +12,10 @@ static void freeRows(Buffer *target)
 {
     /* Used for transactional loads so a failed load cannot leak partial rows. */
     for (int i = 0; i < target->numRows; i++)
+    {
         free(target->rows[i].chars);
+        free(target->rows[i].hl);
+    }
 
     free(target->rows);
 }
@@ -40,6 +43,8 @@ static int appendRow(Buffer *target, const char *chars, size_t size)
     rowChars[size] = '\0';
     target->rows[target->numRows].size = (int)size;
     target->rows[target->numRows].chars = rowChars;
+    target->rows[target->numRows].hl = NULL;
+    target->rows[target->numRows].hlSize = 0;
     target->numRows++;
     return 1;
 }

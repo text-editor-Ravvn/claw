@@ -15,6 +15,7 @@
 #include "config.h"
 #include "keymap.h"
 #include "command.h"
+#include "highlight.h"
 
 char *currentFile = NULL;
 static char statusMessage[128] = "";
@@ -83,6 +84,7 @@ void editorInit(void)
 
     bufferInit();
     historyInit();
+    highlightInit();
     viewportInit();
 }
 

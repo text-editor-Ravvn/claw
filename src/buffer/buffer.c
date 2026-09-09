@@ -32,6 +32,8 @@ void bufferInit(void)
     }
 
     buffer.rows[0].chars[0] = '\0';
+    buffer.rows[0].hl = NULL;
+    buffer.rows[0].hlSize = 0;
 }
 
 void bufferFree(void)
@@ -41,7 +43,10 @@ void bufferFree(void)
         return;
 
     for (int i = 0; i < buffer.numRows; i++)
+    {
         free(buffer.rows[i].chars);
+        free(buffer.rows[i].hl);
+    }
 
     free(buffer.rows);
     buffer.rows = NULL;

@@ -6,6 +6,8 @@ typedef struct
     /* A single editable line stored as bytes plus a terminating NUL. */
     int size;
     char *chars;
+    unsigned char *hl;    /* Per-character highlight type (HighlightType). */
+    int hlSize;           /* Allocated size of the hl array. */
 } Row;
 
 typedef struct
