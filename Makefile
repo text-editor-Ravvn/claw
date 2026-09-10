@@ -1,6 +1,6 @@
 CC = gcc
 TARGET = claw
-CFLAGS = -Wall -Wextra -std=c11 -g -Iinclude
+CFLAGS = -Wall -Wextra -std=c11 -g -Iinclude -D_POSIX_C_SOURCE=200809L
 SANITIZER_FLAGS = -fsanitize=address,undefined -fno-omit-frame-pointer
 
 SRC = src/main.c \
