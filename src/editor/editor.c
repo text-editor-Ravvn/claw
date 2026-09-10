@@ -16,7 +16,7 @@
 #include "keymap.h"
 #include "command.h"
 #include "highlight.h"
-
+#include "git.h"
 char *currentFile = NULL;
 static char statusMessage[128] = "";
 static int quitRequested = 0;
@@ -101,8 +101,27 @@ void editorInit(void)
     historyInit();
     highlightInit();
     viewportInit();
-}
 
+    char branch[128];
+
+if (gitCurrentBranch(
+        branch,
+        sizeof(branch)))
+{
+    char status[256];
+
+    snprintf(
+        status,
+        sizeof(status),
+        "Git: %s",
+        branch
+    );
+
+    editorSetStatusMessage(
+        status
+    );
+}
+    }
 void editorRun(void)
 {
     /* Redraw current state, wait for one command, then apply it. */
