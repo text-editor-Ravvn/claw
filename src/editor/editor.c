@@ -21,6 +21,21 @@ char *currentFile = NULL;
 static char statusMessage[128] = "";
 static int quitRequested = 0;
 
+SavePrompt savePrompt = {0};
+
+void openSavePrompt(void)
+{
+    savePrompt.active = 1;
+    savePrompt.length = 0;
+    savePrompt.filename[0] = '\0';
+    editorSetStatusMessage("");
+}
+
+void closeSavePrompt(void)
+{
+    savePrompt.active = 0;
+}
+
 void editorInit(void)
 {
     /* Raw mode must be active before the first screen refresh or key read. */
@@ -97,6 +112,90 @@ void editorRun(void)
     refreshScreen();
 
     int key = readKey();
+
+    /* ---------- Save-as prompt modal input ---------- */
+    if (savePrompt.active)
+    {
+        if (key == 27)
+        {
+            closeSavePrompt();
+            editorSetStatusMessage("Save cancelled");
+            continue;
+        }
+
+        if (key == '\r' || key == '\n')
+        {
+            if (savePrompt.length == 0)
+            {
+                editorSetStatusMessage(
+                    "Filename cannot be empty");
+                continue;
+            }
+
+            if (saveFile(savePrompt.filename))
+            {
+                currentFile =
+                    strdup(savePrompt.filename);
+
+                highlightInit();
+
+                static char saveBuf[320];
+
+                snprintf(
+                    saveBuf,
+                    sizeof(saveBuf),
+                    "Saved %s",
+                    currentFile
+                );
+
+                editorSetStatusMessage(saveBuf);
+            }
+            else
+            {
+                static char errBuf[320];
+
+                snprintf(
+                    errBuf,
+                    sizeof(errBuf),
+                    "Could not save %s",
+                    savePrompt.filename
+                );
+
+                editorSetStatusMessage(errBuf);
+            }
+
+            closeSavePrompt();
+            continue;
+        }
+
+        if (key == 127)
+        {
+            if (savePrompt.length > 0)
+            {
+                savePrompt.length--;
+                savePrompt.filename[
+                    savePrompt.length
+                ] = '\0';
+            }
+
+            continue;
+        }
+
+        if (key >= 32 && key <= 126 &&
+            savePrompt.length < 255)
+        {
+            savePrompt.filename[
+                savePrompt.length++
+            ] = key;
+
+            savePrompt.filename[
+                savePrompt.length
+            ] = '\0';
+        }
+
+        continue;
+    }
+
     if (searchState.active)
 {
     if (key == 27)

@@ -229,7 +229,14 @@ continue;
     printf("\r\n");
     printf("\033[K");
 
-   if (searchState.active)
+   if (savePrompt.active)
+    {
+        printf(
+            "Save as: %s",
+            savePrompt.filename
+        );
+    }
+    else if (searchState.active)
 {
     if (searchState.replaceMode)
     {

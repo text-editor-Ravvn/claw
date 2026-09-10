@@ -16,14 +16,17 @@ void commandExecute(int action)
     {
         case CMD_SAVE:
         {
+            if (!currentFile)
+            {
+                openSavePrompt();
+                break;
+            }
+
             static char statusBuf[128];
 
-            if (currentFile && saveFile(currentFile))
+            if (saveFile(currentFile))
                 snprintf(statusBuf, sizeof(statusBuf),
                          "Saved %s", currentFile);
-            else if (!currentFile)
-                snprintf(statusBuf, sizeof(statusBuf),
-                         "No filename to save");
             else
                 snprintf(statusBuf, sizeof(statusBuf),
                          "Could not save %s", currentFile);

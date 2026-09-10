@@ -13,7 +13,7 @@ Development Stage: Feature-Complete Editor Core
 Current Version:
 
 ```text
-v1.2
+v1.3
 ```
 
 ## Completed Features
@@ -57,6 +57,9 @@ v1.2
 - Track active filename
 - Detect unsaved changes
 - Exit confirmation for modified files
+- Save-As prompt for unnamed buffers
+- Automatic filename assignment after first save
+- Syntax highlighting re-detection on save
 
 ### Viewport & Scrolling
 - Vertical scrolling
@@ -137,6 +140,7 @@ v1.2
 - Status bar
 - Search prompt
 - Replace prompt
+- Save-As filename prompt
 - File information display
 - Current line and column display
 - Unsaved changes indicator
@@ -167,7 +171,7 @@ v1.2
 
 ## In Progress
 
-### v1.3 — Git Integration & Repository Awareness
+### v1.4 — Git Integration & Repository Awareness
 
 - Git repository detection
 - Current branch identification
@@ -198,7 +202,7 @@ v1.2
 
 ## Planned Features
 
-### v1.4 — Plugin System
+### v1.5 — Plugin System
 - Plugin loading framework
 - Dynamic module support
 - Plugin API
@@ -209,7 +213,7 @@ v1.2
 - Plugin lifecycle management
 - Editor event hooks
 
-### v1.5 — Advanced Editing
+### v1.6 — Advanced Editing
 - Auto indentation
 - Smart indentation
 - Tab and space conversion
@@ -221,7 +225,7 @@ v1.2
 - Comment/uncomment selection
 - Line join/split operations
 
-### v1.6 — Productivity Features
+### v1.7 — Productivity Features
 - Multiple cursors
 - Bookmarks
 - Recent files list
@@ -233,7 +237,7 @@ v1.2
 - Session restoration
 - Workspace support
 
-### v1.7 — Customization & Themes
+### v1.8 — Customization & Themes
 - Theme engine
 - Color scheme support
 - User-defined themes
@@ -242,7 +246,7 @@ v1.2
 - Layout customization
 - Status bar customization
 
-### v1.8 — Project Tools
+### v1.9 — Project Tools
 - Project workspace management
 - Project-wide search
 - Project-wide replace
@@ -575,6 +579,15 @@ If the file does not exist, Claw creates it when saved.
 Ctrl + S
 ```
 
+If no filename has been set (opened with `./claw`), a Save-As prompt appears:
+
+```text
+Save as: _
+```
+
+Type the desired filename and press Enter. The file is saved and subsequent
+Ctrl+S saves directly without prompting. Press Escape to cancel.
+
 ### Search
 
 ```text
@@ -753,6 +766,10 @@ Ctrl + Y        -> Redo Last Action
 
 ```text
 Ctrl + S        -> Save File
+
+                   (prompts for filename if unnamed)
+
+Esc             -> Cancel Save-As Prompt
 
 Ctrl + X        -> Quit Editor
 
@@ -1146,8 +1163,20 @@ Replace Info    -> Replacement Status Messages
 
 ---
 
-### Milestone 13 — Git Integration
-**Status:** In Progress
+### Milestone 13 — Save-As Prompt
+**Status:** Complete
+
+- Interactive filename prompt for unnamed buffers
+- Save-As triggered on Ctrl+S when no filename is set
+- Escape to cancel save
+- Automatic filename assignment after successful save
+- Syntax highlighting re-detection from new filename extension
+- Empty filename validation
+
+---
+
+### Milestone 14 — Git Integration
+**Status:** Planned
 
 - Repository detection
 - Current branch display
@@ -1158,7 +1187,7 @@ Replace Info    -> Replacement Status Messages
 
 ---
 
-### Milestone 14 — Plugin System
+### Milestone 15 — Plugin System
 **Status:** Planned
 
 - Plugin API
@@ -1169,7 +1198,7 @@ Replace Info    -> Replacement Status Messages
 
 ---
 
-### Milestone 15 — Advanced Editing
+### Milestone 16 — Advanced Editing
 **Status:** Planned
 
 - Auto indentation
@@ -1181,7 +1210,7 @@ Replace Info    -> Replacement Status Messages
 
 ---
 
-### Milestone 16 — Productivity Features
+### Milestone 17 — Productivity Features
 **Status:** Planned
 
 - Multiple cursors
@@ -1262,6 +1291,9 @@ Replace Info    -> Replacement Status Messages
 - Open existing files
 - Create new files
 - Save files to disk
+- Save-As prompt for unnamed buffers
+- Automatic filename assignment after first save
+- Syntax highlighting re-detection on save
 - Filename tracking
 - Unsaved change detection
 - Exit confirmation protection
@@ -1343,6 +1375,7 @@ Replace Info    -> Replacement Status Messages
 - Status bar
 - Search prompt
 - Replace prompt
+- Save-As filename prompt
 - File information display
 - Cursor position display
 - Unsaved changes warning
@@ -1394,10 +1427,11 @@ Replace Info    -> Replacement Status Messages
 | v1.0 | Complete | Configuration system, editor settings, custom key bindings, and command dispatch |
 | v1.1 | Complete | Syntax highlighting, language-aware rendering, file type detection, and theme support |
 | v1.2 | Complete | Search & Replace with match tracking, navigation, and bulk replacement |
-| v1.3 | Planned | Git integration and repository awareness |
-| v1.4 | Planned | Plugin system and editor extensibility |
-| v1.5 | Planned | Advanced editing tools and productivity enhancements |
-| v1.6 | Planned | Multiple cursors, bookmarks, command palette, and project navigation |
+| v1.3 | Complete | Save-As prompt for unnamed buffers with filename input and syntax re-detection |
+| v1.4 | Planned | Git integration and repository awareness |
+| v1.5 | Planned | Plugin system and editor extensibility |
+| v1.6 | Planned | Advanced editing tools and productivity enhancements |
+| v1.7 | Planned | Multiple cursors, bookmarks, command palette, and project navigation |
 | v2.0 | Vision | Multi-buffer editing, split views, integrated terminal, and IDE-like capabilities |
 
 ---
