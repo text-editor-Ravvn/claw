@@ -1,30 +1,51 @@
 #include <stdio.h>
+#include <string.h>
+
 #include "statusbar.h"
 #include "buffer.h"
 #include "cursor.h"
 #include "editor.h"
 #include "viewport.h"
 #include "highlight.h"
-#include <string.h>
+#include "git.h"
+
 extern Buffer buffer;
 extern Cursor cursor;
 extern char *currentFile;
 
 void drawStatusBar(void)
 {
-    char left[256];
+    char left[512];
     char right[64];
+    char branch[128];
 
-    snprintf(
-    left,
-    sizeof(left),
-    " Claw v%s | %s%s | %s | %d Lines",
-    CLAW_VERSION,
-    currentFile ? currentFile : "[No Name]",
-    buffer.modified ? " [Modified]" : "",
-    highlightLanguageName(),
-    buffer.numRows
-);
+    if (gitCurrentBranch(branch, sizeof(branch)))
+    {
+        snprintf(
+            left,
+            sizeof(left),
+            " Claw v%s | %s%s | %s | Git:%s | %d Lines",
+            CLAW_VERSION,
+            currentFile ? currentFile : "[No Name]",
+            buffer.modified ? " [Modified]" : "",
+            highlightLanguageName(),
+            branch,
+            buffer.numRows
+        );
+    }
+    else
+    {
+        snprintf(
+            left,
+            sizeof(left),
+            " Claw v%s | %s%s | %s | %d Lines",
+            CLAW_VERSION,
+            currentFile ? currentFile : "[No Name]",
+            buffer.modified ? " [Modified]" : "",
+            highlightLanguageName(),
+            buffer.numRows
+        );
+    }
 
     snprintf(
         right,
@@ -34,8 +55,8 @@ void drawStatusBar(void)
         cursor.x + 1
     );
 
-    int leftLen = strlen(left);
-    int rightLen = strlen(right);
+    int leftLen = (int)strlen(left);
+    int rightLen = (int)strlen(right);
 
     printf("\033[7m");
 
@@ -45,6 +66,9 @@ void drawStatusBar(void)
         viewport.screenCols -
         leftLen -
         rightLen;
+
+    if (padding < 1)
+        padding = 1;
 
     while (padding-- > 0)
         putchar(' ');
