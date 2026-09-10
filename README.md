@@ -13,7 +13,7 @@ Development Stage: Feature-Complete Editor Core
 Current Version:
 
 ```text
-v1.3
+v1.4
 ```
 
 ## Completed Features
@@ -169,51 +169,54 @@ v1.3
 - Command dispatch architecture
 - Tab key insertion support
 
+### Git Integration
+- Git repository detection
+- Repository root discovery
+- Current branch detection
+- Branch display in status bar
+- Repository-aware startup
+- Git status parsing
+- Modified file detection
+- Staged file detection
+- Untracked file detection
+- Git Add integration
+- Git Restore integration
+- Git Blame integration
+- Temporary Git view support
+- Return-to-file workflow
+- Git command execution layer
+- Repository metadata refresh
+
 ## In Progress
 
-### v1.4 — Git Integration & Repository Awareness
+### v1.5 — Plugin System
 
-- Git repository detection
-- Current branch identification
-- Repository root discovery
-- Modified file indicators
-- Git status integration
-- Branch display in status bar
-- Untracked file detection
-- Staged file detection
-- Repository-aware startup
-- Git command execution layer
-- Commit workflow integration
-- Commit message prompt
-- Diff visualization
-- File change statistics
-- Repository metadata caching
+- Plugin loading framework
+- Dynamic module support
+- Plugin API design
+- Editor event hooks
+- Custom command extensions
+- Runtime plugin discovery
+- Plugin lifecycle management
+- Plugin configuration support
+- Extension sandbox architecture
+- Third-party plugin support
 
 ### Current Focus
 
-- Designing Git integration architecture
-- Building repository detection engine
-- Implementing Git status parser
-- Adding branch information to status bar
-- Creating Git command abstraction layer
-- Designing commit workflow UI
-- Planning diff viewer architecture
-- Preparing repository awareness framework
+- Designing plugin architecture
+- Building plugin loading engine
+- Defining plugin API interfaces
+- Creating editor event hook system
+- Planning command extension framework
+- Preparing runtime module discovery
+- Designing plugin configuration format
+- Improving editor extensibility
 
 ## Planned Features
 
-### v1.5 — Plugin System
-- Plugin loading framework
-- Dynamic module support
-- Plugin API
-- Custom commands
-- Third-party extensions
-- Plugin configuration support
-- Runtime plugin discovery
-- Plugin lifecycle management
-- Editor event hooks
-
 ### v1.6 — Advanced Editing
+
 - Auto indentation
 - Smart indentation
 - Tab and space conversion
@@ -226,6 +229,7 @@ v1.3
 - Line join/split operations
 
 ### v1.7 — Productivity Features
+
 - Multiple cursors
 - Bookmarks
 - Recent files list
@@ -238,23 +242,28 @@ v1.3
 - Workspace support
 
 ### v1.8 — Customization & Themes
+
 - Theme engine
 - Color scheme support
 - User-defined themes
 - Syntax theme customization
-- Font rendering preferences
 - Layout customization
 - Status bar customization
+- Editor appearance profiles
 
 ### v1.9 — Project Tools
+
 - Project workspace management
 - Project-wide search
 - Project-wide replace
 - Build command integration
 - Task runner support
 - Project configuration files
+- Workspace indexing
+- Project navigation tools
 
 ### v2.0 — IDE Features
+
 - Multiple file buffers
 - Split-screen editing
 - Mouse support
@@ -266,18 +275,50 @@ v1.3
 - Code navigation
 - Refactoring support
 
+### v2.1 — Git Workflow Expansion
+
+- Commit message prompt
+- Git diff viewer
+- Git log viewer
+- Git branch switching
+- Git stash support
+- Inline change indicators
+- Repository dashboard
+
+### v2.2 — Language Support Expansion
+
+- Python syntax highlighting
+- Java syntax highlighting
+- JavaScript syntax highlighting
+- TypeScript syntax highlighting
+- Rust syntax highlighting
+- Go syntax highlighting
+- Markdown support
+- JSON support
+
+### v3.0 — Modern Editor Platform
+
+- Plugin marketplace
+- Remote file editing
+- Collaborative editing
+- Integrated debugger
+- AI-assisted editing
+- Project templates
+- Cross-platform packaging
+- Lightweight IDE workflow
+
 ## Long-Term Vision
 
-- Multiple file buffers
-- Split-screen editing
-- Mouse support
-- Theme engine
-- Language Server Protocol (LSP) support
-- Integrated terminal
-- Project workspace management
-- Extensible plugin ecosystem
-- Cross-platform support
-- Lightweight IDE capabilities
+- Build a modern terminal-first code editor in C
+- Remain lightweight, fast, and keyboard-driven
+- Support extensibility through plugins
+- Provide powerful project and Git workflows
+- Offer advanced code navigation and editing tools
+- Integrate Language Server Protocol (LSP) features
+- Enable workspace-based development
+- Maintain cross-platform compatibility
+- Preserve low memory usage and fast startup times
+- Evolve Claw into a lightweight IDE without sacrificing simplicity
 
 ---
 
@@ -286,61 +327,63 @@ v1.3
 ### Primary Goals
 
 - Build a lightweight terminal-based text editor in C
-- Gain hands-on experience with low-level systems programming
-- Develop a modular and maintainable codebase
-- Learn terminal control and raw mode programming
-- Implement core text editing functionality from scratch
+- Create a fast and responsive editing experience
+- Maintain a modular and maintainable codebase
+- Provide essential developer-focused editing tools
+- Keep the editor simple, extensible, and efficient
 
 ### Technical Goals
 
-- Create a responsive full-screen terminal interface
-- Support efficient text editing and navigation
-- Implement dynamic memory management for document storage
-- Provide reliable file loading and saving
-- Maintain portability across POSIX-compatible systems
-- Provide configurable editor behavior through settings and keymaps
-- Support efficient document search and replacement workflows
+- Implement efficient text editing and navigation
+- Maintain low memory usage and fast startup times
+- Support configurable editor behavior through settings and keymaps
+- Expand syntax highlighting for multiple programming languages
+- Build a robust plugin architecture for future extensibility
+- Improve Git integration and repository workflows
+- Preserve portability across POSIX-compatible systems
 
 ### User Experience Goals
 
-- Simple and intuitive keyboard-driven workflow
-- Fast startup and low resource usage
-- Real-time editing without noticeable latency
-- Clear status information and feedback
+- Keyboard-first workflow
 - Minimal and distraction-free interface
-- Consistent keyboard shortcuts across editor features
+- Clear visual feedback and status information
+- Consistent and intuitive shortcuts
+- Reliable editing of large files
+- Smooth search, replace, and navigation experience
+- Easy customization without complexity
 
 ### Learning Objectives
 
-- Terminal programming using ANSI escape sequences
-- Raw keyboard input handling
-- Dynamic data structures in C
-- File I/O and persistence
+- Systems programming in C
+- Terminal and ANSI escape sequence programming
+- Raw keyboard input processing
+- Dynamic memory management
 - Modular software architecture
-- Memory management and debugging
-- Event-driven application design
-- Syntax highlighting engine design
-- Search and replace algorithm implementation
+- Data structure design
+- File system and persistence management
+- Version control integration
+- Plugin architecture design
 
 ### Short-Term Goals
 
-- Complete Git integration
-- Add repository awareness
-- Display current Git branch
-- Show file modification status
-- Improve editor workflow integration with version control
-- Expand language support beyond C/C++
+- Complete Plugin System (v1.5)
+- Add runtime extension loading
+- Create editor event hooks
+- Define public plugin APIs
+- Expand syntax highlighting language support
+- Improve Git workflow features
+- Add diff visualization support
 
 ### Long-Term Goals
 
 - Support multiple file buffers
-- Introduce plugin architecture
-- Enable split-screen editing
-- Provide project-level workflows
-- Add theme customization support
-- Implement Language Server Protocol (LSP) integration
-- Add integrated terminal support
-- Evolve Claw into a powerful terminal code editor
+- Introduce split-screen editing
+- Build a full plugin ecosystem
+- Implement Language Server Protocol (LSP) support
+- Add project-wide development tools
+- Create workspace management features
+- Develop integrated terminal support
+- Provide IDE-like capabilities while remaining lightweight
 
 ### Design Philosophy
 
@@ -351,7 +394,7 @@ v1.3
 - Clear and maintainable code
 - Educational and open-source friendly development
 - Fast startup and low memory usage
-- Feature additions must preserve simplicity
+- Features should enhance productivity without sacrificing simplicity
 
 ---
 
@@ -366,6 +409,7 @@ claw/
 │   ├── cursor.h
 │   ├── editor.h
 │   ├── fileio.h
+│   ├── git.h
 │   ├── highlight.h
 │   ├── history.h
 │   ├── input.h
@@ -395,6 +439,9 @@ claw/
 │   │
 │   ├── fileio/
 │   │   └── fileio.c
+│   │
+│   ├── git/
+│   │   └── git.c
 │   │
 │   ├── highlight/
 │   │   └── highlight.c
@@ -508,7 +555,12 @@ src/
 │   └── string_utils.c     Shared string manipulation and parsing helpers
 │
 └── ui/
-    └── statusbar.c        Status bar and editor information display
+│   └── statusbar.c        Status bar and editor information display
+│
+├── git/
+│   └── git.c              Git repository detection, status parsing,
+│                          branch discovery, Git Add, Restore,
+│                          Blame integration, and repository awareness
 ```
 
 ---
@@ -778,6 +830,20 @@ Ctrl + X twice  -> Force Quit
                   (when unsaved changes exist)
 ```
 
+### Git Integration
+
+```text
+Ctrl + G        -> Git Add Current File
+
+Ctrl + U        -> Git Unstage Current File
+
+Ctrl + T        -> Git Restore Current File
+
+Ctrl + B        -> Open Git Blame View
+
+Esc             -> Exit Git View
+```
+
 ### Viewport Navigation
 
 ```text
@@ -809,12 +875,27 @@ Search Info     -> Match Count And Navigation Status
 
 Replace Info    -> Replacement Status Messages
 ```
+
+### Git View
+
+```text
+Git Blame View  -> Line Ownership Information
+
+Author          -> Commit Author
+
+Commit Hash     -> Commit Reference
+
+Commit Date     -> Last Modification Date
+
+Esc             -> Return To Editor
+```
+
 ---
 
 ## Architecture
 
 ```text
-                ┌─────────────────┐
+                               ┌─────────────────┐
                 │    Terminal     │
                 │     (User)      │
                 └────────┬────────┘
@@ -843,35 +924,35 @@ Replace Info    -> Replacement Status Messages
                 │    editor.c     │
                 └────────┬────────┘
                          │
-    ┌────────────────────┼────────────────────┬────────────────────┐
-    │                    │                    │                    │
-    ▼                    ▼                    ▼                    ▼
+     ┌───────────────────┼───────────────────┬───────────────────┬───────────────────┐
+     │                   │                   │                   │                   │
+     ▼                   ▼                   ▼                   ▼                   ▼
 
-┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
-│  Text Buffer    │ │ Search Engine   │ │ History Engine  │ │ Highlight Engine│
-│   buffer.c      │ │   search.c      │ │   history.c     │ │  highlight.c    │
-└────────┬────────┘ └────────┬────────┘ └────────┬────────┘ └────────┬────────┘
-         │                   │                   │                   │
-         └──────────┬────────┴─────────┬─────────┴─────────┬─────────┘
-                    │                  │                   │
-                    ▼                  ▼                   ▼
+┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+│  Text Buffer    │ │ Search Engine   │ │ History Engine  │ │ Highlight Engine│ │   Git Engine    │
+│   buffer.c      │ │   search.c      │ │   history.c     │ │  highlight.c    │ │     git.c       │
+└────────┬────────┘ └────────┬────────┘ └────────┬────────┘ └────────┬────────┘ └────────┬────────┘
+         │                   │                   │                   │                   │
+         └──────────┬────────┴─────────┬─────────┴─────────┬─────────┴─────────┬─────────┘
+                    │                  │                   │                   │
+                    ▼                  ▼                   ▼                   ▼
 
-          ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
-          │ Viewport Engine │ │  File I/O Layer │ │  Config Engine  │
-          │  viewport.c     │ │    fileio.c     │ │   config.c      │
-          └────────┬────────┘ └─────────────────┘ └─────────────────┘
-                   │
-                   ▼
-          ┌─────────────────┐
-          │ Rendering Engine│
-          │    render.c     │
-          └────────┬────────┘
-                   │
-                   ▼
-          ┌─────────────────┐
-          │   Status Bar    │
-          │  statusbar.c    │
-          └─────────────────┘
+          ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+          │ Viewport Engine │ │  File I/O Layer │ │  Config Engine  │ │ Git Integration │
+          │  viewport.c     │ │    fileio.c     │ │   config.c      │ │ Git Commands    │
+          └────────┬────────┘ └─────────────────┘ └─────────────────┘ │ Git Status      │
+                   │                                                  │ Git Blame       │
+                   ▼                                                  │ Git Restore     │
+          ┌─────────────────┐                                         └────────┬────────┘
+          │ Rendering Engine│                                                  │
+          │    render.c     │                                                  │
+          └────────┬────────┘                                                  │
+                   │                                                           │
+                   ▼                                                           ▼
+          ┌─────────────────┐                                         ┌─────────────────┐
+          │   Status Bar    │                                         │ Git Views / UI  │
+          │  statusbar.c    │                                         │ Blame Viewer    │
+          └─────────────────┘                                         └─────────────────┘
 ```
 
 ## Component Responsibilities
@@ -882,6 +963,9 @@ Replace Info    -> Replacement Status Messages
 - Subsystem initialization
 - Configuration and keymap loading
 - Editor lifecycle management
+- Save-As prompt handling
+- Search and replace workflow management
+- Git view state management
 - Coordination between editor subsystems
 
 ### Input Engine (`input.c`, `rawmode.c`)
@@ -960,6 +1044,22 @@ Replace Info    -> Replacement Status Messages
 - Highlight cache management
 - ANSI color generation
 
+### Git Engine (`git.c`)
+
+- Git repository detection
+- Repository root discovery
+- Current branch identification
+- Git status parsing
+- Modified file detection
+- Staged file detection
+- Untracked file detection
+- Git add integration
+- Git unstage integration
+- Git restore integration
+- Git blame integration
+- Repository metadata caching
+- Git command execution
+
 ### Viewport Engine (`viewport.c`)
 
 - Vertical scrolling
@@ -986,6 +1086,7 @@ Replace Info    -> Replacement Status Messages
 - Line number rendering
 - Syntax highlighting rendering
 - Search match highlighting
+- Git information rendering
 - Status message rendering
 - ANSI escape sequence output
 
@@ -995,6 +1096,8 @@ Replace Info    -> Replacement Status Messages
 - Modified state indicator
 - Language display
 - Line and column tracking
+- Git branch display
+- Git repository status display
 - Search status messages
 - Replace status messages
 - Editor feedback messages
@@ -1006,11 +1109,21 @@ Replace Info    -> Replacement Status Messages
 - Boolean conversion utilities
 - Shared reusable functions
 
+### Git View System
+
+- Git blame viewer
+- Temporary Git file rendering
+- Repository information display
+- Git operation feedback
+- Return-to-editor workflow
+- Git view lifecycle management
+
 ---
 
 ## Development Roadmap
 
 ### Milestone 1 — Editor Foundation
+
 **Status:** Complete
 
 - Project structure setup
@@ -1022,6 +1135,7 @@ Replace Info    -> Replacement Status Messages
 ---
 
 ### Milestone 2 — Terminal Input System
+
 **Status:** Complete
 
 - Raw terminal mode
@@ -1033,6 +1147,7 @@ Replace Info    -> Replacement Status Messages
 ---
 
 ### Milestone 3 — Text Buffer Engine
+
 **Status:** Complete
 
 - Dynamic text buffer
@@ -1044,6 +1159,7 @@ Replace Info    -> Replacement Status Messages
 ---
 
 ### Milestone 4 — Cursor Navigation
+
 **Status:** Complete
 
 - Horizontal navigation
@@ -1055,6 +1171,7 @@ Replace Info    -> Replacement Status Messages
 ---
 
 ### Milestone 5 — Multi-Line Editing
+
 **Status:** Complete
 
 - New line creation
@@ -1066,6 +1183,7 @@ Replace Info    -> Replacement Status Messages
 ---
 
 ### Milestone 6 — File Management
+
 **Status:** Complete
 
 - File loading
@@ -1077,6 +1195,7 @@ Replace Info    -> Replacement Status Messages
 ---
 
 ### Milestone 7 — Viewport & Scrolling
+
 **Status:** Complete
 
 - Vertical scrolling
@@ -1088,6 +1207,7 @@ Replace Info    -> Replacement Status Messages
 ---
 
 ### Milestone 8 — Search System
+
 **Status:** Complete
 
 - Search prompt
@@ -1102,6 +1222,7 @@ Replace Info    -> Replacement Status Messages
 ---
 
 ### Milestone 9 — Undo / Redo System
+
 **Status:** Complete
 
 - Undo support
@@ -1114,6 +1235,7 @@ Replace Info    -> Replacement Status Messages
 ---
 
 ### Milestone 10 — Configuration System
+
 **Status:** Complete
 
 - INI-style configuration parser
@@ -1129,6 +1251,7 @@ Replace Info    -> Replacement Status Messages
 ---
 
 ### Milestone 11 — Syntax Highlighting
+
 **Status:** Complete
 
 - C language syntax highlighting
@@ -1149,6 +1272,7 @@ Replace Info    -> Replacement Status Messages
 ---
 
 ### Milestone 12 — Search & Replace
+
 **Status:** Complete
 
 - Replace current match
@@ -1164,6 +1288,7 @@ Replace Info    -> Replacement Status Messages
 ---
 
 ### Milestone 13 — Save-As Prompt
+
 **Status:** Complete
 
 - Interactive filename prompt for unnamed buffers
@@ -1176,18 +1301,26 @@ Replace Info    -> Replacement Status Messages
 ---
 
 ### Milestone 14 — Git Integration
-**Status:** Planned
 
-- Repository detection
+**Status:** Complete
+
+- Git repository detection
+- Repository root discovery
 - Current branch display
-- Modified file indicators
-- Git status integration
-- Commit support
-- Diff visualization
+- Modified file detection
+- Staged file detection
+- Untracked file detection
+- Git add support
+- Git unstage support
+- Git restore support
+- Git blame integration
+- Repository-aware status bar
+- Git view management
 
 ---
 
 ### Milestone 15 — Plugin System
+
 **Status:** Planned
 
 - Plugin API
@@ -1199,18 +1332,22 @@ Replace Info    -> Replacement Status Messages
 ---
 
 ### Milestone 16 — Advanced Editing
+
 **Status:** Planned
 
 - Auto indentation
+- Smart indentation
 - Tab-to-space conversion
 - Duplicate line command
 - Move line up/down
 - Bracket matching
-- Line manipulation tools
+- Auto-closing brackets
+- Comment/uncomment support
 
 ---
 
 ### Milestone 17 — Productivity Features
+
 **Status:** Planned
 
 - Multiple cursors
@@ -1219,25 +1356,89 @@ Replace Info    -> Replacement Status Messages
 - Command palette
 - Go to line
 - File explorer
+- Quick file switching
+- Session restoration
 
 ---
 
-### Long-Term Vision
+### Milestone 18 — Themes & Customization
+
+**Status:** Planned
+
+- Theme engine
+- Color scheme support
+- User-defined themes
+- Status bar customization
+- Layout customization
+
+---
+
+### Milestone 19 — Project Tools
+
+**Status:** Planned
+
+- Project workspace management
+- Project-wide search
+- Project-wide replace
+- Build command integration
+- Task runner support
+- Project configuration files
+
+---
+
+### Milestone 20 — IDE Features
+
+**Status:** Planned
 
 - Multiple file buffers
 - Split-screen editing
 - Mouse support
-- Theme engine
-- Language Server Protocol (LSP) support
 - Integrated terminal
-- Project workspace management
-- IDE-like development workflows
+- Language Server Protocol (LSP)
+- Code completion
+- Diagnostics and error highlighting
+- Code navigation
+- Refactoring support
 
 ---
 
-## Implemented Features
+## Implemented Features**
 
-### Editor Configuration
+### Git Integration**
+
+- Git repository detection
+- Current branch identification
+- Repository root discovery
+- Repository-aware file tracking
+- Git status integration
+- Modified file detection
+- Staged file detection
+- Untracked file detection
+- Git metadata refresh system
+- Branch display in status bar
+
+### Git Commands**
+
+- Git Add (Ctrl + G)
+- Git Restore (Ctrl + T)
+- Git Blame View (Ctrl + B)
+- Repository status refresh
+- Git command execution layer
+- Repository validation before execution
+- Status-aware command handling
+- Automatic Git state updates
+
+### Git Blame Viewer**
+
+- Inline Git blame generation
+- Temporary blame file creation
+- Read-only blame view
+- Original file preservation
+- Return to editor using Esc
+- Repository-aware blame execution
+- Safe blame view switching
+
+### Editor Configuration**
 
 - INI-style configuration file parser
 - User configuration support (XDG and local fallback)
@@ -1252,7 +1453,7 @@ Replace Info    -> Replacement Status Messages
 - Command dispatch architecture
 - Tab key insertion support
 
-### Character Editing
+### Character Editing**
 
 - Character insertion at cursor position
 - Backspace deletion
@@ -1261,7 +1462,7 @@ Replace Info    -> Replacement Status Messages
 - Dynamic row resizing
 - Cursor-aware editing operations
 
-### Cursor Navigation
+### Cursor Navigation**
 
 - Horizontal cursor movement
 - Vertical cursor movement
@@ -1269,7 +1470,7 @@ Replace Info    -> Replacement Status Messages
 - Position tracking
 - Automatic cursor correction
 
-### Multi-Line Editing
+### Multi-Line Editing**
 
 - New line creation
 - Line splitting at cursor position
@@ -1278,7 +1479,7 @@ Replace Info    -> Replacement Status Messages
 - Dynamic row removal
 - Multi-line document support
 
-### Text Buffer Management
+### Text Buffer Management**
 
 - Dynamic memory allocation
 - Row-based document storage
@@ -1286,7 +1487,7 @@ Replace Info    -> Replacement Status Messages
 - Efficient text manipulation
 - Modification tracking
 
-### File Operations
+### File Operations**
 
 - Open existing files
 - Create new files
@@ -1299,7 +1500,7 @@ Replace Info    -> Replacement Status Messages
 - Exit confirmation protection
 - Persistent document storage
 
-### Viewport & Scrolling
+### Viewport & Scrolling**
 
 - Vertical scrolling
 - Horizontal scrolling
@@ -1308,7 +1509,7 @@ Replace Info    -> Replacement Status Messages
 - Large file navigation support
 - Terminal resize handling
 
-### Search System
+### Search System**
 
 - Search prompt (Ctrl + F)
 - Search query input
@@ -1321,7 +1522,7 @@ Replace Info    -> Replacement Status Messages
 - Search cancellation
 - Search state management
 
-### Search & Replace
+### Search & Replace**
 
 - Replace current match
 - Automatic jump to next match after replacement
@@ -1332,7 +1533,7 @@ Replace Info    -> Replacement Status Messages
 - Search and replace integration
 - Document-wide replacement support
 
-### Undo / Redo System
+### Undo / Redo System**
 
 - Undo character insertions
 - Undo character deletions
@@ -1345,7 +1546,7 @@ Replace Info    -> Replacement Status Messages
 - Separate undo and redo stacks
 - History state management
 
-### Rendering Engine
+### Rendering Engine**
 
 - Full-screen terminal rendering
 - Real-time screen refresh
@@ -1357,7 +1558,7 @@ Replace Info    -> Replacement Status Messages
 - Dynamic viewport rendering
 - ANSI escape sequence rendering
 
-### Status Bar
+### Status Bar**
 
 - Current filename display
 - Modified file indicator
@@ -1365,23 +1566,27 @@ Replace Info    -> Replacement Status Messages
 - Current line number display
 - Current column number display
 - Detected language display
+- Current Git branch display
+- Git file status display
 - Search status messages
 - Replace status messages
 - Editor feedback messages
 
-### User Interface
+### User Interface**
 
 - Welcome screen
 - Status bar
 - Search prompt
 - Replace prompt
 - Save-As filename prompt
+- Git status feedback messages
+- Git blame viewer
 - File information display
 - Cursor position display
 - Unsaved changes warning
 - Context-sensitive status messages
 
-### Terminal Support
+### Terminal Support**
 
 - Raw terminal mode
 - Real-time keyboard input
@@ -1391,7 +1596,7 @@ Replace Info    -> Replacement Status Messages
 - POSIX terminal support
 - Safe terminal restoration on exit
 
-### Syntax Highlighting
+### Syntax Highlighting**
 
 - C language syntax highlighting (.c, .h, .cc, .cpp, .hpp)
 - Keyword highlighting
@@ -1411,7 +1616,7 @@ Replace Info    -> Replacement Status Messages
 
 ---
 
-## Development Progress
+**## Development Progress**
 
 | Version | Status | Description |
 |----------|----------|----------|
@@ -1428,11 +1633,11 @@ Replace Info    -> Replacement Status Messages
 | v1.1 | Complete | Syntax highlighting, language-aware rendering, file type detection, and theme support |
 | v1.2 | Complete | Search & Replace with match tracking, navigation, and bulk replacement |
 | v1.3 | Complete | Save-As prompt for unnamed buffers with filename input and syntax re-detection |
-| v1.4 | Planned | Git integration and repository awareness |
+| v1.4 | Complete | Git integration, repository awareness, and version-control workflows |
 | v1.5 | Planned | Plugin system and editor extensibility |
 | v1.6 | Planned | Advanced editing tools and productivity enhancements |
 | v1.7 | Planned | Multiple cursors, bookmarks, command palette, and project navigation |
-| v2.0 | Vision | Multi-buffer editing, split views, integrated terminal, and IDE-like capabilities |
+| v2.0 | Vision | Multi-buffer editing, split views, integrated terminal, LSP support, and IDE-like capabilities |
 
 ---
 
