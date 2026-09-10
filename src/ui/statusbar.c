@@ -18,18 +18,59 @@ void drawStatusBar(void)
     char left[512];
     char right[64];
     char branch[128];
+    char gitInfo[160] = "";
 
     if (gitCurrentBranch(branch, sizeof(branch)))
     {
+        if (currentFile)
+        {
+            if (!gitFileTracked(currentFile))
+            {
+                snprintf(
+                    gitInfo,
+                    sizeof(gitInfo),
+                    "Git:%s?",
+                    branch
+                );
+            }
+            else if (gitFileModified(currentFile))
+            {
+                snprintf(
+                    gitInfo,
+                    sizeof(gitInfo),
+                    "Git:%s*",
+                    branch
+                );
+            }
+            else
+            {
+                snprintf(
+                    gitInfo,
+                    sizeof(gitInfo),
+                    "Git:%s",
+                    branch
+                );
+            }
+        }
+        else
+        {
+            snprintf(
+                gitInfo,
+                sizeof(gitInfo),
+                "Git:%s",
+                branch
+            );
+        }
+
         snprintf(
             left,
             sizeof(left),
-            " Claw v%s | %s%s | %s | Git:%s | %d Lines",
+            " Claw v%s | %s%s | %s | %s | %d Lines",
             CLAW_VERSION,
             currentFile ? currentFile : "[No Name]",
             buffer.modified ? " [Modified]" : "",
             highlightLanguageName(),
-            branch,
+            gitInfo,
             buffer.numRows
         );
     }

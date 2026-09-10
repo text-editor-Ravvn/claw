@@ -9,6 +9,7 @@ enum EditorKey
     ARROW_UP,
     ARROW_DOWN,
     DELETE_KEY
+    
 };
 
 int readKey(void);

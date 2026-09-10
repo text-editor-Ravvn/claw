@@ -21,7 +21,8 @@ SRC = src/main.c \
 	  src/keymap/keymap.c \
 	  src/keymap/parser.c \
 	  src/command/command.c \
-	  src/highlight/highlight.c
+	  src/highlight/highlight.c \
+	  src/git/git.c \
 
 OBJ = $(SRC:.c=.o)
 

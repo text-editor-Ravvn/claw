@@ -4,10 +4,11 @@
 #include <string.h>
 #include <limits.h>
 #include <sys/stat.h>
-
+#include <stdlib.h>
 #include "git.h"
 
 static char repositoryRoot[PATH_MAX];
+static char currentBranch[128];
 
 int gitIsRepository(void)
 {
@@ -128,11 +129,56 @@ int gitCurrentBranch(
     ] = '\0';
 
     snprintf(
-        branch,
-        size,
+        currentBranch,
+        sizeof(currentBranch),
         "%s",
         lastSlash
     );
 
+    snprintf(
+        branch,
+        size,
+        "%s",
+        currentBranch
+    );
+
     return 1;
+}
+const char *gitBranchName(void)
+{
+    return currentBranch;
+}
+
+int gitFileTracked(const char *filename)
+{
+    if (!filename || !gitIsRepository())
+        return 0;
+
+    char command[1024];
+
+    snprintf(
+        command,
+        sizeof(command),
+        "git ls-files --error-unmatch \"%s\" > /dev/null 2>&1",
+        filename
+    );
+
+    return system(command) == 0;
+}
+
+int gitFileModified(const char *filename)
+{
+    if (!filename || !gitIsRepository())
+        return 0;
+
+    char command[1024];
+
+    snprintf(
+        command,
+        sizeof(command),
+        "git diff --quiet -- \"%s\"",
+        filename
+    );
+
+    return system(command) != 0;
 }

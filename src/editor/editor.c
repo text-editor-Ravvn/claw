@@ -104,23 +104,10 @@ void editorInit(void)
 
     char branch[128];
 
-if (gitCurrentBranch(
-        branch,
-        sizeof(branch)))
-{
-    char status[256];
-
-    snprintf(
-        status,
-        sizeof(status),
-        "Git: %s",
-        branch
-    );
-
-    editorSetStatusMessage(
-        status
-    );
-}
+gitCurrentBranch(
+    branch,
+    sizeof(branch)
+);
     }
 void editorRun(void)
 {
