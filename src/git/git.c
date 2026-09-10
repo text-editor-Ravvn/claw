@@ -1,14 +1,20 @@
 /* Placeholder for shared Git repository operations. */
+
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
 #include <limits.h>
 #include <sys/stat.h>
 #include <stdlib.h>
+
 #include "git.h"
 
 static char repositoryRoot[PATH_MAX];
 static char currentBranch[128];
+
+int gitTracked = 0;
+int gitModified = 0;
+char gitBranch[128] = "";
 
 int gitIsRepository(void)
 {
@@ -144,6 +150,7 @@ int gitCurrentBranch(
 
     return 1;
 }
+
 const char *gitBranchName(void)
 {
     return currentBranch;
@@ -181,4 +188,99 @@ int gitFileModified(const char *filename)
     );
 
     return system(command) != 0;
+}
+
+void gitRefreshStatus(const char *filename)
+{
+    gitTracked = 0;
+    gitModified = 0;
+    gitBranch[0] = '\0';
+
+    if (!gitCurrentBranch(
+            gitBranch,
+            sizeof(gitBranch)))
+    {
+        return;
+    }
+
+    if (!filename)
+        return;
+
+    gitTracked =
+        gitFileTracked(filename);
+
+    gitModified =
+        gitFileModified(filename);
+}
+int gitAddFile(const char *filename)
+{
+    if (!filename)
+        return 0;
+
+    char command[1024];
+
+    snprintf(
+        command,
+        sizeof(command),
+        "git add \"%s\" > /dev/null 2>&1",
+        filename
+    );
+
+    return system(command) == 0;
+}
+int gitRestoreFile(const char *filename)
+{
+    if (!filename)
+        return 0;
+
+    char command[1024];
+
+    snprintf(
+        command,
+        sizeof(command),
+        "git restore \"%s\" > /dev/null 2>&1",
+        filename
+    );
+
+    return system(command) == 0;
+}
+int gitUnstageFile(const char *filename)
+{
+    if (!filename || !gitIsRepository())
+        return 0;
+
+    char command[1024];
+
+    snprintf(
+        command,
+        sizeof(command),
+        "git restore --staged \"%s\" > /dev/null 2>&1",
+        filename
+    );
+
+    return system(command) == 0;
+}
+int gitBlameFile(
+    const char *filename,
+    const char *outputFile
+)
+{
+    if (
+        !filename ||
+        !outputFile ||
+        !gitIsRepository()
+    )
+        return 0;
+
+    char command[2048];
+
+    snprintf(
+        command,
+        sizeof(command),
+        "git blame \"%s\" > \"%s\" 2>/dev/null",
+        filename,
+        outputFile
+    );
+
+    return system(command) == 0;
 }

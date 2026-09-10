@@ -6,6 +6,7 @@
 #include "search.h"
 #include "history.h"
 #include "editor.h"
+#include "git.h"
 
 extern char *currentFile;
 extern Buffer buffer;
@@ -25,20 +26,182 @@ void commandExecute(int action)
             static char statusBuf[128];
 
             if (saveFile(currentFile))
-                snprintf(statusBuf, sizeof(statusBuf),
-                         "Saved %s", currentFile);
+            {
+                gitRefreshStatus(currentFile);
+
+                snprintf(
+                    statusBuf,
+                    sizeof(statusBuf),
+                    "Saved %s",
+                    currentFile
+                );
+            }
             else
-                snprintf(statusBuf, sizeof(statusBuf),
-                         "Could not save %s", currentFile);
+            {
+                snprintf(
+                    statusBuf,
+                    sizeof(statusBuf),
+                    "Could not save %s",
+                    currentFile
+                );
+            }
 
             editorSetStatusMessage(statusBuf);
             break;
         }
 
+        case CMD_GIT_ADD:
+        {
+        if (!currentFile)
+        {
+        editorSetStatusMessage(
+            "No file to add"
+        );
+        break;
+        }
+
+        if (gitAddFile(currentFile))
+        {
+        static char msg[256];
+
+        snprintf(
+            msg,
+            sizeof(msg),
+            "Added %s to staging",
+            currentFile
+        );
+
+        editorSetStatusMessage(msg);
+    }
+    else
+    {
+        editorSetStatusMessage(
+            "Git add failed"
+        );
+    }
+
+    break;
+}
+
+case CMD_GIT_RESTORE:
+{
+    if (!currentFile)
+    {
+        editorSetStatusMessage(
+            "No file to restore"
+        );
+        break;
+    }
+
+    if (gitRestoreFile(currentFile))
+    {
+        if (openFile(currentFile))
+        {
+            static char msg[256];
+
+            snprintf(
+                msg,
+                sizeof(msg),
+                "Restored %s",
+                currentFile
+            );
+
+            editorSetStatusMessage(msg);
+        }
+        else
+        {
+            editorSetStatusMessage(
+                "Restore succeeded but reload failed"
+            );
+        }
+    }
+    else
+    {
+        editorSetStatusMessage(
+            "Git restore failed"
+        );
+    }
+
+    break;
+}
+
+case CMD_GIT_UNSTAGE:
+{
+    static char statusBuf[128];
+
+    if (!currentFile)
+    {
+        editorSetStatusMessage(
+            "No file selected"
+        );
+        break;
+    }
+
+    if (gitUnstageFile(currentFile))
+    {
+        gitRefreshStatus(currentFile);
+
+        snprintf(
+            statusBuf,
+            sizeof(statusBuf),
+            "Unstaged %s",
+            currentFile
+        );
+    }
+    else
+    {
+        snprintf(
+            statusBuf,
+            sizeof(statusBuf),
+            "Could not unstage %s",
+            currentFile
+        );
+    }
+
+    editorSetStatusMessage(statusBuf);
+
+    break;
+}
+
+    case CMD_GIT_BLAME:
+{
+    if (!currentFile)
+    {
+        editorSetStatusMessage(
+            "No file selected"
+        );
+        break;
+    }
+
+    if (
+        !gitBlameFile(
+            currentFile,
+            ".claw_blame.tmp"
+        )
+    )
+    {
+        editorSetStatusMessage(
+            "Git blame failed"
+        );
+
+        break;
+    }
+
+    openGitView(
+        ".claw_blame.tmp"
+    );
+
+    editorSetStatusMessage(
+        "Git blame (Esc to return)"
+    );
+
+    break;
+}
+
         case CMD_SEARCH:
             openSearchPrompt();
             break;
-        
+
         case CMD_REPLACE:
             openReplacePrompt();
             break;

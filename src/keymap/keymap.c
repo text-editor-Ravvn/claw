@@ -14,6 +14,22 @@ void keymapInit(void) {
   bindings[bindingCount].key = CTRL_KEY('s');
   bindingCount++;
 
+  bindings[bindingCount].action = CMD_GIT_ADD;
+  bindings[bindingCount].key = CTRL_KEY('g');
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_GIT_RESTORE;
+  bindings[bindingCount].key = CTRL_KEY('t');
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_GIT_UNSTAGE;
+  bindings[bindingCount].key = CTRL_KEY('u');
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_GIT_BLAME;
+  bindings[bindingCount].key = CTRL_KEY('b');
+  bindingCount++;
+
   bindings[bindingCount].action = CMD_QUIT;
   bindings[bindingCount].key = CTRL_KEY('x');
   bindingCount++;

@@ -8,6 +8,14 @@ enum EditorAction
 
     CMD_SAVE,
 
+    CMD_GIT_ADD,
+
+    CMD_GIT_RESTORE,
+
+    CMD_GIT_UNSTAGE,
+
+    CMD_GIT_BLAME,
+
     CMD_QUIT,
 
     CMD_SEARCH,

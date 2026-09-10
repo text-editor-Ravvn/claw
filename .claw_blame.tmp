@@ -1,0 +1,1451 @@
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530    1) # Claw
+6f49427b (Aryan Gupta            2026-09-04 11:08:12 +0530    2) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530    3) A lightweight terminal text editor written entirely in C.
+6f49427b (Aryan Gupta            2026-09-04 11:08:12 +0530    4) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530    5) Claw is being developed as part of a larger project to build a Linux-based operating system from scratch. The goal is to create a fast, modular, and extensible text editor while remaining simple, lightweight, and easy to understand.
+6f49427b (Aryan Gupta            2026-09-04 11:08:12 +0530    6) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530    7) ---
+6f49427b (Aryan Gupta            2026-09-04 11:08:12 +0530    8) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530    9) ## Current Status
+6f49427b (Aryan Gupta            2026-09-04 11:08:12 +0530   10) 
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530   11) Development Stage: Feature-Complete Editor Core
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530   12) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530   13) Current Version:
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530   14) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530   15) ```text
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530   16) v1.3
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530   17) ```
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530   18) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   19) ## Completed Features
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530   20) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   21) ### Character Editing
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   22) - Insert characters at cursor position
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   23) - Delete characters using Backspace
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   24) - Delete characters using Delete key
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   25) - Dynamic row resizing
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   26) - In-line text editing
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   27) - Cursor-aware insertion
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   28) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   29) ### Cursor Management
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   30) - Horizontal cursor movement
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   31) - Vertical cursor movement
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   32) - Cursor position tracking
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   33) - Row boundary handling
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   34) - Column preservation during navigation
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   35) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   36) ### Multi-Line Editing
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   37) - Create new lines using Enter
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   38) - Split lines at cursor position
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   39) - Merge lines using Backspace
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530   40) - Dynamic row creation
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   41) - Dynamic row deletion
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   42) - Multi-line buffer navigation
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530   43) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   44) ### Buffer Management
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   45) - Dynamic memory allocation
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   46) - Dynamic row storage
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   47) - Automatic buffer growth
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   48) - Modification tracking
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   49) - Active document management
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   50) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   51) ### File Operations
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   52) - Open files into editor buffer
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   53) - Save editor buffer to disk
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   54) - Create new files
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   55) - Edit existing files
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   56) - Preserve multi-line file structure
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   57) - Track active filename
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   58) - Detect unsaved changes
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   59) - Exit confirmation for modified files
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530   60) - Save-As prompt for unnamed buffers
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530   61) - Automatic filename assignment after first save
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530   62) - Syntax highlighting re-detection on save
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   63) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   64) ### Viewport & Scrolling
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530   65) - Vertical scrolling
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530   66) - Horizontal scrolling
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   67) - Cursor-aware viewport movement
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   68) - Dynamic viewport updates
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   69) - Large file navigation support
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   70) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   71) ### Search System
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   72) - Search prompt (Ctrl + F)
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   73) - Real-time search input
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   74) - Match discovery across document
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   75) - Search result highlighting
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   76) - Jump cursor to matched text
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   77) - Next match navigation (Ctrl + N)
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   78) - Previous match navigation (Ctrl + P)
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   79) - Search cancellation (Esc)
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   80) - Search state management
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530   81) - Match counting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530   82) - Current match tracking
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530   83) - Search statistics
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   84) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530   85) ### Search & Replace System
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530   86) - Replace prompt (Ctrl + R)
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530   87) - Replace current match
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530   88) - Replace all matches
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530   89) - Automatic jump to next match after replacement
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530   90) - Match counting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530   91) - Search statistics
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530   92) - Replacement statistics
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530   93) - Current match tracking
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530   94) - Replace current occurrence
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530   95) - Replace all occurrences in document
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530   96) - Search result persistence after replacement
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   97) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530   98) ### Undo / Redo System
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530   99) - Undo character insertions
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  100) - Undo character deletions
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  101) - Undo line splits
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  102) - Redo character insertions
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  103) - Redo character deletions
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  104) - Redo line splits
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  105) - Multi-line history support
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  106) - Edit action tracking
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  107) - Separate undo and redo stacks
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  108) - History recording control
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  109) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  110) ### Syntax Highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  111) - C language syntax highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  112) - Keyword highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  113) - Type keyword highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  114) - Number highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  115) - String highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  116) - Character literal highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  117) - Single-line comment highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  118) - Multi-line comment highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  119) - Preprocessor directive highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  120) - Operator highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  121) - File extension detection
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  122) - Language detection
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  123) - Lazy highlight caching
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  124) - ANSI color rendering
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  125) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  126) ### Rendering
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  127) - Full-screen terminal rendering
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  128) - Cursor rendering
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  129) - Real-time screen refresh
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  130) - Status bar rendering
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  131) - Search match highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  132) - Syntax highlighting rendering
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  133) - Welcome screen rendering
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  134) - Filename display
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  135) - Modified file indicator
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  136) - Line and column display
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  137) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  138) ### User Interface
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  139) - Welcome screen
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  140) - Status bar
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  141) - Search prompt
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  142) - Replace prompt
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530  143) - Save-As filename prompt
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  144) - File information display
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  145) - Current line and column display
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  146) - Unsaved changes indicator
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  147) - Context-aware status messages
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  148) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  149) ### Terminal Support
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  150) - Raw terminal mode
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  151) - Real-time keyboard input
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  152) - ANSI escape sequence rendering
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  153) - POSIX terminal support
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  154) - Arrow key processing
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  155) - Control key handling
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  156) - Dynamic terminal resizing
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  157) 
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  158) ### Editor Configuration
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  159) - INI-style configuration file parser
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  160) - User configuration file support (XDG and local fallback)
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  161) - Configurable tab width (1–16 spaces)
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  162) - Toggleable line number display
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  163) - Toggleable welcome screen
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  164) - Toggleable status bar
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  165) - Startup preference loading
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  166) - Layered settings (defaults → user overrides)
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  167) - Custom key binding system
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  168) - Keymap file support with multiple profiles
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  169) - Command dispatch architecture
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  170) - Tab key insertion support
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  171) 
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  172) ## In Progress
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  173) 
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530  174) ### v1.4 — Git Integration & Repository Awareness
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  175) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  176) - Git repository detection
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  177) - Current branch identification
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  178) - Repository root discovery
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  179) - Modified file indicators
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  180) - Git status integration
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  181) - Branch display in status bar
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  182) - Untracked file detection
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  183) - Staged file detection
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  184) - Repository-aware startup
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  185) - Git command execution layer
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  186) - Commit workflow integration
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  187) - Commit message prompt
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  188) - Diff visualization
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  189) - File change statistics
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  190) - Repository metadata caching
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  191) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  192) ### Current Focus
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  193) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  194) - Designing Git integration architecture
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  195) - Building repository detection engine
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  196) - Implementing Git status parser
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  197) - Adding branch information to status bar
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  198) - Creating Git command abstraction layer
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  199) - Designing commit workflow UI
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  200) - Planning diff viewer architecture
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  201) - Preparing repository awareness framework
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  202) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  203) ## Planned Features
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  204) 
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530  205) ### v1.5 — Plugin System
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  206) - Plugin loading framework
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  207) - Dynamic module support
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  208) - Plugin API
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  209) - Custom commands
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  210) - Third-party extensions
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  211) - Plugin configuration support
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  212) - Runtime plugin discovery
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  213) - Plugin lifecycle management
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  214) - Editor event hooks
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  215) 
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530  216) ### v1.6 — Advanced Editing
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  217) - Auto indentation
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  218) - Smart indentation
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  219) - Tab and space conversion
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  220) - Duplicate line command
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  221) - Move line up/down
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  222) - Line selection tools
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  223) - Bracket matching
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  224) - Auto-closing brackets
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  225) - Comment/uncomment selection
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  226) - Line join/split operations
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  227) 
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530  228) ### v1.7 — Productivity Features
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  229) - Multiple cursors
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  230) - Bookmarks
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  231) - Recent files list
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  232) - Command palette
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  233) - Go to line
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  234) - File explorer
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  235) - Quick file switching
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  236) - Symbol navigation
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  237) - Session restoration
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  238) - Workspace support
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  239) 
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530  240) ### v1.8 — Customization & Themes
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  241) - Theme engine
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  242) - Color scheme support
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  243) - User-defined themes
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  244) - Syntax theme customization
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  245) - Font rendering preferences
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  246) - Layout customization
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  247) - Status bar customization
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  248) 
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530  249) ### v1.9 — Project Tools
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  250) - Project workspace management
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  251) - Project-wide search
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  252) - Project-wide replace
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  253) - Build command integration
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  254) - Task runner support
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  255) - Project configuration files
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  256) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  257) ### v2.0 — IDE Features
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  258) - Multiple file buffers
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  259) - Split-screen editing
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  260) - Mouse support
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  261) - Integrated terminal
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  262) - Language Server Protocol (LSP) support
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  263) - Code completion
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  264) - Diagnostics and error highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  265) - Symbol indexing
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  266) - Code navigation
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  267) - Refactoring support
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  268) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  269) ## Long-Term Vision
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  270) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  271) - Multiple file buffers
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  272) - Split-screen editing
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  273) - Mouse support
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  274) - Theme engine
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  275) - Language Server Protocol (LSP) support
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  276) - Integrated terminal
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  277) - Project workspace management
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  278) - Extensible plugin ecosystem
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  279) - Cross-platform support
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  280) - Lightweight IDE capabilities
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  281) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  282) ---
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  283) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  284) ## Project Goals
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  285) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  286) ### Primary Goals
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  287) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  288) - Build a lightweight terminal-based text editor in C
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  289) - Gain hands-on experience with low-level systems programming
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  290) - Develop a modular and maintainable codebase
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  291) - Learn terminal control and raw mode programming
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  292) - Implement core text editing functionality from scratch
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  293) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  294) ### Technical Goals
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  295) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  296) - Create a responsive full-screen terminal interface
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  297) - Support efficient text editing and navigation
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  298) - Implement dynamic memory management for document storage
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  299) - Provide reliable file loading and saving
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  300) - Maintain portability across POSIX-compatible systems
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  301) - Provide configurable editor behavior through settings and keymaps
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  302) - Support efficient document search and replacement workflows
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  303) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  304) ### User Experience Goals
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  305) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  306) - Simple and intuitive keyboard-driven workflow
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  307) - Fast startup and low resource usage
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  308) - Real-time editing without noticeable latency
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  309) - Clear status information and feedback
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  310) - Minimal and distraction-free interface
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  311) - Consistent keyboard shortcuts across editor features
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  312) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  313) ### Learning Objectives
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  314) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  315) - Terminal programming using ANSI escape sequences
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  316) - Raw keyboard input handling
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  317) - Dynamic data structures in C
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  318) - File I/O and persistence
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  319) - Modular software architecture
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  320) - Memory management and debugging
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  321) - Event-driven application design
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  322) - Syntax highlighting engine design
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  323) - Search and replace algorithm implementation
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  324) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  325) ### Short-Term Goals
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  326) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  327) - Complete Git integration
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  328) - Add repository awareness
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  329) - Display current Git branch
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  330) - Show file modification status
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  331) - Improve editor workflow integration with version control
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  332) - Expand language support beyond C/C++
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  333) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  334) ### Long-Term Goals
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  335) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  336) - Support multiple file buffers
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  337) - Introduce plugin architecture
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  338) - Enable split-screen editing
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  339) - Provide project-level workflows
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  340) - Add theme customization support
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  341) - Implement Language Server Protocol (LSP) integration
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  342) - Add integrated terminal support
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  343) - Evolve Claw into a powerful terminal code editor
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  344) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  345) ### Design Philosophy
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  346) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  347) - Lightweight over feature bloat
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  348) - Performance over complexity
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  349) - Keyboard-first interaction
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  350) - Modular and extensible architecture
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  351) - Clear and maintainable code
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  352) - Educational and open-source friendly development
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  353) - Fast startup and low memory usage
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  354) - Feature additions must preserve simplicity
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  355) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  356) ---
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  357) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  358) ## Project Structure
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  359) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  360) ```text
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  361) claw/
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  362) ├── include/
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  363) │   ├── buffer.h
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  364) │   ├── command.h
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  365) │   ├── config.h
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  366) │   ├── cursor.h
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  367) │   ├── editor.h
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  368) │   ├── fileio.h
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  369) │   ├── highlight.h
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  370) │   ├── history.h
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  371) │   ├── input.h
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  372) │   ├── keymap.h
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  373) │   ├── rawmode.h
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  374) │   ├── render.h
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  375) │   ├── search.h
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  376) │   ├── statusbar.h
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  377) │   ├── utils.h
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  378) │   └── viewport.h
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  379) │
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  380) ├── src/
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  381) │
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  382) │   ├── buffer/
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  383) │   │   ├── buffer.c
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  384) │   │   ├── cursor.c
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  385) │   │   └── row.c
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  386) │   │
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  387) │   ├── command/
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  388) │   │   └── command.c
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  389) │   │
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  390) │   ├── config/
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  391) │   │   └── config.c
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  392) │   │
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  393) │   ├── editor/
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  394) │   │   └── editor.c
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  395) │   │
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  396) │   ├── fileio/
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  397) │   │   └── fileio.c
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  398) │   │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  399) │   ├── highlight/
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  400) │   │   └── highlight.c
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  401) │   │
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  402) │   ├── history/
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  403) │   │   └── history.c
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  404) │   │
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  405) │   ├── input/
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  406) │   │   ├── input.c
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  407) │   │   └── rawmode.c
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  408) │   │
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  409) │   ├── keymap/
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  410) │   │   ├── keymap.c
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  411) │   │   └── parser.c
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  412) │   │
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  413) │   ├── render/
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  414) │   │   └── render.c
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  415) │   │
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  416) │   ├── search/
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  417) │   │   └── search.c
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  418) │   │
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  419) │   ├── ui/
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  420) │   │   └── statusbar.c
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  421) │   │
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  422) │   ├── utils/
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  423) │   │   └── string_utils.c
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  424) │   │
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  425) │   ├── viewport/
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  426) │   │   └── viewport.c
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  427) │   │
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  428) │   └── main.c
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  429) │
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  430) ├── config/
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  431) │   ├── default.conf
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  432) │   └── claw.conf
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  433) │
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  434) ├── keymaps/
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  435) │   ├── default.conf
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  436) │   ├── linus.conf
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  437) │   ├── mac.conf
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  438) │   └── windows.conf
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  439) │
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  440) ├── tests/
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  441) │   ├── buffer_test.c
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  442) │   ├── file_test.c
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  443) │   └── search_test.c
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  444) │
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  445) ├── docs/
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  446) │   ├── README.md
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  447) │   ├── ARCHITECTURE.md
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  448) │   └── ROADMAP.md
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  449) │
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  450) ├── Makefile
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  451) ├── LICENSE
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  452) └── .gitignore
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  453) ```
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  454) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  455) ---
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  456) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  457) ## Current Source Structure
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  458) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  459) ```text
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  460) src/
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  461) ├── main.c                 Entry point and application startup
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  462) │
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  463) ├── editor/
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  464) │   └── editor.c           Core editor loop and command handling
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  465) │
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  466) ├── input/
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  467) │   ├── input.c            Keyboard input processing and key decoding
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  468) │   └── rawmode.c          Terminal raw mode management
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  469) │
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  470) ├── buffer/
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  471) │   ├── buffer.c           Text insertion, deletion, and buffer management
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  472) │   ├── row.c              Row insertion, deletion, splitting, and merging
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  473) │   └── cursor.c           Cursor movement and position management
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  474) │
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  475) ├── config/
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  476) │   └── config.c           Configuration file parser and settings management
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  477) │
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  478) ├── command/
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  479) │   └── command.c          Command dispatch from key bindings to editor actions
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  480) │
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  481) ├── keymap/
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  482) │   ├── keymap.c           Key binding table, defaults, and lookup
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  483) │   └── parser.c           Keymap file parser and key string decoder
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  484) │
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  485) ├── render/
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  486) │   └── render.c           Screen rendering, line numbers, syntax highlighting,
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  487) │                          search highlighting, and welcome screen
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  488) │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  489) ├── highlight/
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  490) │   └── highlight.c        Syntax highlighting engine, language definitions,
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  491) │                          color rules, and file type detection
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  492) │
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  493) ├── fileio/
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  494) │   └── fileio.c           File loading, saving, and persistence
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  495) │
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  496) ├── viewport/
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  497) │   └── viewport.c         Scrolling, viewport tracking, and gutter sizing
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  498) │
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  499) ├── search/
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  500) │   └── search.c           Search prompt, match discovery, match navigation,
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  501) │                          replace current match, replace next match,
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  502) │                          and replace all matches
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  503) │
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  504) ├── history/
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  505) │   └── history.c          Undo/Redo system and edit history management
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  506) │
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  507) ├── utils/
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  508) │   └── string_utils.c     Shared string manipulation and parsing helpers
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  509) │
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  510) └── ui/
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  511)     └── statusbar.c        Status bar and editor information display
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  512) ```
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  513) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  514) ---
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  515) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  516) ## Build Instructions
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  517) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  518) ### Requirements
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  519) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  520) - GCC or Clang
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  521) - GNU Make
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  522) - POSIX-compatible terminal
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  523) - Linux or macOS
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  524) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  525) ### Clone Repository
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  526) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  527) ```bash
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  528) git clone <repository-url>
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  529) cd claw
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  530) ```
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  531) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  532) ### Compile
+6f49427b (Aryan Gupta            2026-09-04 11:08:12 +0530  533) 
+6f49427b (Aryan Gupta            2026-09-04 11:08:12 +0530  534) ```bash
+6f49427b (Aryan Gupta            2026-09-04 11:08:12 +0530  535) make
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  536) ```
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  537) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  538) This generates the editor executable:
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  539) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  540) ```text
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  541) claw
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  542) ```
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  543) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  544) ### Run Empty Editor
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  545) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  546) ```bash
+6f49427b (Aryan Gupta            2026-09-04 11:08:12 +0530  547) ./claw
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  548) ```
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  549) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  550) or if installed globally:
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  551) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  552) ```bash
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  553) claw
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  554) ```
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  555) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  556) ### Open Existing File
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  557) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  558) ```bash
+42ed63a7 (Aryan Gupta            2026-09-04 14:10:16 +0530  559) ./claw notes.txt
+42ed63a7 (Aryan Gupta            2026-09-04 14:10:16 +0530  560) ```
+42ed63a7 (Aryan Gupta            2026-09-04 14:10:16 +0530  561) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  562) or
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  563) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  564) ```bash
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  565) claw notes.txt
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  566) ```
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  567) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  568) ### Create New File
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  569) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  570) ```bash
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  571) ./claw newfile.txt
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  572) ```
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  573) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  574) If the file does not exist, Claw creates it when saved.
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  575) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  576) ### Save Changes
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  577) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  578) ```text
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  579) Ctrl + S
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  580) ```
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  581) 
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530  582) If no filename has been set (opened with `./claw`), a Save-As prompt appears:
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530  583) 
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530  584) ```text
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530  585) Save as: _
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530  586) ```
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530  587) 
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530  588) Type the desired filename and press Enter. The file is saved and subsequent
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530  589) Ctrl+S saves directly without prompting. Press Escape to cancel.
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530  590) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  591) ### Search
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  592) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  593) ```text
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  594) Ctrl + F
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  595) ```
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  596) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  597) ### Navigate Search Results
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  598) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  599) ```text
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  600) Ctrl + N    Next Match
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  601) Ctrl + P    Previous Match
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  602) ```
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  603) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  604) ### Replace Current Match
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  605) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  606) ```text
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  607) Ctrl + R
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  608) Enter replacement text
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  609) Press Enter
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  610) ```
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  611) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  612) The current match is replaced and the cursor automatically moves to the next match.
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  613) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  614) ### Replace All Matches
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  615) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  616) ```text
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  617) Ctrl + R
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  618) Enter replacement text
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  619) Ctrl + A
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  620) ```
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  621) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  622) Status message example:
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  623) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  624) ```text
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  625) All matches replaced
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  626) ```
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  627) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  628) ### Undo / Redo
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  629) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  630) ```text
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  631) Ctrl + Z    Undo
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  632) Ctrl + Y    Redo
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  633) ```
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  634) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  635) ### Exit Editor
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  636) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  637) ```text
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  638) Ctrl + X
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  639) ```
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  640) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  641) If unsaved changes exist:
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  642) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  643) ```text
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  644) Press Ctrl + X twice to force quit
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  645) ```
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  646) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  647) ### Clean Build Files
+6f49427b (Aryan Gupta            2026-09-04 11:08:12 +0530  648) 
+00ebfd80 (Official-Pranavchauhan 2026-09-04 17:42:44 +0530  649) ```bash
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  650) make clean
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  651) ```
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  652) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  653) ### Rebuild Project
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  654) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  655) ```bash
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  656) make clean
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  657) make
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  658) ```
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  659) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  660) or
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  661) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  662) ```bash
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  663) make rebuild
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  664) ```
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  665) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  666) ### Install Globally
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  667) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  668) ```bash
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  669) sudo ln -sf "$(pwd)/claw" /usr/local/bin/claw
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  670) ```
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  671) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  672) Verify installation:
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  673) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  674) ```bash
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  675) which claw
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  676) ```
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  677) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  678) Expected output:
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  679) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  680) ```text
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  681) /usr/local/bin/claw
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  682) ```
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  683) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  684) Run from anywhere:
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  685) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  686) ```bash
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  687) claw
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  688) ```
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  689) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  690) Open a file from anywhere:
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  691) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  692) ```bash
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  693) claw notes.txt
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  694) ```
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  695) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  696) ### Uninstall Global Command
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  697) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  698) ```bash
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  699) sudo rm /usr/local/bin/claw
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  700) ```
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  701) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  702) ---
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  703) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  704) ## Current Controls
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  705) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  706) ### Navigation
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  707) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  708) ```text
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  709) ↑              -> Move Cursor Up
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  710) ↓              -> Move Cursor Down
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  711) ←              -> Move Cursor Left
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  712) →              -> Move Cursor Right
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  713) ```
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  714) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  715) ### Editing
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  716) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  717) ```text
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  718) Printable Keys  -> Insert Character
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  719) 
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  720) Tab             -> Insert Spaces (configurable width)
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  721) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  722) Backspace       -> Delete Character Left
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  723) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  724) Delete          -> Delete Character Right
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  725) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  726) Enter           -> Create New Line
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  727) ```
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  728) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  729) ### Search
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  730) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  731) ```text
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  732) Ctrl + F        -> Open Search
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  733) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  734) Enter           -> Jump To Current Match
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  735) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  736) Ctrl + N        -> Next Match
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  737) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  738) Ctrl + P        -> Previous Match
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  739) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  740) Esc             -> Close Search
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  741) ```
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  742) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  743) ### Replace
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  744) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  745) ```text
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  746) Ctrl + R        -> Open Replace Prompt
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  747) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  748) Enter           -> Replace Current Match
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  749) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  750) Enter           -> Replace Current Match And Jump To Next Match
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  751) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  752) Ctrl + A        -> Replace All Matches
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  753) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  754) Esc             -> Cancel Replace
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  755) ```
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  756) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  757) ### Undo / Redo
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  758) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  759) ```text
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  760) Ctrl + Z        -> Undo Last Action
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  761) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  762) Ctrl + Y        -> Redo Last Action
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  763) ```
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  764) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  765) ### File Operations
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  766) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  767) ```text
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  768) Ctrl + S        -> Save File
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  769) 
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530  770)                    (prompts for filename if unnamed)
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530  771) 
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530  772) Esc             -> Cancel Save-As Prompt
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530  773) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  774) Ctrl + X        -> Quit Editor
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  775) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  776) Ctrl + X twice  -> Force Quit
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  777) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  778)                   (when unsaved changes exist)
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  779) ```
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  780) 
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  781) ### Viewport Navigation
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  782) 
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  783) ```text
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  784) Arrow Keys      -> Navigate Through File
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  785) 
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  786) Auto Vertical Scroll
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  787) 
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  788) Auto Horizontal Scroll
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  789) 
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  790) Window Resize Support
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  791) ```
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  792) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  793) ### Status Information
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  794) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  795) ```text
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  796) Status Bar      -> Current File Information
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  797) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  798) [Modified]      -> Unsaved Changes Indicator
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  799) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  800) Language        -> Detected Syntax Language
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  801) 
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  802) Lines           -> Total Line Count
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  803) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  804) Ln              -> Current Line Number
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  805) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  806) Col             -> Current Column Number
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  807) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  808) Search Info     -> Match Count And Navigation Status
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  809) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  810) Replace Info    -> Replacement Status Messages
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  811) ```
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  812) ---
+ac2dfa38 (Official-Pranavchauhan 2026-09-04 19:08:08 +0530  813) 
+ac2dfa38 (Official-Pranavchauhan 2026-09-04 19:08:08 +0530  814) ## Architecture
+ac2dfa38 (Official-Pranavchauhan 2026-09-04 19:08:08 +0530  815) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  816) ```text
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  817)                 ┌─────────────────┐
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  818)                 │    Terminal     │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  819)                 │     (User)      │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  820)                 └────────┬────────┘
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  821)                          │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  822)                          ▼
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  823)                 ┌─────────────────┐
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  824)                 │  Input Engine   │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  825)                 │    input.c      │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  826)                 └────────┬────────┘
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  827)                          │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  828)                          ▼
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  829)                 ┌─────────────────┐
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  830)                 │  Keymap Engine  │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  831)                 │   keymap.c      │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  832)                 └────────┬────────┘
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  833)                          │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  834)                          ▼
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  835)                 ┌─────────────────┐
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  836)                 │ Command System  │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  837)                 │   command.c     │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  838)                 └────────┬────────┘
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  839)                          │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  840)                          ▼
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  841)                 ┌─────────────────┐
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  842)                 │   Editor Core   │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  843)                 │    editor.c     │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  844)                 └────────┬────────┘
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  845)                          │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  846)     ┌────────────────────┼────────────────────┬────────────────────┐
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  847)     │                    │                    │                    │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  848)     ▼                    ▼                    ▼                    ▼
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  849) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  850) ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  851) │  Text Buffer    │ │ Search Engine   │ │ History Engine  │ │ Highlight Engine│
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  852) │   buffer.c      │ │   search.c      │ │   history.c     │ │  highlight.c    │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  853) └────────┬────────┘ └────────┬────────┘ └────────┬────────┘ └────────┬────────┘
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  854)          │                   │                   │                   │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  855)          └──────────┬────────┴─────────┬─────────┴─────────┬─────────┘
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  856)                     │                  │                   │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  857)                     ▼                  ▼                   ▼
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  858) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  859)           ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  860)           │ Viewport Engine │ │  File I/O Layer │ │  Config Engine  │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  861)           │  viewport.c     │ │    fileio.c     │ │   config.c      │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  862)           └────────┬────────┘ └─────────────────┘ └─────────────────┘
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  863)                    │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  864)                    ▼
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  865)           ┌─────────────────┐
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  866)           │ Rendering Engine│
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  867)           │    render.c     │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  868)           └────────┬────────┘
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  869)                    │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  870)                    ▼
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  871)           ┌─────────────────┐
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  872)           │   Status Bar    │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  873)           │  statusbar.c    │
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  874)           └─────────────────┘
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  875) ```
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  876) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  877) ## Component Responsibilities
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  878) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  879) ### Editor Core (`editor.c`)
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  880) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  881) - Main application loop
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  882) - Subsystem initialization
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  883) - Configuration and keymap loading
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  884) - Editor lifecycle management
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  885) - Coordination between editor subsystems
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  886) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  887) ### Input Engine (`input.c`, `rawmode.c`)
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  888) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  889) - Raw terminal input processing
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  890) - Keyboard event decoding
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  891) - Escape sequence handling
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  892) - Control key processing
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  893) - Terminal mode management
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  894) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  895) ### Keymap Engine (`keymap.c`, `parser.c`)
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  896) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  897) - Key-to-command binding management
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  898) - Default keymap registration
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  899) - Keymap file parsing
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  900) - Custom shortcut support
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  901) - Key lookup and dispatch preparation
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  902) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  903) ### Command System (`command.c`)
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  904) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  905) - Command dispatch architecture
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  906) - Action routing
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  907) - Editor command execution
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  908) - Keymap integration
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  909) - Centralized editor actions
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  910) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  911) ### Config Engine (`config.c`)
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  912) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  913) - INI-style configuration parsing
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  914) - User preference loading
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  915) - XDG configuration support
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  916) - Default settings management
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  917) - Layered configuration overrides
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530  918) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  919) ### Text Buffer (`buffer.c`, `row.c`, `cursor.c`)
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  920) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  921) - Document storage
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  922) - Character insertion
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  923) - Character deletion
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  924) - Line insertion and removal
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  925) - Line splitting and merging
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  926) - Cursor movement and tracking
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  927) - Dynamic memory management
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  928) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  929) ### Search Engine (`search.c`)
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  930) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  931) - Search prompt handling
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  932) - Match discovery
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  933) - Match counting
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  934) - Search navigation
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  935) - Current match tracking
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  936) - Search result highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  937) - Replace current match
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  938) - Replace next match
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  939) - Replace all matches
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  940) - Search statistics and status reporting
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  941) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  942) ### History Engine (`history.c`)
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  943) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  944) - Undo operations
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  945) - Redo operations
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  946) - Edit action recording
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  947) - Multi-line history tracking
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  948) - Undo stack management
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  949) - Redo stack management
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  950) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  951) ### Highlight Engine (`highlight.c`)
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  952) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  953) - Syntax highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  954) - Language detection
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  955) - File type recognition
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  956) - Keyword highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  957) - String highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  958) - Number highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  959) - Comment highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  960) - Highlight cache management
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  961) - ANSI color generation
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  962) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  963) ### Viewport Engine (`viewport.c`)
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  964) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  965) - Vertical scrolling
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  966) - Horizontal scrolling
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  967) - Cursor visibility management
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  968) - Viewport tracking
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  969) - Window size adaptation
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  970) - Line number gutter calculation
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  971) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  972) ### File I/O Layer (`fileio.c`)
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  973) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  974) - File loading
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  975) - File saving
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  976) - New file creation
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  977) - Filename tracking
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  978) - Persistence management
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  979) - Unsaved change detection
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  980) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  981) ### Rendering Engine (`render.c`)
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  982) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  983) - Full-screen rendering
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  984) - Cursor rendering
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  985) - Welcome screen rendering
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  986) - Line number rendering
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  987) - Syntax highlighting rendering
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  988) - Search match highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  989) - Status message rendering
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  990) - ANSI escape sequence output
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530  991) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  992) ### Status Bar (`statusbar.c`)
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530  993) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  994) - Current filename display
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  995) - Modified state indicator
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  996) - Language display
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530  997) - Line and column tracking
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  998) - Search status messages
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530  999) - Replace status messages
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1000) - Editor feedback messages
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530 1001) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1002) ### Utility Layer (`string_utils.c`)
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530 1003) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1004) - String manipulation helpers
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1005) - Configuration parsing helpers
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1006) - Boolean conversion utilities
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1007) - Shared reusable functions
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1008) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1009) ---
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1010) 
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530 1011) ## Development Roadmap
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1012) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1013) ### Milestone 1 — Editor Foundation
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1014) **Status:** Complete
+6f49427b (Aryan Gupta            2026-09-04 11:08:12 +0530 1015) 
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530 1016) - Project structure setup
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1017) - Modular source organization
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1018) - Main editor loop
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530 1019) - Basic screen rendering
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1020) - Initial build system
+6f49427b (Aryan Gupta            2026-09-04 11:08:12 +0530 1021) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1022) ---
+ac2dfa38 (Official-Pranavchauhan 2026-09-04 19:08:08 +0530 1023) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1024) ### Milestone 2 — Terminal Input System
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1025) **Status:** Complete
+6f49427b (Aryan Gupta            2026-09-04 11:08:12 +0530 1026) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1027) - Raw terminal mode
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1028) - Keyboard input handling
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1029) - Arrow key support
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1030) - Escape sequence processing
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1031) - Terminal restoration on exit
+53dca02b (Official-Pranavchauhan 2026-09-04 23:47:11 +0530 1032) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1033) ---
+53dca02b (Official-Pranavchauhan 2026-09-04 23:47:11 +0530 1034) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1035) ### Milestone 3 — Text Buffer Engine
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1036) **Status:** Complete
+53dca02b (Official-Pranavchauhan 2026-09-04 23:47:11 +0530 1037) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1038) - Dynamic text buffer
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1039) - Character insertion
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1040) - Character deletion
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1041) - Memory management
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1042) - Row storage system
+53dca02b (Official-Pranavchauhan 2026-09-04 23:47:11 +0530 1043) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1044) ---
+53dca02b (Official-Pranavchauhan 2026-09-04 23:47:11 +0530 1045) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1046) ### Milestone 4 — Cursor Navigation
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1047) **Status:** Complete
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530 1048) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1049) - Horizontal navigation
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1050) - Vertical navigation
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1051) - Boundary handling
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1052) - Cursor tracking
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1053) - Position management
+53dca02b (Official-Pranavchauhan 2026-09-04 23:47:11 +0530 1054) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1055) ---
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1056) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1057) ### Milestone 5 — Multi-Line Editing
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1058) **Status:** Complete
+53dca02b (Official-Pranavchauhan 2026-09-04 23:47:11 +0530 1059) 
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530 1060) - New line creation
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1061) - Line splitting
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1062) - Line merging
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1063) - Multi-line navigation
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1064) - Dynamic row allocation
+53dca02b (Official-Pranavchauhan 2026-09-04 23:47:11 +0530 1065) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1066) ---
+53dca02b (Official-Pranavchauhan 2026-09-04 23:47:11 +0530 1067) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1068) ### Milestone 6 — File Management
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1069) **Status:** Complete
+53dca02b (Official-Pranavchauhan 2026-09-04 23:47:11 +0530 1070) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1071) - File loading
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1072) - File saving
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1073) - Filename tracking
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1074) - Persistent storage
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1075) - Modified-state tracking
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1076) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1077) ---
+53dca02b (Official-Pranavchauhan 2026-09-04 23:47:11 +0530 1078) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1079) ### Milestone 7 — Viewport & Scrolling
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1080) **Status:** Complete
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1081) 
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530 1082) - Vertical scrolling
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530 1083) - Horizontal scrolling
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1084) - Cursor-aware viewport
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1085) - Dynamic window sizing
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1086) - Large file navigation
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1087) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1088) ---
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1089) 
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530 1090) ### Milestone 8 — Search System
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1091) **Status:** Complete
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1092) 
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530 1093) - Search prompt
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1094) - Search input handling
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1095) - Match discovery
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1096) - Search highlighting
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1097) - Next match navigation
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1098) - Previous match navigation
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1099) - Match count display
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1100) - Cursor jump to result
+53dca02b (Official-Pranavchauhan 2026-09-04 23:47:11 +0530 1101) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1102) ---
+53dca02b (Official-Pranavchauhan 2026-09-04 23:47:11 +0530 1103) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1104) ### Milestone 9 — Undo / Redo System
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1105) **Status:** Complete
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1106) 
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530 1107) - Undo support
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530 1108) - Redo support
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1109) - Edit history tracking
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1110) - Multi-line undo
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1111) - Multi-line redo
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1112) - Action recording control
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1113) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1114) ---
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1115) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1116) ### Milestone 10 — Configuration System
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530 1117) **Status:** Complete
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1118) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1119) - INI-style configuration parser
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1120) - Custom key binding system
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1121) - Keymap file support
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530 1122) - Configurable tab width
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1123) - Toggleable line numbers
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530 1124) - Toggleable welcome screen
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530 1125) - Toggleable status bar
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1126) - XDG configuration support
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1127) - Layered settings architecture
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1128) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1129) ---
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1130) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1131) ### Milestone 11 — Syntax Highlighting
+fcdb1767 (Official-Pranavchauhan 2026-09-09 13:22:24 +0530 1132) **Status:** Complete
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1133) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1134) - C language syntax highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1135) - Keyword highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1136) - Type keyword highlighting
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530 1137) - String highlighting
+fcdb1767 (Official-Pranavchauhan 2026-09-09 13:22:24 +0530 1138) - Character literal highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1139) - Number highlighting
+fcdb1767 (Official-Pranavchauhan 2026-09-09 13:22:24 +0530 1140) - Single-line comment highlighting
+fcdb1767 (Official-Pranavchauhan 2026-09-09 13:22:24 +0530 1141) - Multi-line comment highlighting
+fcdb1767 (Official-Pranavchauhan 2026-09-09 13:22:24 +0530 1142) - Preprocessor directive highlighting
+fcdb1767 (Official-Pranavchauhan 2026-09-09 13:22:24 +0530 1143) - Operator highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1144) - File extension detection
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1145) - Language name display
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1146) - Highlight caching
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1147) - ANSI color theme support
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1148) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1149) ---
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1150) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1151) ### Milestone 12 — Search & Replace
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1152) **Status:** Complete
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1153) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1154) - Replace current match
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1155) - Replace next match
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1156) - Replace all matches
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1157) - Match count reporting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1158) - Search result highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1159) - Current match tracking
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1160) - Search navigation integration
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1161) - Replacement status messages
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1162) - Automatic jump to next match after replacement
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1163) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1164) ---
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1165) 
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1166) ### Milestone 13 — Save-As Prompt
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1167) **Status:** Complete
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1168) 
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1169) - Interactive filename prompt for unnamed buffers
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1170) - Save-As triggered on Ctrl+S when no filename is set
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1171) - Escape to cancel save
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1172) - Automatic filename assignment after successful save
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1173) - Syntax highlighting re-detection from new filename extension
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1174) - Empty filename validation
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1175) 
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1176) ---
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1177) 
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1178) ### Milestone 14 — Git Integration
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1179) **Status:** Planned
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1180) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1181) - Repository detection
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1182) - Current branch display
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1183) - Modified file indicators
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1184) - Git status integration
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1185) - Commit support
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1186) - Diff visualization
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1187) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1188) ---
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1189) 
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1190) ### Milestone 15 — Plugin System
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530 1191) **Status:** Planned
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1192) 
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530 1193) - Plugin API
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1194) - Dynamic module loading
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1195) - Custom editor commands
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1196) - Third-party extensions
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1197) - Plugin configuration support
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1198) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1199) ---
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1200) 
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1201) ### Milestone 16 — Advanced Editing
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1202) **Status:** Planned
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1203) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1204) - Auto indentation
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1205) - Tab-to-space conversion
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1206) - Duplicate line command
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1207) - Move line up/down
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1208) - Bracket matching
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1209) - Line manipulation tools
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1210) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1211) ---
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1212) 
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1213) ### Milestone 17 — Productivity Features
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1214) **Status:** Planned
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1215) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1216) - Multiple cursors
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1217) - Bookmarks
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1218) - Recent files list
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1219) - Command palette
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1220) - Go to line
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1221) - File explorer
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1222) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1223) ---
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1224) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1225) ### Long-Term Vision
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1226) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1227) - Multiple file buffers
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1228) - Split-screen editing
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1229) - Mouse support
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1230) - Theme engine
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1231) - Language Server Protocol (LSP) support
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1232) - Integrated terminal
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1233) - Project workspace management
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1234) - IDE-like development workflows
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1235) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1236) ---
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1237) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1238) ## Implemented Features
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1239) 
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530 1240) ### Editor Configuration
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530 1241) 
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530 1242) - INI-style configuration file parser
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1243) - User configuration support (XDG and local fallback)
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530 1244) - Configurable tab width (1–16 spaces)
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530 1245) - Toggleable line number display
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530 1246) - Toggleable welcome screen
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530 1247) - Toggleable status bar
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530 1248) - Startup preference loading
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530 1249) - Layered settings (defaults → user overrides)
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530 1250) - Custom key binding system
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530 1251) - Keymap file support with multiple profiles
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1252) - Command dispatch architecture
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530 1253) - Tab key insertion support
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530 1254) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1255) ### Character Editing
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1256) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1257) - Character insertion at cursor position
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1258) - Backspace deletion
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1259) - Forward deletion using Delete key
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1260) - Real-time text editing
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1261) - Dynamic row resizing
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1262) - Cursor-aware editing operations
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1263) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1264) ### Cursor Navigation
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1265) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1266) - Horizontal cursor movement
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1267) - Vertical cursor movement
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1268) - Boundary-aware navigation
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1269) - Position tracking
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1270) - Automatic cursor correction
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1271) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1272) ### Multi-Line Editing
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1273) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1274) - New line creation
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1275) - Line splitting at cursor position
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1276) - Line merging with Backspace
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1277) - Dynamic row creation
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1278) - Dynamic row removal
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1279) - Multi-line document support
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1280) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1281) ### Text Buffer Management
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1282) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1283) - Dynamic memory allocation
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1284) - Row-based document storage
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1285) - Automatic buffer growth
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1286) - Efficient text manipulation
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1287) - Modification tracking
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1288) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1289) ### File Operations
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1290) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1291) - Open existing files
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1292) - Create new files
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1293) - Save files to disk
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1294) - Save-As prompt for unnamed buffers
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1295) - Automatic filename assignment after first save
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1296) - Syntax highlighting re-detection on save
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1297) - Filename tracking
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1298) - Unsaved change detection
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1299) - Exit confirmation protection
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1300) - Persistent document storage
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1301) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1302) ### Viewport & Scrolling
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530 1303) 
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530 1304) - Vertical scrolling
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530 1305) - Horizontal scrolling
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1306) - Cursor-aware viewport tracking
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1307) - Dynamic viewport updates
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1308) - Large file navigation support
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1309) - Terminal resize handling
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1310) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1311) ### Search System
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1312) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1313) - Search prompt (Ctrl + F)
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1314) - Search query input
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1315) - Document-wide match detection
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1316) - Match count reporting
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1317) - Search result highlighting
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1318) - Jump to matching text
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1319) - Next match navigation (Ctrl + N)
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1320) - Previous match navigation (Ctrl + P)
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1321) - Search cancellation
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1322) - Search state management
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1323) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1324) ### Search & Replace
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1325) 
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1326) - Replace current match
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1327) - Automatic jump to next match after replacement
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1328) - Replace next match workflow
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1329) - Replace all matches
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1330) - Replacement status messages
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1331) - Match tracking across document
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1332) - Search and replace integration
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1333) - Document-wide replacement support
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1334) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1335) ### Undo / Redo System
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1336) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1337) - Undo character insertions
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1338) - Undo character deletions
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1339) - Undo line splits
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1340) - Redo character insertions
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1341) - Redo character deletions
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1342) - Redo line splits
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1343) - Multi-line history support
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1344) - Edit action recording
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1345) - Separate undo and redo stacks
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1346) - History state management
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1347) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1348) ### Rendering Engine
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1349) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1350) - Full-screen terminal rendering
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1351) - Real-time screen refresh
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1352) - Cursor rendering
+cb499e1d (Official-Pranavchauhan 2026-09-08 23:12:50 +0530 1353) - Line number gutter rendering
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1354) - Search result highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1355) - Syntax highlighting rendering
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1356) - Welcome screen display
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1357) - Dynamic viewport rendering
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1358) - ANSI escape sequence rendering
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1359) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1360) ### Status Bar
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530 1361) 
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530 1362) - Current filename display
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1363) - Modified file indicator
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530 1364) - Total line count
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1365) - Current line number display
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1366) - Current column number display
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1367) - Detected language display
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1368) - Search status messages
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1369) - Replace status messages
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1370) - Editor feedback messages
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1371) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1372) ### User Interface
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1373) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1374) - Welcome screen
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1375) - Status bar
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1376) - Search prompt
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1377) - Replace prompt
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1378) - Save-As filename prompt
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1379) - File information display
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1380) - Cursor position display
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1381) - Unsaved changes warning
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1382) - Context-sensitive status messages
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530 1383) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1384) ### Terminal Support
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1385) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1386) - Raw terminal mode
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1387) - Real-time keyboard input
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1388) - Arrow key processing
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1389) - Control key shortcuts
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1390) - ANSI terminal compatibility
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1391) - POSIX terminal support
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1392) - Safe terminal restoration on exit
+fef7ea1c (aryangupta-tech        2026-09-06 00:34:42 +0530 1393) 
+fcdb1767 (Official-Pranavchauhan 2026-09-09 13:22:24 +0530 1394) ### Syntax Highlighting
+fcdb1767 (Official-Pranavchauhan 2026-09-09 13:22:24 +0530 1395) 
+fcdb1767 (Official-Pranavchauhan 2026-09-09 13:22:24 +0530 1396) - C language syntax highlighting (.c, .h, .cc, .cpp, .hpp)
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1397) - Keyword highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1398) - Type keyword highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1399) - String literal highlighting
+fcdb1767 (Official-Pranavchauhan 2026-09-09 13:22:24 +0530 1400) - Character literal highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1401) - Number highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1402) - Single-line comment highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1403) - Multi-line comment highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1404) - Preprocessor directive highlighting
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1405) - Operator highlighting
+fcdb1767 (Official-Pranavchauhan 2026-09-09 13:22:24 +0530 1406) - File type detection from filename extension
+fcdb1767 (Official-Pranavchauhan 2026-09-09 13:22:24 +0530 1407) - Language name display in status bar
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1408) - Lazy per-row highlight caching
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1409) - ANSI 256-color dark theme support
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1410) - Extensible language definition architecture
+fcdb1767 (Official-Pranavchauhan 2026-09-09 13:22:24 +0530 1411) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1412) ---
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1413) 
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1414) ## Development Progress
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1415) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1416) | Version | Status | Description |
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1417) |----------|----------|----------|
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1418) | v0.1 | Complete | Project setup, modular architecture, and editor framework |
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1419) | v0.2 | Complete | Raw terminal mode and real-time keyboard input handling |
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1420) | v0.3 | Complete | Dynamic text buffer, character insertion, and deletion |
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1421) | v0.4 | Complete | Multi-line editing and advanced cursor navigation |
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1422) | v0.5 | Complete | File loading, saving, filename tracking, and persistence |
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1423) | v0.6 | Complete | Status bar, modification tracking, and file information display |
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1424) | v0.7 | Complete | Viewport engine, vertical scrolling, horizontal scrolling, and large-file navigation |
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1425) | v0.8 | Complete | Search system with highlighting, match navigation, match counting, and cursor jump |
+4f3b81da (aryangupta-tech        2026-09-07 22:29:08 +0530 1426) | v0.9 | Complete | Full Undo/Redo system with edit history and multi-line support |
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1427) | v1.0 | Complete | Configuration system, editor settings, custom key bindings, and command dispatch |
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1428) | v1.1 | Complete | Syntax highlighting, language-aware rendering, file type detection, and theme support |
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1429) | v1.2 | Complete | Search & Replace with match tracking, navigation, and bulk replacement |
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1430) | v1.3 | Complete | Save-As prompt for unnamed buffers with filename input and syntax re-detection |
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1431) | v1.4 | Planned | Git integration and repository awareness |
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1432) | v1.5 | Planned | Plugin system and editor extensibility |
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1433) | v1.6 | Planned | Advanced editing tools and productivity enhancements |
+f0d52595 (Official-Pranavchauhan 2026-09-10 10:09:37 +0530 1434) | v1.7 | Planned | Multiple cursors, bookmarks, command palette, and project navigation |
+cc0e3511 (aryangupta-tech        2026-09-09 21:56:13 +0530 1435) | v2.0 | Vision | Multi-buffer editing, split views, integrated terminal, and IDE-like capabilities |
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1436) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1437) ---
+42ed63a7 (Aryan Gupta            2026-09-04 14:10:16 +0530 1438) 
+6f49427b (Aryan Gupta            2026-09-04 11:08:12 +0530 1439) ## License
+6f49427b (Aryan Gupta            2026-09-04 11:08:12 +0530 1440) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1441) MIT License
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1442) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1443) ---
+6f49427b (Aryan Gupta            2026-09-04 11:08:12 +0530 1444) 
+6f49427b (Aryan Gupta            2026-09-04 11:08:12 +0530 1445) ## Author
+6f49427b (Aryan Gupta            2026-09-04 11:08:12 +0530 1446) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1447) Aryan Gupta & Pranav Chauhan 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1448) 
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1449) Project: Claw Text Editor
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1450) Language: C
+d70ea7a0 (Aryan Gupta            2026-09-05 13:28:08 +0530 1451) Platform: Linux

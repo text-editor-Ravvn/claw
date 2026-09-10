@@ -12,6 +12,7 @@
 extern Buffer buffer;
 extern Cursor cursor;
 extern char *currentFile;
+extern GitViewState gitView;
 
 void drawStatusBar(void)
 {
@@ -20,6 +21,51 @@ void drawStatusBar(void)
     char branch[128];
     char gitInfo[160] = "";
 
+    /* ---------------- Git Viewer Mode ---------------- */
+    if (gitView.active)
+    {
+        snprintf(
+            left,
+            sizeof(left),
+            " Claw v%s | Git Blame View | Esc to return ",
+            CLAW_VERSION
+        );
+
+        snprintf(
+            right,
+            sizeof(right),
+            "Ln %d, Col %d",
+            cursor.y + 1,
+            cursor.x + 1
+        );
+
+        int leftLen = (int)strlen(left);
+        int rightLen = (int)strlen(right);
+
+        printf("\033[7m");
+
+        printf("%s", left);
+
+        int padding =
+            viewport.screenCols -
+            leftLen -
+            rightLen;
+
+        if (padding < 1)
+            padding = 1;
+
+        while (padding-- > 0)
+            putchar(' ');
+
+        printf("%s", right);
+
+        printf("\033[K");
+        printf("\033[m");
+
+        return;
+    }
+
+    /* ---------------- Normal Status Bar ---------------- */
     if (gitCurrentBranch(branch, sizeof(branch)))
     {
         if (currentFile)
@@ -33,7 +79,7 @@ void drawStatusBar(void)
                     branch
                 );
             }
-            else if (gitFileModified(currentFile))
+            else if (buffer.modified)
             {
                 snprintf(
                     gitInfo,

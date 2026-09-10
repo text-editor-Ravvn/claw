@@ -17,11 +17,13 @@
 #include "command.h"
 #include "highlight.h"
 #include "git.h"
+
 char *currentFile = NULL;
 static char statusMessage[128] = "";
 static int quitRequested = 0;
 
 SavePrompt savePrompt = {0};
+GitViewState gitView = {0};
 
 void openSavePrompt(void)
 {
@@ -102,13 +104,8 @@ void editorInit(void)
     highlightInit();
     viewportInit();
 
-    char branch[128];
-
-gitCurrentBranch(
-    branch,
-    sizeof(branch)
-);
-    }
+    gitRefreshStatus(currentFile);
+}
 void editorRun(void)
 {
     /* Redraw current state, wait for one command, then apply it. */
@@ -118,6 +115,21 @@ void editorRun(void)
     refreshScreen();
 
     int key = readKey();
+
+    /* ---------- Git View ---------- */
+if (gitView.active)
+{
+    if (key == 27)
+    {
+        closeGitView();
+
+        editorSetStatusMessage(
+            "Returned to file"
+        );
+
+        continue;
+    }
+}
 
     /* ---------- Save-as prompt modal input ---------- */
     if (savePrompt.active)
@@ -143,7 +155,9 @@ void editorRun(void)
                 currentFile =
                     strdup(savePrompt.filename);
 
-                highlightInit();
+                    highlightInit();
+
+                    gitRefreshStatus(currentFile);
 
                 static char saveBuf[320];
 
@@ -417,4 +431,41 @@ const char *editorStatusMessage(void)
 void editorSetStatusMessage(const char *message)
 {
     snprintf(statusMessage, sizeof(statusMessage), "%s", message);
+}
+void openGitView(
+    const char *tempFile
+)
+{
+    gitView.active = 1;
+
+    if (currentFile)
+    {
+        snprintf(
+            gitView.originalFile,
+            sizeof(gitView.originalFile),
+            "%s",
+            currentFile
+        );
+    }
+    else
+    {
+        gitView.originalFile[0] = '\0';
+    }
+
+    openFile(tempFile);
+}
+
+void closeGitView(void)
+{
+    if (!gitView.active)
+        return;
+
+    if (strlen(gitView.originalFile) > 0)
+    {
+        openFile(
+            gitView.originalFile
+        );
+    }
+
+    gitView.active = 0;
 }

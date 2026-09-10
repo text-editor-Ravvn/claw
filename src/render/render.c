@@ -14,11 +14,27 @@
 extern Buffer buffer;
 extern Cursor cursor;
 extern char *currentFile;
+static int lastRows = 0;
+static int lastCols = 0;
 
 void refreshScreen(void)
 {
     printf("\033[?25l");
+
+/* Clear only when terminal size changes */
+if (lastRows != viewport.screenRows ||
+    lastCols != viewport.screenCols)
+{
+    printf("\033[2J");
     printf("\033[H");
+
+    lastRows = viewport.screenRows;
+    lastCols = viewport.screenCols;
+}
+else
+{
+    printf("\033[H");
+}
 
     int showWelcome =
         (configShowWelcome() &&
@@ -38,73 +54,80 @@ void refreshScreen(void)
 
         printf("\033[K");
 
-       if (showWelcome)
+      if (showWelcome)
 {
-   const char *welcomeLines[] =
-{
-    "Claw Text Editor",
-    "",
-    ("Version " CLAW_VERSION),
-    "",
-    "Ctrl+S    Save File",
-    "Ctrl+F    Search",
-    "Ctrl+R    Replace",
-    "Ctrl+Z    Undo",
-    "Ctrl+Y    Redo",
-    "Ctrl+X    Quit Editor"
-};
-
-int lineCount =
-    sizeof(welcomeLines) /
-    sizeof(welcomeLines[0]);
-
-int startRow =
-    (viewport.screenRows - 2 - lineCount) / 2;
-
-if (i >= startRow &&
-    i < startRow + lineCount)
-{
-    int index = i - startRow;
-    const char *line = welcomeLines[index];
-
-    if (index == 0 || index == 2)
+    const char *welcomeLines[] =
     {
-        int len = (int)strlen(line);
+        "Claw Text Editor",
+        "",
+        ("Version " CLAW_VERSION),
+        "",
+        "Ctrl+S    Save File",
+        "Ctrl+F    Search",
+        "Ctrl+R    Replace",
+        "Ctrl+Z    Undo",
+        "Ctrl+Y    Redo",
+        "",
+        "Ctrl+G    Git Add",
+        "Ctrl+T    Git Restore",
+        "Ctrl+B    Git Blame",
+        "Esc       Exit Git View",
+        "",
+        "Ctrl+X    Quit Editor"
+    };
 
-        int padding =
-            (viewport.screenCols - len) / 2;
+    int lineCount =
+        sizeof(welcomeLines) /
+        sizeof(welcomeLines[0]);
 
-        if (padding < 0)
-            padding = 0;
+    int startRow =
+        (viewport.screenRows - 2 - lineCount) / 2;
 
-        for (int j = 0; j < padding; j++)
-            putchar(' ');
+    if (i >= startRow &&
+        i < startRow + lineCount)
+    {
+        int index = i - startRow;
+        const char *line = welcomeLines[index];
 
-        printf("%s", line);
+        /* Center title and version */
+        if (index == 0 || index == 2)
+        {
+            int len = (int)strlen(line);
+
+            int padding =
+                (viewport.screenCols - len) / 2;
+
+            if (padding < 0)
+                padding = 0;
+
+            for (int j = 0; j < padding; j++)
+                putchar(' ');
+
+            printf("%s", line);
+        }
+        else
+        {
+            int blockWidth = 28;
+
+            int padding =
+                (viewport.screenCols - blockWidth) / 2;
+
+            if (padding < 0)
+                padding = 0;
+
+            for (int j = 0; j < padding; j++)
+                putchar(' ');
+
+            printf("%s", line);
+        }
     }
     else
     {
-        int blockWidth = 24;
-
-        int padding =
-            (viewport.screenCols - blockWidth) / 2;
-
-        if (padding < 0)
-            padding = 0;
-
-        for (int j = 0; j < padding; j++)
-            putchar(' ');
-
-        printf("%s", line);
+        putchar(' ');
     }
-}
-else
-{
-    putchar(' ');
-}
 
-printf("\r\n");
-continue;
+    printf("\r\n");
+    continue;
 }
 
         /* Draw line number gutter. */
