@@ -1,0 +1,4 @@
+name=Formatter Plugin
+version=1.0
+author=Aryan Gupta
+command=format

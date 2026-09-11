@@ -7,6 +7,8 @@
 #include "history.h"
 #include "editor.h"
 #include "git.h"
+#include "plugin.h"
+#include "plugin_commands.h"
 
 extern char *currentFile;
 extern Buffer buffer;
@@ -197,6 +199,45 @@ case CMD_GIT_UNSTAGE:
 
     break;
 }
+        case CMD_PLUGIN_LIST:
+{
+    int count = pluginCount();
+
+    char message[64];
+
+    snprintf(
+        message,
+        sizeof(message),
+        "%d plugins loaded",
+        count
+    );
+
+    editorSetStatusMessage(message);
+    break;
+}
+
+case CMD_PLUGIN_RELOAD:
+{
+    pluginReloadAll();
+
+    editorSetStatusMessage(
+        "Plugins reloaded"
+    );
+
+    break;
+}
+
+        case CMD_PLUGIN_HELLO:
+        pluginExecute("hello");
+        break;
+
+        case CMD_PLUGIN_STATS:
+        pluginExecute("stats");
+        break;
+
+        case CMD_PLUGIN_FORMAT:
+        pluginExecute("format");
+        break;
 
         case CMD_SEARCH:
             openSearchPrompt();

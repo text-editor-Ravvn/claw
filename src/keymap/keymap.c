@@ -30,6 +30,26 @@ void keymapInit(void) {
   bindings[bindingCount].key = CTRL_KEY('b');
   bindingCount++;
 
+  bindings[bindingCount].action = CMD_PLUGIN_LIST;
+  bindings[bindingCount].key = CTRL_KEY('l');
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_PLUGIN_RELOAD;
+  bindings[bindingCount].key = CTRL_KEY('k');
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_PLUGIN_HELLO;
+  bindings[bindingCount].key = CTRL_KEY('h');
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_PLUGIN_STATS;
+  bindings[bindingCount].key = CTRL_KEY('j');
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_PLUGIN_FORMAT;
+  bindings[bindingCount].key = CTRL_KEY('o');
+  bindingCount++;
+
   bindings[bindingCount].action = CMD_QUIT;
   bindings[bindingCount].key = CTRL_KEY('x');
   bindingCount++;

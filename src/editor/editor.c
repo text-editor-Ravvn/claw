@@ -17,6 +17,7 @@
 #include "command.h"
 #include "highlight.h"
 #include "git.h"
+#include "plugin.h"
 
 char *currentFile = NULL;
 static char statusMessage[128] = "";
@@ -43,6 +44,10 @@ void editorInit(void)
     /* Raw mode must be active before the first screen refresh or key read. */
     enableRawMode();
     printf("\033[2 q");
+
+    pluginInit();
+
+    pluginLoadAll();
 
     /* Load configuration before anything that reads settings.
        Order: compiled-in defaults → bundled defaults → user config.
@@ -468,4 +473,52 @@ void closeGitView(void)
     }
 
     gitView.active = 0;
+}
+void pluginList(void)
+{
+    editorSetStatusMessage(
+        "Plugins loaded"
+    );
+
+    printf("\033[2J");
+    printf("\033[H");
+
+    printf("Installed Plugins\n\n");
+
+    for (int i = 0;
+         i < pluginCount();
+         i++)
+    {
+        Plugin *p =
+            pluginGet(i);
+
+        printf(
+            "%d. %s v%s\n",
+            i + 1,
+            p->name,
+            p->version
+        );
+    }
+
+    printf(
+        "\nTotal: %d\n",
+        pluginCount()
+    );
+
+    getchar();
+}
+void pluginReload(void)
+{
+    pluginReloadAll();
+
+    char msg[128];
+
+    snprintf(
+        msg,
+        sizeof(msg),
+        "Reloaded %d plugins",
+        pluginCount()
+    );
+
+    editorSetStatusMessage(msg);
 }

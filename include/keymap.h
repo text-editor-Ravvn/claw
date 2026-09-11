@@ -16,6 +16,16 @@ enum EditorAction
 
     CMD_GIT_BLAME,
 
+    CMD_PLUGIN_LIST,
+
+    CMD_PLUGIN_RELOAD,
+
+    CMD_PLUGIN_HELLO,
+
+    CMD_PLUGIN_STATS,
+
+    CMD_PLUGIN_FORMAT,
+
     CMD_QUIT,
 
     CMD_SEARCH,

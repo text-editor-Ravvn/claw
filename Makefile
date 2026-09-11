@@ -23,6 +23,8 @@ SRC = src/main.c \
 	  src/command/command.c \
 	  src/highlight/highlight.c \
 	  src/git/git.c \
+	  src/plugin/plugin.c \
+	  src/plugin/plugin_commands.c \
 
 OBJ = $(SRC:.c=.o)
 
