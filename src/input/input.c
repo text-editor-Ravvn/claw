@@ -8,64 +8,160 @@ static int readEscapeByte(char *value)
 {
     fd_set readSet;
     struct timeval timeout = {0, 100000};
-    int ready;
 
     FD_ZERO(&readSet);
     FD_SET(STDIN_FILENO, &readSet);
 
+    int ready;
+
     do
     {
-        ready = select(STDIN_FILENO + 1, &readSet, NULL, NULL, &timeout);
-    } while (ready < 0 && errno == EINTR);
+        ready = select(
+            STDIN_FILENO + 1,
+            &readSet,
+            NULL,
+            NULL,
+            &timeout
+        );
+    }
+    while (
+        ready < 0 &&
+        errno == EINTR
+    );
 
-    return ready > 0 && read(STDIN_FILENO, value, 1) == 1;
+    return (
+        ready > 0 &&
+        read(
+            STDIN_FILENO,
+            value,
+            1
+        ) == 1
+    );
 }
 
-int readKey(void)
+KeyEvent readKey(void)
 {
-    /* Read one byte, then recognize the terminal's multi-byte key sequences. */
+    KeyEvent event;
+
+    event.key = 0;
+    event.modifiers = 0;
+
     char c;
 
-    if (read(STDIN_FILENO, &c, 1) != 1)
-        return -1;
+    if (
+        read(
+            STDIN_FILENO,
+            &c,
+            1
+        ) != 1
+    )
+    {
+        return event;
+    }
 
+    /*
+     * CTRL handling
+     * Ctrl+A ... Ctrl+Z
+     */
+    if (
+        c >= 1 &&
+        c <= 26
+    )
+    {
+        event.key =
+            'a' + c - 1;
+
+        event.modifiers =
+            MOD_CTRL;
+
+        return event;
+    }
+
+    /*
+     * ESC sequences
+     * Arrow keys
+     * Delete key
+     * Alt/Option key
+     */
     if (c == '\x1b')
     {
         char seq[2];
 
-        /* A short timeout lets a standalone Escape remain a usable key. */
         if (!readEscapeByte(&seq[0]))
-            return '\x1b';
-        if (!readEscapeByte(&seq[1]))
-            return '\x1b';
+        {
+            event.key = '\x1b';
+            return event;
+        }
 
+        /*
+         * Arrow/Delete sequences
+         */
         if (seq[0] == '[')
         {
+            if (!readEscapeByte(&seq[1]))
+            {
+                event.key = '\x1b';
+                return event;
+            }
+
             switch (seq[1])
             {
                 case 'A':
-                    return ARROW_UP;
+                    event.key =
+                        ARROW_UP;
+                    return event;
 
                 case 'B':
-                    return ARROW_DOWN;
+                    event.key =
+                        ARROW_DOWN;
+                    return event;
 
                 case 'C':
-                    return ARROW_RIGHT;
+                    event.key =
+                        ARROW_RIGHT;
+                    return event;
 
                 case 'D':
-                    return ARROW_LEFT;
+                    event.key =
+                        ARROW_LEFT;
+                    return event;
             }
 
             if (seq[1] == '3')
             {
                 char terminator;
-                if (readEscapeByte(&terminator) && terminator == '~')
-                    return DELETE_KEY;
+
+                if (
+                    readEscapeByte(
+                        &terminator
+                    ) &&
+                    terminator == '~'
+                )
+                {
+                    event.key =
+                        DELETE_KEY;
+
+                    return event;
+                }
             }
         }
 
-        return '\x1b';
+        /*
+         * Alt / Option key
+         */
+        event.key =
+            seq[0];
+
+        event.modifiers =
+            MOD_ALT;
+
+        return event;
     }
 
-    return c;
+    /*
+     * Normal key
+     */
+    event.key = c;
+
+    return event;
 }

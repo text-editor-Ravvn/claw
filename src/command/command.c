@@ -266,6 +266,10 @@ case CMD_PLUGIN_RELOAD:
         pluginToggle();
         break;
 
+        case CMD_PLUGIN_HEALTH:
+        pluginHealthCheck();
+        break;
+
         case CMD_PLUGIN_HELP:
         pluginShowCommands();
         break;

@@ -19,6 +19,7 @@
 #include "git.h"
 #include "plugin.h"
 #include "plugin_api.h"
+#include "plugin_commands.h"
 
 char *currentFile = NULL;
 static char statusMessage[128] = "";
@@ -125,8 +126,23 @@ void editorRun(void)
     viewportUpdateSize();
     refreshScreen();
 
-    int key = readKey();
+    KeyEvent event =
+    readKey();
+    char dbg[128];
 
+snprintf(
+    dbg,
+    sizeof(dbg),
+    "key=%d mod=%d pm=%d",
+    event.key,
+    event.modifiers,
+    pluginManager.active
+);
+
+editorSetStatusMessage(dbg);
+
+int key =
+    event.key;
     /* ---------- Git View ---------- */
 if (gitView.active)
 {
@@ -142,7 +158,7 @@ if (gitView.active)
     }
 }
 
-    /* ---------- Plugin Manager ---------- */
+   /* ---------- Plugin Manager ---------- */
 if (pluginManager.active)
 {
     if (key == 27)
@@ -159,13 +175,40 @@ if (pluginManager.active)
 
     if (key == ARROW_DOWN)
     {
-        if (pluginManager.selected <
-            pluginCount() - 1)
-        {
+        if (pluginManager.selected < pluginCount() - 1)
             pluginManager.selected++;
-        }
     }
 
+    if (
+        key == '\r' ||
+        key == '\n' ||
+        key == 10 ||
+        key == 13
+    )
+    {
+        Plugin *p =
+            pluginGet(
+                pluginManager.selected
+            );
+
+        if (p)
+        {
+            char msg[256];
+
+            snprintf(
+                msg,
+                sizeof(msg),
+                "Selected: %s",
+                p->name
+            );
+
+            editorSetStatusMessage(msg);
+        }
+
+        continue;
+    }
+
+    /* IMPORTANT */
     continue;
 }
 
@@ -367,7 +410,11 @@ if (pluginManager.active)
         return;
 
     /* Check if this key has a command binding. */
-    int action = keymapLookup(key);
+   int action =
+    keymapLookup(
+        event.key,
+        event.modifiers
+    );
 
     /* Reset quit confirmation on any key except quit. */
     if (action != CMD_QUIT)
@@ -596,6 +643,13 @@ void pluginReload(void)
 }
 void openPluginManager(void)
 {
+    fprintf(
+        stderr,
+        "\nOPEN_PLUGIN_MANAGER CALLED\n"
+    );
+
+    fflush(stderr);
+
     pluginManager.active = 1;
     pluginManager.selected = 0;
 

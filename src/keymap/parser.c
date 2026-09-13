@@ -9,18 +9,32 @@
 
 int keymapParseKey(const char *str)
 {
-    /* Handle "Ctrl+X" format. */
-    if (strncasecmp(str, "Ctrl+", 5) == 0 && str[5] != '\0')
-    {
-        char ch = str[5];
+    const char *plus =
+        strrchr(str, '+');
 
-        if (isalpha((unsigned char)ch))
-            return CTRL_KEY(tolower((unsigned char)ch));
+    if (plus)
+        str = plus + 1;
+
+    if (
+        strlen(str) == 1 &&
+        isalpha(
+            (unsigned char)str[0]
+        )
+    )
+    {
+        return tolower(
+            (unsigned char)str[0]
+        );
     }
 
-    /* Handle single printable character (for future extensibility). */
-    if (strlen(str) == 1 && str[0] >= 32 && str[0] <= 126)
+    if (
+        strlen(str) == 1 &&
+        str[0] >= 32 &&
+        str[0] <= 126
+    )
+    {
         return str[0];
+    }
 
     return -1;
 }
@@ -58,8 +72,14 @@ static int parseActionName(const char *name)
     return CMD_NONE;
 }
 
-int keymapParseFile(const char *path,
-                    void (*setter)(int, int))
+int keymapParseFile(
+    const char *path,
+    void (*setter)(
+        int action,
+        int key,
+        int modifiers
+    )
+)
 {
     FILE *fp = fopen(path, "r");
 
@@ -70,36 +90,101 @@ int keymapParseFile(const char *path,
 
     while (fgets(line, sizeof(line), fp))
     {
-        line[strcspn(line, "\r\n")] = '\0';
+        line[
+            strcspn(
+                line,
+                "\r\n"
+            )
+        ] = '\0';
 
-        char *trimmed = trimWhitespace(line);
+        char *trimmed =
+            trimWhitespace(line);
 
-        if (*trimmed == '\0' || *trimmed == '#')
+        if (
+            *trimmed == '\0' ||
+            *trimmed == '#'
+        )
+        {
             continue;
+        }
 
-        char *equals = strchr(trimmed, '=');
+        char *equals =
+            strchr(trimmed, '=');
 
         if (!equals)
             continue;
 
         *equals = '\0';
 
-        char *actionStr = trimWhitespace(trimmed);
-        char *keyStr = trimWhitespace(equals + 1);
+        char *actionStr =
+            trimWhitespace(trimmed);
 
-        int action = parseActionName(actionStr);
+        char *keyStr =
+            trimWhitespace(
+                equals + 1
+            );
 
-        if (action == CMD_NONE)
+        int action =
+            parseActionName(
+                actionStr
+            );
+
+        if (
+            action ==
+            CMD_NONE
+        )
+        {
             continue;
+        }
 
-        int key = keymapParseKey(keyStr);
+        int modifiers = 0;
+
+        if (
+            strstr(
+                keyStr,
+                "Ctrl"
+            )
+        )
+        {
+            modifiers |= MOD_CTRL;
+        }
+
+        if (
+            strstr(
+                keyStr,
+                "Alt"
+            )
+        )
+        {
+            modifiers |= MOD_ALT;
+        }
+
+        if (
+            strstr(
+                keyStr,
+                "Shift"
+            )
+        )
+        {
+            modifiers |= MOD_SHIFT;
+        }
+
+        int key =
+            keymapParseKey(
+                keyStr
+            );
 
         if (key < 0)
             continue;
 
-        setter(action, key);
+        setter(
+            action,
+            key,
+            modifiers
+        );
     }
 
     fclose(fp);
+
     return 1;
 }

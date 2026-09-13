@@ -31,7 +31,11 @@ typedef struct
     int searchHooks;
     int exitHooks;
 
-} Plugin;
+    /* V1.5.9 */
+    int healthScore;
+    int warningCount;
+    int healthy;
+    } Plugin;
 
 typedef enum
 {

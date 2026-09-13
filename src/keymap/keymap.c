@@ -11,130 +11,204 @@ void keymapInit(void) {
   bindingCount = 0;
 
   bindings[bindingCount].action = CMD_SAVE;
-  bindings[bindingCount].key = CTRL_KEY('s');
+  bindings[bindingCount].key = 's';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_GIT_ADD;
-  bindings[bindingCount].key = CTRL_KEY('g');
+  bindings[bindingCount].key = 'g';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_GIT_RESTORE;
-  bindings[bindingCount].key = CTRL_KEY('t');
+  bindings[bindingCount].key = 't';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_GIT_UNSTAGE;
-  bindings[bindingCount].key = CTRL_KEY('u');
+  bindings[bindingCount].key = 'u';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_GIT_BLAME;
-  bindings[bindingCount].key = CTRL_KEY('b');
+  bindings[bindingCount].key = 'b';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_PLUGIN_LIST;
-  bindings[bindingCount].key = CTRL_KEY('l');
+  bindings[bindingCount].key = 'l';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_PLUGIN_RELOAD;
-  bindings[bindingCount].key = CTRL_KEY('k');
+  bindings[bindingCount].key = 'k';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_PLUGIN_INFO;
-  bindings[bindingCount].key = CTRL_KEY('i');
+  bindings[bindingCount].key = 'i';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_PLUGIN_HELLO;
-  bindings[bindingCount].key = CTRL_KEY('h');
+  bindings[bindingCount].key = 'h';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_PLUGIN_STATS;
-  bindings[bindingCount].key = CTRL_KEY('j');
+  bindings[bindingCount].key = 'j';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_PLUGIN_FORMAT;
-  bindings[bindingCount].key = CTRL_KEY('o');
+  bindings[bindingCount].key = 'o';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_PLUGIN_CLEAR_LOGS;
-  bindings[bindingCount].key = CTRL_KEY('d');
+  bindings[bindingCount].key = 'd';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_PLUGIN_LOG;
-  bindings[bindingCount].key = CTRL_KEY('e');
+  bindings[bindingCount].key = 'e';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_PLUGIN_MANAGER;
-  bindings[bindingCount].key = CTRL_KEY('m');
+  bindings[bindingCount].key = 'm';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_PLUGIN_TOGGLE;
-  bindings[bindingCount].key = CTRL_KEY('v');
-  bindingCount++;
-  
-  bindings[bindingCount].action = CMD_PLUGIN_HELP;
-  bindings[bindingCount].key = CTRL_KEY('w');
+  bindings[bindingCount].key = 'v';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
+  bindings[bindingCount].action = CMD_PLUGIN_HEALTH;
+  bindings[bindingCount].key = 'h';
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_PLUGIN_HELP;
+  bindings[bindingCount].key = 'w';
+  bindings[bindingCount].modifiers = MOD_CTRL;
+  bindingCount++;
+  
   bindings[bindingCount].action = CMD_QUIT;
-  bindings[bindingCount].key = CTRL_KEY('x');
+  bindings[bindingCount].key = 'x';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_SEARCH;
-  bindings[bindingCount].key = CTRL_KEY('f');
+  bindings[bindingCount].key = 'f';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_REPLACE;
-  bindings[bindingCount].key = CTRL_KEY('r');
+  bindings[bindingCount].key = 'r';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_REPLACE_ALL;
-  bindings[bindingCount].key = CTRL_KEY('a');
+  bindings[bindingCount].key = 'a';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_UNDO;
-  bindings[bindingCount].key = CTRL_KEY('z');
+  bindings[bindingCount].key = 'z';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_REDO;
-  bindings[bindingCount].key = CTRL_KEY('y');
+  bindings[bindingCount].key = 'y';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_NEXT_MATCH;
-  bindings[bindingCount].key = CTRL_KEY('n');
+  bindings[bindingCount].key = 'n';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_PREV_MATCH;
-  bindings[bindingCount].key = CTRL_KEY('p');
+  bindings[bindingCount].key = 'p';
+  bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 }
 
-int keymapLookup(int key) {
-  for (int i = 0; i < bindingCount; i++) {
-    if (bindings[i].key == key)
-      return bindings[i].action;
-  }
+int keymapLookup(
+    int key,
+    int modifiers
+) {
+  for (int i = 0;
+     i < bindingCount;
+     i++)
+{
+    if (
+        bindings[i].key == key &&
+        bindings[i].modifiers == modifiers
+    )
+    {
+        return bindings[i].action;
+    }
+}
 
-  return CMD_NONE;
+return CMD_NONE;
 }
 
 /* Update an existing binding or append a new one. */
-static void keymapSetBinding(int action, int key) {
-  for (int i = 0; i < bindingCount; i++) {
-    if (bindings[i].action == action) {
-      bindings[i].key = key;
-      return;
-    }
-  }
+static void keymapSetBinding(
+    int action,
+    int key,
+    int modifiers
+)
+{
+    for (
+        int i = 0;
+        i < bindingCount;
+        i++
+    )
+    {
+        if (
+            bindings[i].action ==
+            action
+        )
+        {
+            bindings[i].key = key;
+            bindings[i].modifiers =
+                modifiers;
 
-  if (bindingCount < KEYMAP_MAX_BINDINGS) {
-    bindings[bindingCount].action = action;
-    bindings[bindingCount].key = key;
-    bindingCount++;
-  }
+            return;
+        }
+    }
+
+    if (
+        bindingCount <
+        KEYMAP_MAX_BINDINGS
+    )
+    {
+        bindings[bindingCount].action =
+            action;
+
+        bindings[bindingCount].key =
+            key;
+
+        bindings[bindingCount].modifiers =
+            modifiers;
+
+        bindingCount++;
+    }
 }
 
 int keymapLoad(const char *path) {
   /* Reuse the config-style parser from keymap/parser.c. */
-  extern int keymapParseFile(const char *path, void (*setter)(int, int));
-
+  extern int keymapParseFile(
+    const char *path,
+    void (*setter)(
+        int,
+        int,
+        int
+    )
+);
   return keymapParseFile(path, keymapSetBinding);
 }

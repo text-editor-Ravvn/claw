@@ -12,6 +12,16 @@ enum EditorKey
     
 };
 
-int readKey(void);
+typedef struct
+{
+    int key;
+    int modifiers;
+} KeyEvent;
+
+#define MOD_CTRL  1
+#define MOD_ALT   2
+#define MOD_SHIFT 4
+
+KeyEvent readKey(void);
 
 #endif

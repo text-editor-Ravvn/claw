@@ -403,7 +403,7 @@ void pluginShowCommands(void)
     snprintf(
         msg,
         sizeof(msg),
-        "Commands: hello stats format"
+        "Commands: hello stats format health"
     );
 
     editorSetStatusMessage(
@@ -441,4 +441,102 @@ void pluginToggle(void)
     );
 
     editorSetStatusMessage(msg);
+}
+void pluginHealthCheck(void)
+{
+    Plugin *p =
+        pluginGet(
+            pluginManager.selected
+        );
+
+    if (!p)
+    {
+        editorSetStatusMessage(
+            "No plugin selected"
+        );
+        return;
+    }
+
+    p->healthScore = 100;
+    p->warningCount = 0;
+    p->healthy = 1;
+
+    /* Plugin disabled */
+    if (!p->enabled)
+    {
+        p->healthScore -= 10;
+        p->warningCount++;
+    }
+
+    /* Auto-load disabled */
+    if (!p->autoLoad)
+    {
+        p->healthScore -= 10;
+        p->warningCount++;
+    }
+
+    /* Event system disabled */
+    if (!p->allowEvents)
+    {
+        p->healthScore -= 10;
+        p->warningCount++;
+    }
+
+    /* Missing command */
+    if (strlen(p->command) == 0)
+    {
+        p->healthScore -= 20;
+        p->warningCount++;
+    }
+
+    /* Missing version */
+    if (strlen(p->version) == 0)
+    {
+        p->healthScore -= 10;
+        p->warningCount++;
+    }
+
+    /* Missing author */
+    if (strlen(p->author) == 0)
+    {
+        p->healthScore -= 10;
+        p->warningCount++;
+    }
+
+    /* Runtime errors */
+    if (p->errorCount > 0)
+    {
+        p->healthScore -=
+            (p->errorCount * 5);
+
+        p->warningCount++;
+    }
+
+    if (p->healthScore < 0)
+    {
+        p->healthScore = 0;
+    }
+
+    if (p->healthScore < 70)
+    {
+        p->healthy = 0;
+    }
+
+    char msg[256];
+
+    snprintf(
+        msg,
+        sizeof(msg),
+        "%s Health:%d Warnings:%d %s",
+        p->name,
+        p->healthScore,
+        p->warningCount,
+        p->healthy
+            ? "HEALTHY"
+            : "UNHEALTHY"
+    );
+
+    editorSetStatusMessage(
+        msg
+    );
 }

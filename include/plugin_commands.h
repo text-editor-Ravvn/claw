@@ -19,4 +19,6 @@ void pluginShowCommands(void);
 
 void pluginToggle(void);
 
+void pluginHealthCheck(void);
+
 #endif

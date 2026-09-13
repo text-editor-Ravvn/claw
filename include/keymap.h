@@ -1,5 +1,8 @@
 #ifndef KEYMAP_H
 #define KEYMAP_H
+#define MOD_CTRL   1
+#define MOD_ALT    2
+#define MOD_SHIFT  4
 
 /* Editor actions that can be bound to keys. */
 enum EditorAction
@@ -40,6 +43,8 @@ enum EditorAction
 
     CMD_PLUGIN_TOGGLE,
 
+    CMD_PLUGIN_HEALTH,
+
     CMD_QUIT,
 
     CMD_SEARCH,
@@ -63,6 +68,7 @@ typedef struct
 {
     int action;
     int key;
+    int modifiers;
 } KeyBinding;
 
 /* Populate the binding table with the default key assignments. */
@@ -75,7 +81,10 @@ int keymapLoad(const char *path);
 
 /* Look up the action bound to a key code.
    Returns the EditorAction, or CMD_NONE if no binding matches. */
-int keymapLookup(int key);
+int keymapLookup(
+    int key,
+    int modifiers
+);
 
 /* Parse a human-readable key string like "Ctrl+S" into a key code.
    Returns -1 if the string cannot be parsed. */
