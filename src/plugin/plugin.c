@@ -46,6 +46,8 @@ int pluginLoad(const char *path)
     memset(&p, 0, sizeof(p));
 
     p.enabled = 1;
+    p.autoLoad = 1;
+    p.allowEvents = 1;
 
     strcpy(p.filename, path);
 
@@ -89,8 +91,21 @@ int pluginLoad(const char *path)
         {
             p.enabled = strcmp(value, "true") == 0;
         }
+        else if (
+    strcmp(key, "autoload") == 0
+)
+{
+    p.autoLoad =
+        strcmp(value, "true") == 0;
+}
+else if (
+    strcmp(key, "events") == 0
+)
+{
+    p.allowEvents =
+        strcmp(value, "true") == 0;
+}
     }
-
     fclose(fp);
     p.loadCount = 1;
     p.commandCount = 0;

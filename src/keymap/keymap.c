@@ -66,6 +66,10 @@ void keymapInit(void) {
   bindings[bindingCount].key = CTRL_KEY('m');
   bindingCount++;
 
+  bindings[bindingCount].action = CMD_PLUGIN_TOGGLE;
+  bindings[bindingCount].key = CTRL_KEY('v');
+  bindingCount++;
+  
   bindings[bindingCount].action = CMD_PLUGIN_HELP;
   bindings[bindingCount].key = CTRL_KEY('w');
   bindingCount++;

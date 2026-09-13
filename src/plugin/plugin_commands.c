@@ -273,13 +273,12 @@ void pluginShowInfo(void)
     snprintf(
     message,
     sizeof(message),
-    "%s v%s [%s] %s",
+    "%s v%s [%s] Auto:%s Events:%s",
     p->name,
     p->version,
-    p->enabled
-        ? "Enabled"
-        : "Disabled",
-    p->command
+    p->enabled ? "Enabled" : "Disabled",
+    p->autoLoad ? "On" : "Off",
+    p->allowEvents ? "On" : "Off"
 );
 
     editorSetStatusMessage(
@@ -410,4 +409,36 @@ void pluginShowCommands(void)
     editorSetStatusMessage(
         msg
     );
+}
+void pluginToggle(void)
+{
+    Plugin *p =
+        pluginGet(
+            pluginManager.selected
+        );
+
+    if (!p)
+    {
+        editorSetStatusMessage(
+            "No plugin selected"
+        );
+        return;
+    }
+
+    p->enabled =
+        !p->enabled;
+
+    char msg[128];
+
+    snprintf(
+        msg,
+        sizeof(msg),
+        "%s %s",
+        p->name,
+        p->enabled
+            ? "enabled"
+            : "disabled"
+    );
+
+    editorSetStatusMessage(msg);
 }

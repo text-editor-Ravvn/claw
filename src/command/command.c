@@ -262,6 +262,10 @@ case CMD_PLUGIN_RELOAD:
         openPluginManager();
         break;
 
+        case CMD_PLUGIN_TOGGLE:
+        pluginToggle();
+        break;
+
         case CMD_PLUGIN_HELP:
         pluginShowCommands();
         break;

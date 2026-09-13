@@ -14,14 +14,18 @@ typedef struct
 
     int enabled;
 
-    /* Existing statistics */
+    /* Configuration */
+    int autoLoad;
+    int allowEvents;
+
+    /* Statistics */
     int loadCount;
     int commandCount;
     int eventCount;
 
-    /* V1.5.3 statistics */
     int commandRuns;
     int errorCount;
+
     int startupHooks;
     int saveHooks;
     int searchHooks;

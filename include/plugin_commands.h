@@ -17,4 +17,6 @@ void pluginClearLogs(void);
 
 void pluginShowCommands(void);
 
+void pluginToggle(void);
+
 #endif

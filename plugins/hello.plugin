@@ -1,5 +1,8 @@
 name=Hello Plugin
-version=1.0
+version=1.5.8
 author=Aryan
 command=hello
+
 enabled=true
+autoload=true
+events=true

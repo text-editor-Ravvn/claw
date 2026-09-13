@@ -38,6 +38,8 @@ enum EditorAction
 
     CMD_PLUGIN_MANAGER,
 
+    CMD_PLUGIN_TOGGLE,
+
     CMD_QUIT,
 
     CMD_SEARCH,
