@@ -2,8 +2,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <dirent.h>
-
+#include "plugin_api.h"
+#include "plugin_commands.h"
 #include "plugin.h"
+#include "editor.h"
 
 Plugin plugins[MAX_PLUGINS];
 int pluginCountValue = 0;
@@ -11,6 +13,11 @@ int pluginCountValue = 0;
 void pluginInit(void)
 {
     pluginCountValue = 0;
+
+    pluginApiInit();
+
+    pluginRegisterBuiltins();
+
 }
 
 static void trim(char *s)
@@ -37,6 +44,8 @@ int pluginLoad(const char *path)
 
     Plugin p;
     memset(&p, 0, sizeof(p));
+
+    p.enabled = 1;
 
     strcpy(p.filename, path);
 
@@ -75,9 +84,18 @@ int pluginLoad(const char *path)
             strncpy(p.command,
                     value,
                     sizeof(p.command) - 1);
+
+        else if (strcmp(key, "enabled") == 0)
+        {
+            p.enabled = strcmp(value, "true") == 0;
+        }
     }
 
     fclose(fp);
+    p.loadCount = 1;
+    p.commandCount = 0;
+    p.errorCount = 0;
+    p.eventCount = 0;
 
     plugins[pluginCountValue++] = p;
 
@@ -132,4 +150,66 @@ Plugin *pluginGet(int index)
     }
 
     return &plugins[index];
+}
+void pluginHandleEvent(
+    Plugin *plugin,
+    int event
+)
+{
+    char message[256];
+
+    const char *eventName =
+        "unknown";
+
+    switch (event)
+    {
+        case PLUGIN_EVENT_STARTUP:
+            eventName = "startup";
+            break;
+
+        case PLUGIN_EVENT_SAVE:
+            eventName = "save";
+            break;
+
+        case PLUGIN_EVENT_SEARCH:
+            eventName = "search";
+            break;
+
+        case PLUGIN_EVENT_EXIT:
+            eventName = "exit";
+            break;
+    }
+
+    snprintf(
+        message,
+        sizeof(message),
+        "%s saw %s",
+        plugin->name,
+        eventName
+    );
+
+    editorSetStatusMessage(
+        message
+    );
+}
+Plugin *pluginFindByCommand(
+    const char *command
+)
+{
+    for (int i = 0;
+         i < pluginCountValue;
+         i++)
+    {
+        if (
+            strcmp(
+                plugins[i].command,
+                command
+            ) == 0
+        )
+        {
+            return &plugins[i];
+        }
+    }
+
+    return NULL;
 }

@@ -10,16 +10,33 @@
 #include "config.h"
 #include "highlight.h"
 #include <string.h>
+#include "plugin.h"
 
 extern Buffer buffer;
 extern Cursor cursor;
 extern char *currentFile;
 static int lastRows = 0;
 static int lastCols = 0;
+extern PluginManagerState pluginManager;
+void drawPluginManager(void);
+
 
 void refreshScreen(void)
 {
     printf("\033[?25l");
+
+    if (pluginManager.active)
+    {
+        printf("\033[2J");
+        printf("\033[H");
+
+        drawPluginManager();
+
+        printf("\033[?25h");
+        fflush(stdout);
+
+        return;
+    }
 
 /* Clear only when terminal size changes */
 if (lastRows != viewport.screenRows ||
@@ -61,19 +78,33 @@ else
         "Claw Text Editor",
         "",
         ("Version " CLAW_VERSION),
+        "Plugin System Active",
         "",
-        "Ctrl+S    Save File",
-        "Ctrl+F    Search",
-        "Ctrl+R    Replace",
-        "Ctrl+Z    Undo",
-        "Ctrl+Y    Redo",
+        "EDITOR",
+        "Ctrl+S  Save File",
+        "Ctrl+F  Search",
+        "Ctrl+R  Replace",
+        "Ctrl+Z  Undo",
+        "Ctrl+Y  Redo",
         "",
-        "Ctrl+G    Git Add",
-        "Ctrl+T    Git Restore",
-        "Ctrl+B    Git Blame",
-        "Esc       Exit Git View",
+        "GIT",
+        "Ctrl+G  Git Add",
+        "Ctrl+T  Git Restore",
+        "Ctrl+U  Git Unstage",
+        "Ctrl+B  Git Blame",
         "",
-        "Ctrl+X    Quit Editor"
+        "PLUGINS",
+        "Ctrl+M  Plugin Manager",
+        "Ctrl+I  Plugin Info",
+        "Ctrl+W  Plugin Commands",
+        "Ctrl+K  Reload Plugins",
+        "Ctrl+E  Plugin Log",
+        "Ctrl+H  Hello Plugin",
+        "Ctrl+J  Statistics Plugin",
+        "Ctrl+O  Format Plugin",
+        "",
+        "Esc     Exit Views",
+        "Ctrl+X  Quit Editor"
     };
 
     int lineCount =
@@ -87,12 +118,17 @@ else
         i < startRow + lineCount)
     {
         int index = i - startRow;
-        const char *line = welcomeLines[index];
 
-        /* Center title and version */
-        if (index == 0 || index == 2)
+        const char *line =
+            welcomeLines[index];
+
+        /* Center title, version and subtitle */
+        if (index == 0 ||
+            index == 2 ||
+            index == 3)
         {
-            int len = (int)strlen(line);
+            int len =
+                (int)strlen(line);
 
             int padding =
                 (viewport.screenCols - len) / 2;
@@ -100,23 +136,32 @@ else
             if (padding < 0)
                 padding = 0;
 
-            for (int j = 0; j < padding; j++)
+            for (int j = 0;
+                 j < padding;
+                 j++)
+            {
                 putchar(' ');
+            }
 
             printf("%s", line);
         }
         else
         {
-            int blockWidth = 28;
+            int blockWidth = 32;
 
             int padding =
-                (viewport.screenCols - blockWidth) / 2;
+                (viewport.screenCols -
+                 blockWidth) / 2;
 
             if (padding < 0)
                 padding = 0;
 
-            for (int j = 0; j < padding; j++)
+            for (int j = 0;
+                 j < padding;
+                 j++)
+            {
                 putchar(' ');
+            }
 
             printf("%s", line);
         }
@@ -304,4 +349,54 @@ else
 
     printf("\033[?25h");
     fflush(stdout);
+}
+void drawPluginManager(void)
+{
+    printf("\033[H");
+
+    printf("Plugin Manager\r\n");
+    printf("==============\r\n\r\n");
+
+    for (int i = 0;
+     i < pluginCount();
+     i++)
+{
+    Plugin *p = pluginGet(i);
+
+    if (i == pluginManager.selected)
+    {
+        printf(
+            "> [%d] %s v%s [%s]\r\n",
+            i,
+            p->name,
+            p->version,
+            p->enabled
+                ? "Enabled"
+                : "Disabled"
+        );
+
+        printf(
+            "    Cmd:%d Startup:%d Save:%d Search:%d Exit:%d\r\n",
+            p->commandRuns,
+            p->startupHooks,
+            p->saveHooks,
+            p->searchHooks,
+            p->exitHooks
+        );
+    }
+    else
+    {
+        printf(
+            "  [%d] %s v%s [%s]\r\n",
+            i,
+            p->name,
+            p->version,
+            p->enabled
+                ? "Enabled"
+                : "Disabled"
+        );
+    }
+}
+
+    printf("\r\nEsc = Return");
 }

@@ -18,6 +18,7 @@
 #include "highlight.h"
 #include "git.h"
 #include "plugin.h"
+#include "plugin_api.h"
 
 char *currentFile = NULL;
 static char statusMessage[128] = "";
@@ -25,6 +26,7 @@ static int quitRequested = 0;
 
 SavePrompt savePrompt = {0};
 GitViewState gitView = {0};
+PluginManagerState pluginManager = {0};
 
 void openSavePrompt(void)
 {
@@ -48,6 +50,10 @@ void editorInit(void)
     pluginInit();
 
     pluginLoadAll();
+
+    pluginTriggerEvent(
+    PLUGIN_EVENT_STARTUP
+    );
 
     /* Load configuration before anything that reads settings.
        Order: compiled-in defaults → bundled defaults → user config.
@@ -136,6 +142,33 @@ if (gitView.active)
     }
 }
 
+    /* ---------- Plugin Manager ---------- */
+if (pluginManager.active)
+{
+    if (key == 27)
+    {
+        closePluginManager();
+        continue;
+    }
+
+    if (key == ARROW_UP)
+    {
+        if (pluginManager.selected > 0)
+            pluginManager.selected--;
+    }
+
+    if (key == ARROW_DOWN)
+    {
+        if (pluginManager.selected <
+            pluginCount() - 1)
+        {
+            pluginManager.selected++;
+        }
+    }
+
+    continue;
+}
+
     /* ---------- Save-as prompt modal input ---------- */
     if (savePrompt.active)
     {
@@ -155,26 +188,26 @@ if (gitView.active)
                 continue;
             }
 
-            if (saveFile(savePrompt.filename))
-            {
-                currentFile =
-                    strdup(savePrompt.filename);
+           if (saveFile(savePrompt.filename))
+{
+    currentFile =
+        strdup(savePrompt.filename);
 
-                    highlightInit();
+    highlightInit();
 
-                    gitRefreshStatus(currentFile);
+    gitRefreshStatus(currentFile);
 
-                static char saveBuf[320];
+    static char saveBuf[320];
 
-                snprintf(
-                    saveBuf,
-                    sizeof(saveBuf),
-                    "Saved %s",
-                    currentFile
-                );
+    snprintf(
+        saveBuf,
+        sizeof(saveBuf),
+        "Saved %s",
+        currentFile
+    );
 
-                editorSetStatusMessage(saveBuf);
-            }
+    editorSetStatusMessage(saveBuf);
+}
             else
             {
                 static char errBuf[320];
@@ -342,18 +375,27 @@ if (gitView.active)
 
     /* Handle quit specially because of the confirmation flow. */
     if (action == CMD_QUIT)
+{
+    if (buffer.modified && !quitRequested)
     {
-        if (buffer.modified && !quitRequested)
-        {
-            quitRequested = 1;
-            snprintf(statusMessage,
-                     sizeof(statusMessage),
-                     "Unsaved changes. Press Ctrl-X again to quit.");
-            scrollEditor();
-            continue;
-        }
-        return;
+        quitRequested = 1;
+
+        snprintf(
+            statusMessage,
+            sizeof(statusMessage),
+            "Unsaved changes. Press Ctrl-X again to quit."
+        );
+
+        scrollEditor();
+        continue;
     }
+
+    pluginTriggerEvent(
+        PLUGIN_EVENT_EXIT
+    );
+
+    return;
+}
 
     /* Dispatch bound commands. */
     if (action != CMD_NONE)
@@ -443,6 +485,8 @@ void openGitView(
 {
     gitView.active = 1;
 
+    gitView.pluginLog = 0;
+
     if (currentFile)
     {
         snprintf(
@@ -460,6 +504,31 @@ void openGitView(
     openFile(tempFile);
 }
 
+void openPluginLogView(void)
+{
+    gitView.active = 1;
+
+    gitView.pluginLog = 1;
+
+    if (currentFile)
+    {
+        snprintf(
+            gitView.originalFile,
+            sizeof(gitView.originalFile),
+            "%s",
+            currentFile
+        );
+    }
+    else
+    {
+        gitView.originalFile[0] = '\0';
+    }
+
+    openFile(
+        "logs/plugins.log"
+    );
+}
+
 void closeGitView(void)
 {
     if (!gitView.active)
@@ -473,7 +542,10 @@ void closeGitView(void)
     }
 
     gitView.active = 0;
+
+    gitView.pluginLog = 0;
 }
+
 void pluginList(void)
 {
     editorSetStatusMessage(
@@ -521,4 +593,22 @@ void pluginReload(void)
     );
 
     editorSetStatusMessage(msg);
+}
+void openPluginManager(void)
+{
+    pluginManager.active = 1;
+    pluginManager.selected = 0;
+
+    editorSetStatusMessage(
+        "Plugin Manager"
+    );
+}
+
+void closePluginManager(void)
+{
+    pluginManager.active = 0;
+
+    editorSetStatusMessage(
+        "Returned to editor"
+    );
 }

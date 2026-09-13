@@ -2,9 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-
+#include "plugin.h"
 #include "buffer.h"
 #include "cursor.h"
+#include "plugin_api.h"
 
 extern Buffer buffer;
 
@@ -186,6 +187,10 @@ int saveFile(const char *filename)
 }
 
 buffer.modified = 0;
+
+pluginTriggerEvent(
+    PLUGIN_EVENT_SAVE
+);
 
 return 1;
 }

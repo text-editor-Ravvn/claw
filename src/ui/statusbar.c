@@ -23,6 +23,17 @@ void drawStatusBar(void)
 
     /* ---------------- Git Viewer Mode ---------------- */
     if (gitView.active)
+{
+    if (gitView.pluginLog)
+    {
+        snprintf(
+            left,
+            sizeof(left),
+            " Claw v%s | Plugin Log | Esc to return ",
+            CLAW_VERSION
+        );
+    }
+    else
     {
         snprintf(
             left,
@@ -30,40 +41,44 @@ void drawStatusBar(void)
             " Claw v%s | Git Blame View | Esc to return ",
             CLAW_VERSION
         );
-
-        snprintf(
-            right,
-            sizeof(right),
-            "Ln %d, Col %d",
-            cursor.y + 1,
-            cursor.x + 1
-        );
-
-        int leftLen = (int)strlen(left);
-        int rightLen = (int)strlen(right);
-
-        printf("\033[7m");
-
-        printf("%s", left);
-
-        int padding =
-            viewport.screenCols -
-            leftLen -
-            rightLen;
-
-        if (padding < 1)
-            padding = 1;
-
-        while (padding-- > 0)
-            putchar(' ');
-
-        printf("%s", right);
-
-        printf("\033[K");
-        printf("\033[m");
-
-        return;
     }
+
+    snprintf(
+        right,
+        sizeof(right),
+        "Ln %d, Col %d",
+        cursor.y + 1,
+        cursor.x + 1
+    );
+
+    int leftLen =
+        (int)strlen(left);
+
+    int rightLen =
+        (int)strlen(right);
+
+    printf("\033[7m");
+
+    printf("%s", left);
+
+    int padding =
+        viewport.screenCols -
+        leftLen -
+        rightLen;
+
+    if (padding < 1)
+        padding = 1;
+
+    while (padding-- > 0)
+        putchar(' ');
+
+    printf("%s", right);
+
+    printf("\033[K");
+    printf("\033[m");
+
+    return;
+}
 
     /* ---------------- Normal Status Bar ---------------- */
     if (gitCurrentBranch(branch, sizeof(branch)))

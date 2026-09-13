@@ -6,6 +6,8 @@
 #include "buffer.h"
 #include "cursor.h"
 #include "viewport.h"
+#include "plugin_api.h"
+
 
 extern Buffer buffer;
 extern Cursor cursor;
@@ -14,6 +16,11 @@ SearchState searchState = {0};
 
 void openSearchPrompt(void)
 {
+
+    pluginTriggerEvent(
+    PLUGIN_EVENT_SEARCH
+);
+
     searchState.active = 1;
 
     searchState.replaceMode = 0;
@@ -22,7 +29,6 @@ void openSearchPrompt(void)
 
     searchState.query[0] = '\0';
 
-    editorSetStatusMessage("");
 }
 
 void openReplacePrompt(void)
@@ -107,7 +113,7 @@ void performSearch(void)
         return;
     }
 
-    cursor.y =
+        cursor.y =
         searchState.matchRows[0];
 
     cursor.x =
@@ -118,13 +124,17 @@ void performSearch(void)
     char status[64];
 
     snprintf(
-    status,
-    sizeof(status),
-    "%d matches found",
-    searchState.matchCount
+        status,
+        sizeof(status),
+        "%d matches found",
+        searchState.matchCount
     );
 
-editorSetStatusMessage(status);
+    editorSetStatusMessage(status);
+
+    pluginTriggerEvent(
+    PLUGIN_EVENT_SEARCH
+);
 }
 void nextMatch(void)
 {

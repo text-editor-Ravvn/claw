@@ -9,6 +9,7 @@
 #include "git.h"
 #include "plugin.h"
 #include "plugin_commands.h"
+#include "plugin_api.h"
 
 extern char *currentFile;
 extern Buffer buffer;
@@ -28,16 +29,16 @@ void commandExecute(int action)
             static char statusBuf[128];
 
             if (saveFile(currentFile))
-            {
-                gitRefreshStatus(currentFile);
+{
+    gitRefreshStatus(currentFile);
 
-                snprintf(
-                    statusBuf,
-                    sizeof(statusBuf),
-                    "Saved %s",
-                    currentFile
-                );
-            }
+    snprintf(
+        statusBuf,
+        sizeof(statusBuf),
+        "Saved %s",
+        currentFile
+    );
+}
             else
             {
                 snprintf(
@@ -189,6 +190,8 @@ case CMD_GIT_UNSTAGE:
         break;
     }
 
+    gitView.pluginLog = 0;
+
     openGitView(
         ".claw_blame.tmp"
     );
@@ -227,6 +230,10 @@ case CMD_PLUGIN_RELOAD:
     break;
 }
 
+        case CMD_PLUGIN_INFO:
+        pluginShowInfo();
+        break;
+
         case CMD_PLUGIN_HELLO:
         pluginExecute("hello");
         break;
@@ -239,9 +246,30 @@ case CMD_PLUGIN_RELOAD:
         pluginExecute("format");
         break;
 
+        case CMD_PLUGIN_STATS_VIEW:
+        pluginShowStats();
+        break;
+
+        case CMD_PLUGIN_CLEAR_LOGS:
+        pluginClearLogs();
+        break;
+
+        case CMD_PLUGIN_LOG:
+        pluginOpenLog();
+        break;
+
+        case CMD_PLUGIN_MANAGER:
+        openPluginManager();
+        break;
+
+        case CMD_PLUGIN_HELP:
+        pluginShowCommands();
+        break;
+
         case CMD_SEARCH:
-            openSearchPrompt();
-            break;
+
+    openSearchPrompt();
+    break;
 
         case CMD_REPLACE:
             openReplacePrompt();

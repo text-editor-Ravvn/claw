@@ -25,6 +25,7 @@ SRC = src/main.c \
 	  src/git/git.c \
 	  src/plugin/plugin.c \
 	  src/plugin/plugin_commands.c \
+	  src/plugin/plugin_api.c \
 
 OBJ = $(SRC:.c=.o)
 

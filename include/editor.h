@@ -1,7 +1,7 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-#define CLAW_VERSION "1.4"
+#define CLAW_VERSION "1.5"
 
 /* Path of the file currently being edited, or NULL for a new buffer. */
 extern char *currentFile;
@@ -20,7 +20,11 @@ extern SavePrompt savePrompt;
 typedef struct
 {
     int active;
+
+    int pluginLog;
+
     char originalFile[512];
+
 } GitViewState;
 
 extern GitViewState gitView;

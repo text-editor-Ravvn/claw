@@ -1,12 +1,79 @@
 #include <string.h>
 #include <stdio.h>
-
+#include "plugin_api.h"
 #include "plugin_commands.h"
 #include "plugin.h"
 #include "editor.h"
 #include "buffer.h"
+#include <time.h>
 
 extern Buffer buffer;
+extern GitViewState gitView;
+extern PluginManagerState pluginManager;
+
+static void pluginLog(
+    const char *message
+)
+{
+    FILE *fp =
+        fopen(
+            "logs/plugins.log",
+            "a"
+        );
+
+    if (!fp)
+        return;
+
+    time_t now =
+        time(NULL);
+
+    struct tm *tmInfo =
+        localtime(&now);
+
+    char timestamp[64];
+
+    strftime(
+        timestamp,
+        sizeof(timestamp),
+        "%Y-%m-%d %H:%M:%S",
+        tmInfo
+    );
+
+    fprintf(
+        fp,
+        "[%s] %s\n",
+        timestamp,
+        message
+    );
+
+    fclose(fp);
+}
+
+static void pluginError(
+    Plugin *plugin,
+    const char *message
+)
+{
+    char logMsg[256];
+
+    snprintf(
+        logMsg,
+        sizeof(logMsg),
+        "[ERROR] %s",
+        message
+    );
+
+    pluginLog(logMsg);
+
+    editorSetStatusMessage(
+        logMsg
+    );
+
+    if (plugin)
+    {
+        plugin->errorCount++;
+    }
+}
 
 static void helloPlugin(void)
 {
@@ -71,25 +138,276 @@ void pluginExecute(
     const char *command
 )
 {
-    if (strcmp(command, "hello") == 0)
+    Plugin *plugin =
+        pluginFindByCommand(
+            command
+        );
+
+    if (
+        plugin &&
+        !plugin->enabled
+    )
     {
-        helloPlugin();
+        char msg[256];
+
+snprintf(
+    msg,
+    sizeof(msg),
+    "Plugin disabled: %s",
+    plugin->name
+);
+
+pluginError(
+    plugin,
+    msg
+);
+
+return;
+    }
+
+    PluginCommandFunc func =
+        pluginFindCommand(
+            command
+        );
+
+    if (func)
+{
+    for (int i = 0; i < pluginCountValue; i++)
+    {
+        if (strcmp(
+                plugins[i].command,
+                command
+            ) == 0)
+        {
+            plugins[i].commandRuns++;
+            break;
+        }
+    }
+
+    func();
+    return;
+}
+
+    char msg[256];
+
+snprintf(
+    msg,
+    sizeof(msg),
+    "Unknown plugin command: %s",
+    command
+);
+
+pluginError(
+    NULL,
+    msg
+);
+}
+static void startupHook(void)
+{
+    Plugin *p =
+        pluginFindByCommand("hello");
+
+    if (p)
+        p->startupHooks++;
+
+    pluginLog(
+        "[STARTUP] Hello Plugin saw startup"
+    );
+}
+
+static void searchHook(void)
+{
+    Plugin *p =
+        pluginFindByCommand("hello");
+
+    if (p)
+        p->searchHooks++;
+
+    pluginLog(
+        "[SEARCH] Hello Plugin saw search"
+    );
+}
+ 
+static void saveHook(void)
+{
+    Plugin *p =
+        pluginFindByCommand("hello");
+
+    if (p)
+        p->saveHooks++;
+
+    pluginLog(
+        "[SAVE] Hello Plugin saw save"
+    );
+}
+
+static void exitHook(void)
+{
+    Plugin *p =
+        pluginFindByCommand("hello");
+
+    if (p)
+        p->exitHooks++;
+
+    pluginLog(
+        "[EXIT] Hello Plugin saw exit"
+    );
+}
+
+void pluginShowInfo(void)
+{
+    static int current = 0;
+
+    if (pluginCountValue == 0)
+    {
+        editorSetStatusMessage(
+            "No plugins loaded"
+        );
         return;
     }
 
-    if (strcmp(command, "stats") == 0)
-    {
-        statsPlugin();
-        return;
-    }
+    Plugin *p = &plugins[current];
 
-    if (strcmp(command, "format") == 0)
-    {
-        formatterPlugin();
-        return;
-    }
+    char message[256];
+
+    snprintf(
+    message,
+    sizeof(message),
+    "%s v%s [%s] %s",
+    p->name,
+    p->version,
+    p->enabled
+        ? "Enabled"
+        : "Disabled",
+    p->command
+);
 
     editorSetStatusMessage(
-        "Unknown plugin"
+        message
+    );
+
+    current++;
+
+    if (current >= pluginCountValue)
+        current = 0;
+}
+
+void pluginOpenLog(void)
+{
+    openGitView(
+        "logs/plugins.log"
+    );
+
+    gitView.pluginLog = 1;
+
+    editorSetStatusMessage(
+        "Plugin Log (Esc to return)"
+    );
+}
+
+void pluginClearLogs(void)
+{
+    FILE *fp =
+        fopen(
+            "logs/plugins.log",
+            "w"
+        );
+
+    if (!fp)
+    {
+        editorSetStatusMessage(
+            "Could not clear plugin log"
+        );
+        return;
+    }
+
+    fclose(fp);
+
+    editorSetStatusMessage(
+        "Plugin log cleared"
+    );
+}
+
+void pluginRegisterBuiltins(void)
+{
+    pluginRegisterCommand(
+        "hello",
+        helloPlugin
+    );
+
+    pluginRegisterCommand(
+        "stats",
+        statsPlugin
+    );
+
+    pluginRegisterCommand(
+        "format",
+        formatterPlugin
+    );
+
+    pluginRegisterEvent(
+        PLUGIN_EVENT_STARTUP,
+        startupHook
+    );
+
+    pluginRegisterEvent(
+        PLUGIN_EVENT_SEARCH,
+        searchHook
+    );
+
+    pluginRegisterEvent(
+        PLUGIN_EVENT_SAVE,
+        saveHook
+    );
+
+    pluginRegisterEvent(
+        PLUGIN_EVENT_EXIT,
+        exitHook
+    );
+}
+void pluginShowStats(void)
+{
+    Plugin *p =
+        pluginGet(
+            pluginManager.selected
+        );
+
+    if (!p)
+    {
+        editorSetStatusMessage(
+            "No plugin selected"
+        );
+        return;
+    }
+
+    char msg[256];
+
+    snprintf(
+        msg,
+        sizeof(msg),
+       "%s | Cmd:%d Err:%d Startup:%d Save:%d Search:%d Exit:%d",
+        p->name,
+        p->commandRuns,
+        p->errorCount,
+        p->startupHooks,
+        p->saveHooks,
+        p->searchHooks,
+        p->exitHooks
+    );
+
+    editorSetStatusMessage(msg);
+}
+void pluginShowCommands(void)
+{
+    char msg[256];
+
+    snprintf(
+        msg,
+        sizeof(msg),
+        "Commands: hello stats format"
+    );
+
+    editorSetStatusMessage(
+        msg
     );
 }

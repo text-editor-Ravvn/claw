@@ -38,6 +38,10 @@ void keymapInit(void) {
   bindings[bindingCount].key = CTRL_KEY('k');
   bindingCount++;
 
+  bindings[bindingCount].action = CMD_PLUGIN_INFO;
+  bindings[bindingCount].key = CTRL_KEY('i');
+  bindingCount++;
+
   bindings[bindingCount].action = CMD_PLUGIN_HELLO;
   bindings[bindingCount].key = CTRL_KEY('h');
   bindingCount++;
@@ -48,6 +52,22 @@ void keymapInit(void) {
 
   bindings[bindingCount].action = CMD_PLUGIN_FORMAT;
   bindings[bindingCount].key = CTRL_KEY('o');
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_PLUGIN_CLEAR_LOGS;
+  bindings[bindingCount].key = CTRL_KEY('d');
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_PLUGIN_LOG;
+  bindings[bindingCount].key = CTRL_KEY('e');
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_PLUGIN_MANAGER;
+  bindings[bindingCount].key = CTRL_KEY('m');
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_PLUGIN_HELP;
+  bindings[bindingCount].key = CTRL_KEY('w');
   bindingCount++;
 
   bindings[bindingCount].action = CMD_QUIT;
