@@ -219,18 +219,18 @@ else
 
         int highlight = 0;
 
-        if (searchState.active &&
+        if (searchState.showMatches &&
             searchState.matchCount > 0)
         {
+            for(int m = 0;
+                m < searchState.matchCount;
+                m++)
+        {
             int matchRow =
-                searchState.matchRows[
-                    searchState.currentMatch
-                ];
+                searchState.matchRows[m];
 
             int matchCol =
-                searchState.matchCols[
-                    searchState.currentMatch
-                ];
+                searchState.matchCols[m];
 
             if (fileRow == matchRow &&
                 fileCol >= matchCol &&
@@ -238,7 +238,9 @@ else
                           searchState.length)
             {
                 highlight = 1;
+                break;
             }
+        }
         }
 
         if (highlight)
