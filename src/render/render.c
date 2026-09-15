@@ -219,7 +219,8 @@ else
 
         int highlight = 0;
 
-        if (searchState.matchCount > 0)
+        if (searchState.active &&
+            searchState.matchCount > 0)
         {
             int matchRow =
                 searchState.matchRows[
