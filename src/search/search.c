@@ -61,6 +61,7 @@ void performSearch(void)
 {
     searchState.matchCount = 0;
     searchState.currentMatch = 0;
+    searchState.showMatches = 0;
 
     if (searchState.length == 0)
         return;
@@ -112,6 +113,8 @@ void performSearch(void)
         );
         return;
     }
+    
+    searchState.showMatches = 1;
 
         cursor.y =
         searchState.matchRows[0];
