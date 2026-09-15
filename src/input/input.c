@@ -60,6 +60,19 @@ KeyEvent readKey(void)
     }
 
     /*
+     * Enter/Return
+     *
+     * Normalize both CR and LF to newline before
+     * the Ctrl+A....Ctrl+Z decoder
+    */
+    if(c=='\r' || c=='\n')
+    {
+        event.key = '\n';
+        event.modifiers = 0;
+        return event;
+    }
+    
+    /*
      * CTRL handling
      * Ctrl+A ... Ctrl+Z
      */
