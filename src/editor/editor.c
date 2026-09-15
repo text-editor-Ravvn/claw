@@ -301,6 +301,8 @@ if (pluginManager.active)
 {
     if (key == 27)
     {
+        searchState.showMatches = 0;
+        
         closeSearchPrompt();
 
         editorSetStatusMessage(
