@@ -297,6 +297,16 @@ if (pluginManager.active)
         continue;
     }
 
+    /* Clear accepted search highlighting
+     * After Enter, searchState.active is already 0
+     * so Esc must be handed here
+    */
+    if(key == 27 && searchState.showMatches)
+    {
+        searchState.showMatches = 0;
+        continue;
+    }
+    
     if (searchState.active)
 {
     if (key == 27)
