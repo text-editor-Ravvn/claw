@@ -4,7 +4,7 @@
 typedef struct
 {
     int active;
-
+    int showMatches;
     int replaceMode;
 
     char query[128];
