@@ -76,7 +76,7 @@ void keymapInit(void) {
   bindingCount++;
 
   bindings[bindingCount].action = CMD_PLUGIN_MANAGER;
-  bindings[bindingCount].key = 'm';
+  bindings[bindingCount].key = 'q';
   bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
