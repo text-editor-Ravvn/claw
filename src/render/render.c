@@ -24,6 +24,7 @@ void drawPluginManager(void);
 void refreshScreen(void)
 {
     printf("\033[?25l");
+    printf("\033[0m");
 
     if (pluginManager.active)
     {
