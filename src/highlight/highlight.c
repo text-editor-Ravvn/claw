@@ -119,7 +119,7 @@ const char *highlightColor(int hlType)
     case HL_OPERATOR:
         return "\033[38;5;204m"; /* soft red */
     case HL_MATCH:
-        return "\033[30;43m"; /* black on yellow (search) */
+        return "\033[0m\33[30;43m"; /* reset first, then black on yellow (search) */
     default:
         return "\033[m"; /* reset / normal */
     }
