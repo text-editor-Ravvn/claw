@@ -47,7 +47,7 @@ void keymapInit(void) {
 
   bindings[bindingCount].action = CMD_PLUGIN_INFO;
   bindings[bindingCount].key = 'i';
-  bindings[bindingCount].modifiers = MOD_CTRL;
+  bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_PLUGIN_HELLO;
@@ -57,7 +57,7 @@ void keymapInit(void) {
 
   bindings[bindingCount].action = CMD_PLUGIN_STATS;
   bindings[bindingCount].key = 'j';
-  bindings[bindingCount].modifiers = MOD_CTRL;
+  bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_PLUGIN_FORMAT;
@@ -76,8 +76,13 @@ void keymapInit(void) {
   bindingCount++;
 
   bindings[bindingCount].action = CMD_PLUGIN_MANAGER;
-  bindings[bindingCount].key = 'q';
-  bindings[bindingCount].modifiers = MOD_CTRL;
+  bindings[bindingCount].key = 'm';
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_PLUGIN_MANAGER;
+  bindings[bindingCount].key = 'p';
+  bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_PLUGIN_TOGGLE;

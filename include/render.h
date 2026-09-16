@@ -3,5 +3,6 @@
 
 /* Redraw the document, status bar, and terminal cursor. */
 void refreshScreen(void);
+void renderForceClear(void);
 
 #endif

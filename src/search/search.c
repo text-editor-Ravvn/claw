@@ -14,13 +14,6 @@ extern Cursor cursor;
 
 SearchState searchState = {0};
 
-void clearSearchMatches(void)
-{
-    searchState.showMatches = 0;
-    searchState.matchCount = 0;
-    searchState.currentMatch = 0;
-}
-
 void openSearchPrompt(void)
 {
 
@@ -29,7 +22,7 @@ void openSearchPrompt(void)
 );
 
     searchState.active = 1;
-    searchState.showMatches = 0;
+
     searchState.replaceMode = 0;
 
     searchState.length = 0;
@@ -68,7 +61,6 @@ void performSearch(void)
 {
     searchState.matchCount = 0;
     searchState.currentMatch = 0;
-    searchState.showMatches = 0;
 
     if (searchState.length == 0)
         return;
@@ -120,8 +112,6 @@ void performSearch(void)
         );
         return;
     }
-    
-    searchState.showMatches = 1;
 
         cursor.y =
         searchState.matchRows[0];
@@ -374,4 +364,3 @@ int replaceAllMatches(void)
 
     return replacements;
 }
-

@@ -3,6 +3,6 @@ version=1.5.8
 author=Aryan
 command=hello
 
-enabled=false
+enabled=true
 autoload=true
-events=false
+events=true

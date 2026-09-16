@@ -128,28 +128,14 @@ void editorRun(void)
 
     KeyEvent event =
     readKey();
-    char dbg[128];
 
-snprintf(
-    dbg,
-    sizeof(dbg), // Temporary changes only most likely //
-    "key=%d act =%d show =%d matches = %d len = %d cur = %d", // previously it was key %d mod = %d pm = %d //
-    event.key,
-    searchState.active,
-    searchState.showMatches, // previously only event.modifiers, was present //
-    searchState.matchCount,
-    searchState.length,
-    searchState.currentmatch // previously only pluginmanager.active was present //
-);
-
-editorSetStatusMessage(dbg);
 
 int key =
     event.key;
-    /* ---------- Git View ---------- */
+    /* ---------- Git View (read-only) ---------- */
 if (gitView.active)
 {
-    if (key == 27)
+    if (key == 27 || key == 'q')
     {
         closeGitView();
 
@@ -159,27 +145,42 @@ if (gitView.active)
 
         continue;
     }
+
+    /* Allow navigation only — block all editing in Git/Plugin views. */
+    if (key == ARROW_UP)
+        moveCursorUp();
+    else if (key == ARROW_DOWN)
+        moveCursorDown();
+    else if (key == ARROW_LEFT)
+        moveCursorLeft();
+    else if (key == ARROW_RIGHT)
+        moveCursorRight();
+
+    scrollEditor();
+    continue;
 }
 
    /* ---------- Plugin Manager ---------- */
 if (pluginManager.active)
 {
-    if (key == 27)
+    if (key == 27 || key == 'q')
     {
         closePluginManager();
         continue;
     }
 
-    if (key == ARROW_UP)
+    if (key == ARROW_UP || key == 'k')
     {
         if (pluginManager.selected > 0)
             pluginManager.selected--;
+        continue;
     }
 
-    if (key == ARROW_DOWN)
+    if (key == ARROW_DOWN || key == 'j')
     {
         if (pluginManager.selected < pluginCount() - 1)
             pluginManager.selected++;
+        continue;
     }
 
     if (
@@ -201,8 +202,11 @@ if (pluginManager.active)
             snprintf(
                 msg,
                 sizeof(msg),
-                "Selected: %s",
-                p->name
+                "%s v%s by %s - %s",
+                p->name,
+                p->version,
+                p->author[0] ? p->author : "Unknown",
+                p->enabled ? "Enabled" : "Disabled"
             );
 
             editorSetStatusMessage(msg);
@@ -211,7 +215,26 @@ if (pluginManager.active)
         continue;
     }
 
-    /* IMPORTANT */
+    if (key == ' ' || key == 't' || (event.key == 'v' && (event.modifiers & MOD_CTRL)))
+    {
+        pluginToggle();
+        continue;
+    }
+
+    if (key == 'h' || (event.key == 'h' && (event.modifiers & MOD_ALT)))
+    {
+        pluginHealthCheck();
+        continue;
+    }
+
+    if (key == 'r' || (event.key == 'k' && (event.modifiers & MOD_CTRL)))
+    {
+        pluginReloadAll();
+        editorSetStatusMessage("Plugins reloaded");
+        continue;
+    }
+
+    /* Ignore other keys while in plugin manager modal */
     continue;
 }
 
@@ -300,21 +323,10 @@ if (pluginManager.active)
         continue;
     }
 
-    /* Clear accepted search highlighting
-     * After Enter, searchState.active is already 0
-     * so Esc must be handed here
-    */
-    if(key == 27 && searchState.showMatches)
-    {
-        searchState.showMatches = 0;
-        continue;
-    }
-    
     if (searchState.active)
 {
     if (key == 27)
     {
-        clearSearchMatches();
         closeSearchPrompt();
 
         editorSetStatusMessage(
@@ -326,7 +338,7 @@ if (pluginManager.active)
         continue;
     }
     if (searchState.replaceMode &&
-    key == CTRL_KEY('a'))
+        (event.key == 'a' && (event.modifiers & MOD_CTRL)))
 {
     replaceAllMatches();
 
@@ -487,14 +499,11 @@ if (pluginManager.active)
 
         case '\r':
         case '\n':
-            searchState.showMatches = 0;
             insertNewLine();
             break;
 
         case '\t':
         {
-            searchState.showMatches = 0;
-            
             int width = configTabWidth();
 
             for (int i = 0; i < width; i++)
@@ -504,21 +513,16 @@ if (pluginManager.active)
         }
 
         case 127:
-            searchState.showMatches = 0;
             deleteChar();
             break;
 
         case DELETE_KEY:
-            searchState.showMatches = 0;
             deleteForward();
             break;
 
         default:
             if (key >= 32 && key <= 126)
-            {
-                searchState.showMatches = 0;
                 insertChar(key);
-            }
             break;
     }
     /* Update viewport after cursor movement */
@@ -573,30 +577,7 @@ void openGitView(
     openFile(tempFile);
 }
 
-void openPluginLogView(void)
-{
-    gitView.active = 1;
 
-    gitView.pluginLog = 1;
-
-    if (currentFile)
-    {
-        snprintf(
-            gitView.originalFile,
-            sizeof(gitView.originalFile),
-            "%s",
-            currentFile
-        );
-    }
-    else
-    {
-        gitView.originalFile[0] = '\0';
-    }
-
-    openFile(
-        "logs/plugins.log"
-    );
-}
 
 void closeGitView(void)
 {
@@ -609,68 +590,25 @@ void closeGitView(void)
             gitView.originalFile
         );
     }
-
-    gitView.active = 0;
-
-    gitView.pluginLog = 0;
-}
-
-void pluginList(void)
-{
-    editorSetStatusMessage(
-        "Plugins loaded"
-    );
-
-    printf("\033[2J");
-    printf("\033[H");
-
-    printf("Installed Plugins\n\n");
-
-    for (int i = 0;
-         i < pluginCount();
-         i++)
+    else
     {
-        Plugin *p =
-            pluginGet(i);
-
-        printf(
-            "%d. %s v%s\n",
-            i + 1,
-            p->name,
-            p->version
-        );
+        bufferFree();
+        bufferInit();
+        cursor.x = 0;
+        cursor.y = 0;
     }
 
-    printf(
-        "\nTotal: %d\n",
-        pluginCount()
-    );
+    gitView.active = 0;
+    gitView.pluginLog = 0;
 
-    getchar();
+    remove(".claw_blame.tmp");
+    renderForceClear();
 }
-void pluginReload(void)
-{
-    pluginReloadAll();
 
-    char msg[128];
 
-    snprintf(
-        msg,
-        sizeof(msg),
-        "Reloaded %d plugins",
-        pluginCount()
-    );
 
-    editorSetStatusMessage(msg);
-}
 void openPluginManager(void)
 {
-    fprintf(
-        stderr,
-        "\nOPEN_PLUGIN_MANAGER CALLED\n"
-    );
-
-    fflush(stderr);
 
     pluginManager.active = 1;
     pluginManager.selected = 0;
@@ -683,6 +621,8 @@ void openPluginManager(void)
 void closePluginManager(void)
 {
     pluginManager.active = 0;
+
+    renderForceClear();
 
     editorSetStatusMessage(
         "Returned to editor"

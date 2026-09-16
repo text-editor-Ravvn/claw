@@ -20,10 +20,15 @@ static int lastCols = 0;
 extern PluginManagerState pluginManager;
 void drawPluginManager(void);
 
+void renderForceClear(void)
+{
+    lastRows = 0;
+    lastCols = 0;
+}
+
 
 void refreshScreen(void)
 {
-    printf("\033[0m");
     printf("\033[?25l");
 
     if (pluginManager.active)
@@ -70,7 +75,7 @@ else
     {
         int fileRow = viewport.rowOffset + i;
 
-        printf("\033[\0m\033[K");
+        printf("\033[K");
 
       if (showWelcome)
 {
@@ -95,13 +100,13 @@ else
         "Ctrl+B  Git Blame",
         "",
         "PLUGINS",
-        "Ctrl+M  Plugin Manager",
-        "Ctrl+I  Plugin Info",
+        "Alt+M   Plugin Manager",
+        "Alt+I   Plugin Info",
         "Ctrl+W  Plugin Commands",
         "Ctrl+K  Reload Plugins",
         "Ctrl+E  Plugin Log",
         "Ctrl+H  Hello Plugin",
-        "Ctrl+J  Statistics Plugin",
+        "Alt+J   Statistics Plugin",
         "Ctrl+O  Format Plugin",
         "",
         "Esc     Exit Views",
@@ -220,18 +225,17 @@ else
 
         int highlight = 0;
 
-        if (searchState.showMatches &&
-            searchState.matchCount > 0)
-        {
-            for(int m = 0;
-                m < searchState.matchCount;
-                m++)
+        if (searchState.matchCount > 0)
         {
             int matchRow =
-                searchState.matchRows[m];
+                searchState.matchRows[
+                    searchState.currentMatch
+                ];
 
             int matchCol =
-                searchState.matchCols[m];
+                searchState.matchCols[
+                    searchState.currentMatch
+                ];
 
             if (fileRow == matchRow &&
                 fileCol >= matchCol &&
@@ -239,9 +243,7 @@ else
                           searchState.length)
             {
                 highlight = 1;
-                break;
             }
-        }
         }
 
         if (highlight)
@@ -361,46 +363,52 @@ void drawPluginManager(void)
     printf("Plugin Manager\r\n");
     printf("==============\r\n\r\n");
 
-    for (int i = 0;
-     i < pluginCount();
-     i++)
-{
-    Plugin *p = pluginGet(i);
-
-    if (i == pluginManager.selected)
+    for (int i = 0; i < pluginCount(); i++)
     {
-        printf(
-            "> [%d] %s v%s [%s]\r\n",
-            i,
-            p->name,
-            p->version,
-            p->enabled
-                ? "Enabled"
-                : "Disabled"
-        );
+        Plugin *p = pluginGet(i);
+        if (!p)
+            continue;
 
-        printf(
-            "    Cmd:%d Startup:%d Save:%d Search:%d Exit:%d\r\n",
-            p->commandRuns,
-            p->startupHooks,
-            p->saveHooks,
-            p->searchHooks,
-            p->exitHooks
-        );
+        if (i == pluginManager.selected)
+        {
+            printf(
+                "> [%d] %s v%s [%s]\r\n",
+                i,
+                p->name,
+                p->version,
+                p->enabled
+                    ? "Enabled"
+                    : "Disabled"
+            );
+
+            printf(
+                "    Cmd:%d Startup:%d Save:%d Search:%d Exit:%d\r\n",
+                p->commandRuns,
+                p->startupHooks,
+                p->saveHooks,
+                p->searchHooks,
+                p->exitHooks
+            );
+        }
+        else
+        {
+            printf(
+                "  [%d] %s v%s [%s]\r\n",
+                i,
+                p->name,
+                p->version,
+                p->enabled
+                    ? "Enabled"
+                    : "Disabled"
+            );
+        }
     }
-    else
+
+    const char *status = editorStatusMessage();
+    if (status && strlen(status) > 0)
     {
-        printf(
-            "  [%d] %s v%s [%s]\r\n",
-            i,
-            p->name,
-            p->version,
-            p->enabled
-                ? "Enabled"
-                : "Disabled"
-        );
+        printf("\r\nStatus: %s\r\n", status);
     }
-}
 
-    printf("\r\nEsc = Return");
+    printf("\r\n[Up/Down] Navigate  [Enter] Inspect  [Space/t] Toggle  [h] Health  [r] Reload  [Esc/q] Return\r\n");
 }

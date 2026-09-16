@@ -366,6 +366,14 @@ void pluginRegisterBuiltins(void)
 }
 void pluginShowStats(void)
 {
+    if (!pluginManager.active)
+    {
+        editorSetStatusMessage(
+            "Open Plugin Manager first (Alt+M)"
+        );
+        return;
+    }
+
     Plugin *p =
         pluginGet(
             pluginManager.selected
@@ -412,6 +420,14 @@ void pluginShowCommands(void)
 }
 void pluginToggle(void)
 {
+    if (!pluginManager.active)
+    {
+        editorSetStatusMessage(
+            "Open Plugin Manager first (Alt+M)"
+        );
+        return;
+    }
+
     Plugin *p =
         pluginGet(
             pluginManager.selected
@@ -444,6 +460,14 @@ void pluginToggle(void)
 }
 void pluginHealthCheck(void)
 {
+    if (!pluginManager.active)
+    {
+        editorSetStatusMessage(
+            "Open Plugin Manager first (Alt+M)"
+        );
+        return;
+    }
+
     Plugin *p =
         pluginGet(
             pluginManager.selected

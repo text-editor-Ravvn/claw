@@ -62,7 +62,7 @@ enum EditorAction
     CMD_PREV_MATCH
 };
 
-#define KEYMAP_MAX_BINDINGS 32
+#define KEYMAP_MAX_BINDINGS 64
 
 typedef struct
 {

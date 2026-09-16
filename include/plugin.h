@@ -35,7 +35,7 @@ typedef struct
     int healthScore;
     int warningCount;
     int healthy;
-    } Plugin;
+} Plugin;
 
 typedef enum
 {
