@@ -485,11 +485,14 @@ if (pluginManager.active)
 
         case '\r':
         case '\n':
+            searchState.showMatches = 0;
             insertNewLine();
             break;
 
         case '\t':
         {
+            searchState.showMatches = 0;
+            
             int width = configTabWidth();
 
             for (int i = 0; i < width; i++)
@@ -499,16 +502,21 @@ if (pluginManager.active)
         }
 
         case 127:
+            searchState.showMatches = 0;
             deleteChar();
             break;
 
         case DELETE_KEY:
+            searchState.showMatches = 0;
             deleteForward();
             break;
 
         default:
             if (key >= 32 && key <= 126)
+            {
+                searchState.showMatches = 0;
                 insertChar(key);
+            }
             break;
     }
     /* Update viewport after cursor movement */
