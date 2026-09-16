@@ -14,6 +14,13 @@ extern Cursor cursor;
 
 SearchState searchState = {0};
 
+void clearSearchMatches(void)
+{
+    searchState.showMatches = 0;
+    searchState.matchCount = 0;
+    searchState.currentMatch = 0;
+}
+
 void openSearchPrompt(void)
 {
 
@@ -368,9 +375,3 @@ int replaceAllMatches(void)
     return replacements;
 }
 
-void clearSearchMatches(void)
-{
-    searchState.showMatches = 0;
-    searchState.matchCount = 0;
-    searchState.currentMatch = 0;
-}
