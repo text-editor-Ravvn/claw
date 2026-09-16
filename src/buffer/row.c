@@ -4,6 +4,7 @@
 #include "buffer.h"
 #include "cursor.h"
 #include "history.h"
+#include "search.h"
 
 extern Buffer buffer;
 
