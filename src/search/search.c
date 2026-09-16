@@ -22,7 +22,7 @@ void openSearchPrompt(void)
 );
 
     searchState.active = 1;
-
+    searchState.showMatches = 0;
     searchState.replaceMode = 0;
 
     searchState.length = 0;
