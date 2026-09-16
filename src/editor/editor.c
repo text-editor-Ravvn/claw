@@ -132,11 +132,14 @@ void editorRun(void)
 
 snprintf(
     dbg,
-    sizeof(dbg),
-    "key=%d mod=%d pm=%d",
+    sizeof(dbg), // Temporary changes only most likely //
+    "key=%d act =%d show =%d matches = %d len = %d cur = %d", // previously it was key %d mod = %d pm = %d //
     event.key,
-    event.modifiers,
-    pluginManager.active
+    searchState.active,
+    searchState.showMatches, // previously only event.modifiers, was present //
+    searchState.matchCount,
+    searchState.length,
+    searchState.currentmatch // previously only pluginmanager.active was present //
 );
 
 editorSetStatusMessage(dbg);
