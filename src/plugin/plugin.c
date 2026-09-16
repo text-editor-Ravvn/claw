@@ -149,7 +149,7 @@ void pluginLoadAll(void)
 
 void pluginReloadAll(void)
 {
-    pluginCountValue = 0;
+    pluginInit();
 
     pluginLoadAll();
 }
@@ -169,47 +169,7 @@ Plugin *pluginGet(int index)
 
     return &plugins[index];
 }
-void pluginHandleEvent(
-    Plugin *plugin,
-    int event
-)
-{
-    char message[256];
 
-    const char *eventName =
-        "unknown";
-
-    switch (event)
-    {
-        case PLUGIN_EVENT_STARTUP:
-            eventName = "startup";
-            break;
-
-        case PLUGIN_EVENT_SAVE:
-            eventName = "save";
-            break;
-
-        case PLUGIN_EVENT_SEARCH:
-            eventName = "search";
-            break;
-
-        case PLUGIN_EVENT_EXIT:
-            eventName = "exit";
-            break;
-    }
-
-    snprintf(
-        message,
-        sizeof(message),
-        "%s saw %s",
-        plugin->name,
-        eventName
-    );
-
-    editorSetStatusMessage(
-        message
-    );
-}
 Plugin *pluginFindByCommand(
     const char *command
 )

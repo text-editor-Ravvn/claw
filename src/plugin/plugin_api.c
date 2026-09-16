@@ -22,10 +22,15 @@ int pluginRegisterCommand(
     if (commandCount >= MAX_PLUGIN_COMMANDS)
         return 0;
 
-    strcpy(
+    strncpy(
         commands[commandCount].command,
-        command
+        command,
+        sizeof(commands[commandCount].command) - 1
     );
+
+    commands[commandCount].command[
+        sizeof(commands[commandCount].command) - 1
+    ] = '\0';
 
     commands[commandCount].execute =
         func;

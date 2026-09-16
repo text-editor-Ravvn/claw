@@ -39,6 +39,66 @@ static int readEscapeByte(char *value)
     );
 }
 
+KeyEvent decodeKeyChar(char c)
+{
+    KeyEvent event;
+    event.key = 0;
+    event.modifiers = 0;
+
+    /*
+     * Enter / Newline keys:
+     * In standard terminals, Enter transmits '\r' (ASCII 13) or '\n' (ASCII 10).
+     * These must not be treated as Ctrl+M or Ctrl+J.
+     */
+    if (c == '\r' || c == '\n')
+    {
+        event.key = '\r';
+        event.modifiers = 0;
+        return event;
+    }
+
+    /*
+     * Tab key:
+     * In standard terminals, Tab transmits '\t' (ASCII 9).
+     * This must not be treated as Ctrl+I.
+     */
+    if (c == '\t')
+    {
+        event.key = '\t';
+        event.modifiers = 0;
+        return event;
+    }
+
+    /*
+     * Backspace key:
+     * Terminals send 127 (DEL) or 8 (BS).
+     * Standardize to 127 with no modifiers.
+     */
+    if (c == 127 || c == 8)
+    {
+        event.key = 127;
+        event.modifiers = 0;
+        return event;
+    }
+
+    /*
+     * CTRL handling:
+     * Ctrl+A ... Ctrl+Z (excluding Enter, Tab, Backspace handled above)
+     */
+    if (c >= 1 && c <= 26)
+    {
+        event.key = 'a' + c - 1;
+        event.modifiers = MOD_CTRL;
+        return event;
+    }
+
+    /*
+     * Normal printable character
+     */
+    event.key = (unsigned char)c;
+    return event;
+}
+
 KeyEvent readKey(void)
 {
     KeyEvent event;
@@ -56,24 +116,6 @@ KeyEvent readKey(void)
         ) != 1
     )
     {
-        return event;
-    }
-
-    /*
-     * CTRL handling
-     * Ctrl+A ... Ctrl+Z
-     */
-    if (
-        c >= 1 &&
-        c <= 26
-    )
-    {
-        event.key =
-            'a' + c - 1;
-
-        event.modifiers =
-            MOD_CTRL;
-
         return event;
     }
 
@@ -144,6 +186,9 @@ KeyEvent readKey(void)
                     return event;
                 }
             }
+
+            /* Unknown escape sequence, do not map to Alt+[ */
+            return event;
         }
 
         /*
@@ -158,10 +203,5 @@ KeyEvent readKey(void)
         return event;
     }
 
-    /*
-     * Normal key
-     */
-    event.key = c;
-
-    return event;
+    return decodeKeyChar(c);
 }

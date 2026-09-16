@@ -51,11 +51,13 @@ asan: clean
 test:
 	$(CC) $(CFLAGS) tests/buffer_test.c src/buffer/buffer.c src/buffer/row.c src/buffer/cursor.c src/history/history.c -o buffer_test
 	./buffer_test
-	$(CC) $(CFLAGS) tests/file_test.c src/fileio/fileio.c src/buffer/buffer.c src/buffer/row.c src/buffer/cursor.c src/history/history.c -o file_test
+	$(CC) $(CFLAGS) tests/file_test.c src/fileio/fileio.c src/buffer/buffer.c src/buffer/row.c src/buffer/cursor.c src/history/history.c src/plugin/plugin_api.c -o file_test
 	./file_test
-	rm -f buffer_test file_test
+	$(CC) $(CFLAGS) tests/input_test.c src/input/input.c src/keymap/keymap.c src/keymap/parser.c src/utils/string_utils.c -o input_test
+	./input_test
+	rm -f buffer_test file_test input_test
 
 clean:
-	rm -f $(OBJ) $(TARGET) buffer_test file_test
+	rm -f $(OBJ) $(TARGET) buffer_test file_test input_test
 
 rebuild: clean all

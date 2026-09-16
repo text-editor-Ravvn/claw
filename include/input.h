@@ -18,10 +18,10 @@ typedef struct
     int modifiers;
 } KeyEvent;
 
-#define MOD_CTRL  1
-#define MOD_ALT   2
-#define MOD_SHIFT 4
+/* MOD_CTRL, MOD_ALT, MOD_SHIFT are defined in keymap.h */
+#include "keymap.h"
 
+KeyEvent decodeKeyChar(char c);
 KeyEvent readKey(void);
 
 #endif
