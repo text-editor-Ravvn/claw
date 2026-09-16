@@ -23,8 +23,8 @@ void drawPluginManager(void);
 
 void refreshScreen(void)
 {
-    printf("\033[?25l");
     printf("\033[0m");
+    printf("\033[?25l");
 
     if (pluginManager.active)
     {
@@ -70,7 +70,7 @@ else
     {
         int fileRow = viewport.rowOffset + i;
 
-        printf("\033[K");
+        printf("\033[\0m\033[K");
 
       if (showWelcome)
 {
