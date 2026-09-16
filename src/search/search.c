@@ -367,3 +367,10 @@ int replaceAllMatches(void)
 
     return replacements;
 }
+
+void clearSearchMatches(void)
+{
+    searchState.showMatches = 0;
+    searchState.matchCount = 0;
+    searchState.currentMatch = 0;
+}
