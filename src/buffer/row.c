@@ -52,6 +52,7 @@ void insertChar(char c)
 
     cursor.x++;
     buffer.modified = 1;
+    clearSearchMatches();
 }
 
 void deleteChar(void)
@@ -87,6 +88,7 @@ void deleteChar(void)
 
         cursor.x--;
         buffer.modified = 1;
+        clearSearchMatches();
 
         return;
     }
@@ -145,6 +147,7 @@ void deleteChar(void)
 
     cursor.x = oldSize;
     buffer.modified = 1;
+    clearSearchMatches();
 }
 
 void deleteForward(void)
@@ -174,6 +177,7 @@ void deleteForward(void)
         row->hl = NULL;
         row->hlSize = 0;
         buffer.modified = 1;
+        clearSearchMatches();
         return;
     }
 
@@ -211,6 +215,7 @@ void deleteForward(void)
             buffer.rows = newRows;
         cursor.x = oldSize;
         buffer.modified = 1;
+        clearSearchMatches();
     }
 }
 
@@ -285,4 +290,5 @@ void insertNewLine(void)
 
     cursor.x = 0;
     buffer.modified = 1;
+    clearSearchMatches();
 }
