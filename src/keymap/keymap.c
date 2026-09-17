@@ -52,7 +52,7 @@ void keymapInit(void) {
 
   bindings[bindingCount].action = CMD_PLUGIN_HELLO;
   bindings[bindingCount].key = 'h';
-  bindings[bindingCount].modifiers = MOD_CTRL;
+  bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_PLUGIN_STATS;
@@ -77,11 +77,6 @@ void keymapInit(void) {
 
   bindings[bindingCount].action = CMD_PLUGIN_MANAGER;
   bindings[bindingCount].key = 'm';
-  bindings[bindingCount].modifiers = MOD_ALT;
-  bindingCount++;
-
-  bindings[bindingCount].action = CMD_PLUGIN_MANAGER;
-  bindings[bindingCount].key = 'p';
   bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
 

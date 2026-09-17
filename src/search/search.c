@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "search.h"
 #include "editor.h"
 #include "buffer.h"
@@ -8,27 +9,34 @@
 #include "viewport.h"
 #include "plugin_api.h"
 
-
 extern Buffer buffer;
 extern Cursor cursor;
 
 SearchState searchState = {0};
 
+void clearSearchResults(void)
+{
+    searchState.matchCount = 0;
+    searchState.currentMatch = 0;
+
+    searchState.length = 0;
+    searchState.query[0] = '\0';
+
+    searchState.replacementLength = 0;
+    searchState.replacement[0] = '\0';
+}
+
 void openSearchPrompt(void)
 {
-
     pluginTriggerEvent(
-    PLUGIN_EVENT_SEARCH
-);
+        PLUGIN_EVENT_SEARCH
+    );
 
     searchState.active = 1;
-
     searchState.replaceMode = 0;
 
     searchState.length = 0;
-
     searchState.query[0] = '\0';
-
 }
 
 void openReplacePrompt(void)
@@ -44,8 +52,7 @@ void openReplacePrompt(void)
     searchState.active = 1;
     searchState.replaceMode = 1;
 
-    /* KEEP searchState.query intact */
-
+    /* KEEP search query */
     searchState.replacementLength = 0;
     searchState.replacement[0] = '\0';
 
@@ -100,8 +107,7 @@ void performSearch(void)
                 searchState.matchCount++;
             }
 
-            start =
-                match + 1;
+            start = match + 1;
         }
     }
 
@@ -113,7 +119,7 @@ void performSearch(void)
         return;
     }
 
-        cursor.y =
+    cursor.y =
         searchState.matchRows[0];
 
     cursor.x =
@@ -133,9 +139,10 @@ void performSearch(void)
     editorSetStatusMessage(status);
 
     pluginTriggerEvent(
-    PLUGIN_EVENT_SEARCH
-);
+        PLUGIN_EVENT_SEARCH
+    );
 }
+
 void nextMatch(void)
 {
     if (searchState.matchCount == 0)
@@ -163,15 +170,15 @@ void nextMatch(void)
 
     char status[64];
 
-snprintf(
-    status,
-    sizeof(status),
-    "Match %d/%d",
-    searchState.currentMatch + 1,
-    searchState.matchCount
-);
+    snprintf(
+        status,
+        sizeof(status),
+        "Match %d/%d",
+        searchState.currentMatch + 1,
+        searchState.matchCount
+    );
 
-editorSetStatusMessage(status);
+    editorSetStatusMessage(status);
 }
 
 void previousMatch(void)
@@ -201,15 +208,15 @@ void previousMatch(void)
 
     char status[64];
 
-snprintf(
-    status,
-    sizeof(status),
-    "Match %d/%d",
-    searchState.currentMatch + 1,
-    searchState.matchCount
-);
+    snprintf(
+        status,
+        sizeof(status),
+        "Match %d/%d",
+        searchState.currentMatch + 1,
+        searchState.matchCount
+    );
 
-editorSetStatusMessage(status);
+    editorSetStatusMessage(status);
 }
 
 void replaceCurrentMatch(void)
@@ -237,17 +244,19 @@ void replaceCurrentMatch(void)
     char newLine[2048];
 
     int queryLen =
-    strlen(searchState.query);
+        (int)strlen(
+            searchState.query
+        );
 
-snprintf(
-    newLine,
-    sizeof(newLine),
-    "%.*s%s%s",
-    col,
-    r->chars,
-    searchState.replacement,
-    r->chars + col + queryLen
-);
+    snprintf(
+        newLine,
+        sizeof(newLine),
+        "%.*s%s%s",
+        col,
+        r->chars,
+        searchState.replacement,
+        r->chars + col + queryLen
+    );
 
     free(r->chars);
 
@@ -263,35 +272,36 @@ snprintf(
 
     performSearch();
 
-if (searchState.matchCount > 0)
-{
-    cursor.y =
-        searchState.matchRows[0];
+    if (searchState.matchCount > 0)
+    {
+        cursor.y =
+            searchState.matchRows[0];
 
-    cursor.x =
-        searchState.matchCols[0];
+        cursor.x =
+            searchState.matchCols[0];
 
-    scrollEditor();
+        scrollEditor();
 
-    snprintf(
-        status,
-        sizeof(status),
-        "Replaced \"%s\" with \"%s\"",
-        searchState.query,
-        searchState.replacement
-    );
+        snprintf(
+            status,
+            sizeof(status),
+            "Replaced \"%s\" with \"%s\"",
+            searchState.query,
+            searchState.replacement
+        );
+    }
+    else
+    {
+        snprintf(
+            status,
+            sizeof(status),
+            "All matches replaced"
+        );
+    }
+
+    editorSetStatusMessage(status);
 }
-else
-{
-    snprintf(
-        status,
-        sizeof(status),
-        "All matches replaced"
-    );
-}
 
-editorSetStatusMessage(status);
-}
 int replaceAllMatches(void)
 {
     performSearch();
@@ -327,7 +337,9 @@ int replaceAllMatches(void)
         char newLine[2048];
 
         int queryLen =
-            (int)strlen(searchState.query);
+            (int)strlen(
+                searchState.query
+            );
 
         snprintf(
             newLine,
@@ -341,7 +353,8 @@ int replaceAllMatches(void)
 
         free(r->chars);
 
-        r->chars = strdup(newLine);
+        r->chars =
+            strdup(newLine);
 
         r->size =
             (int)strlen(newLine);

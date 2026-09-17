@@ -327,6 +327,7 @@ if (pluginManager.active)
 {
     if (key == 27)
     {
+        clearSearchResults();
         closeSearchPrompt();
 
         editorSetStatusMessage(

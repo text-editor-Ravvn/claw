@@ -1,43 +1,8 @@
 #include <unistd.h>
 #include <sys/select.h>
-#include <errno.h>
 
 #include "input.h"
 
-static int readEscapeByte(char *value)
-{
-    fd_set readSet;
-    struct timeval timeout = {0, 100000};
-
-    FD_ZERO(&readSet);
-    FD_SET(STDIN_FILENO, &readSet);
-
-    int ready;
-
-    do
-    {
-        ready = select(
-            STDIN_FILENO + 1,
-            &readSet,
-            NULL,
-            NULL,
-            &timeout
-        );
-    }
-    while (
-        ready < 0 &&
-        errno == EINTR
-    );
-
-    return (
-        ready > 0 &&
-        read(
-            STDIN_FILENO,
-            value,
-            1
-        ) == 1
-    );
-}
 
 KeyEvent decodeKeyChar(char c)
 {
@@ -108,97 +73,92 @@ KeyEvent readKey(void)
 
     char c;
 
-    if (
-        read(
-            STDIN_FILENO,
-            &c,
-            1
-        ) != 1
-    )
-    {
+    if (read(STDIN_FILENO, &c, 1) != 1)
         return event;
-    }
 
-    /*
-     * ESC sequences
-     * Arrow keys
-     * Delete key
-     * Alt/Option key
-     */
     if (c == '\x1b')
     {
-        char seq[2];
+        fd_set set;
+        struct timeval tv;
 
-        if (!readEscapeByte(&seq[0]))
+        FD_ZERO(&set);
+        FD_SET(STDIN_FILENO, &set);
+
+        tv.tv_sec = 0;
+        tv.tv_usec = 30000;
+
+        int ready =
+            select(
+                STDIN_FILENO + 1,
+                &set,
+                NULL,
+                NULL,
+                &tv
+            );
+
+        if (ready == 0)
         {
-            event.key = '\x1b';
+            event.key = 27;
+            event.modifiers = 0;
             return event;
         }
 
-        /*
-         * Arrow/Delete sequences
-         */
+        char seq[2];
+
+        if (read(STDIN_FILENO, &seq[0], 1) != 1)
+        {
+            event.key = 27;
+            return event;
+        }
+
         if (seq[0] == '[')
         {
-            if (!readEscapeByte(&seq[1]))
+            if (read(STDIN_FILENO, &seq[1], 1) != 1)
             {
-                event.key = '\x1b';
+                event.key = 27;
                 return event;
             }
 
             switch (seq[1])
             {
                 case 'A':
-                    event.key =
-                        ARROW_UP;
+                    event.key = ARROW_UP;
                     return event;
 
                 case 'B':
-                    event.key =
-                        ARROW_DOWN;
+                    event.key = ARROW_DOWN;
                     return event;
 
                 case 'C':
-                    event.key =
-                        ARROW_RIGHT;
+                    event.key = ARROW_RIGHT;
                     return event;
 
                 case 'D':
-                    event.key =
-                        ARROW_LEFT;
+                    event.key = ARROW_LEFT;
                     return event;
             }
 
             if (seq[1] == '3')
             {
-                char terminator;
+                char term;
 
                 if (
-                    readEscapeByte(
-                        &terminator
-                    ) &&
-                    terminator == '~'
+                    read(STDIN_FILENO,
+                         &term,
+                         1) == 1 &&
+                    term == '~'
                 )
                 {
-                    event.key =
-                        DELETE_KEY;
-
+                    event.key = DELETE_KEY;
                     return event;
                 }
             }
 
-            /* Unknown escape sequence, do not map to Alt+[ */
             return event;
         }
 
-        /*
-         * Alt / Option key
-         */
-        event.key =
-            seq[0];
-
-        event.modifiers =
-            MOD_ALT;
+        event.key = seq[0];
+        event.modifiers = MOD_ALT;
 
         return event;
     }

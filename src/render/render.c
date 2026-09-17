@@ -86,29 +86,40 @@ else
         ("Version " CLAW_VERSION),
         "Plugin System Active",
         "",
+
         "EDITOR",
         "Ctrl+S  Save File",
         "Ctrl+F  Search",
         "Ctrl+R  Replace",
+        "Ctrl+A  Replace All",
         "Ctrl+Z  Undo",
         "Ctrl+Y  Redo",
+        "Ctrl+N  Next Match",
+        "Ctrl+P  Previous Match",
         "",
+
         "GIT",
         "Ctrl+G  Git Add",
         "Ctrl+T  Git Restore",
         "Ctrl+U  Git Unstage",
         "Ctrl+B  Git Blame",
         "",
+
         "PLUGINS",
         "Alt+M   Plugin Manager",
-        "Alt+I   Plugin Info",
-        "Ctrl+W  Plugin Commands",
+        "Ctrl+L  Plugin List",
         "Ctrl+K  Reload Plugins",
+        "Alt+I   Plugin Info",
         "Ctrl+E  Plugin Log",
-        "Ctrl+H  Hello Plugin",
+        "Alt+H   Hello Plugin",
         "Alt+J   Statistics Plugin",
         "Ctrl+O  Format Plugin",
+        "Ctrl+D  Clear Plugin Logs",
+        "Ctrl+V  Toggle Plugin",
+        "Alt+H   Plugin Health",
+        "Ctrl+W  Plugin Help",
         "",
+
         "Esc     Exit Views",
         "Ctrl+X  Quit Editor"
     };
@@ -128,13 +139,11 @@ else
         const char *line =
             welcomeLines[index];
 
-        /* Center title, version and subtitle */
         if (index == 0 ||
             index == 2 ||
             index == 3)
         {
-            int len =
-                (int)strlen(line);
+            int len = (int)strlen(line);
 
             int padding =
                 (viewport.screenCols - len) / 2;
@@ -142,32 +151,23 @@ else
             if (padding < 0)
                 padding = 0;
 
-            for (int j = 0;
-                 j < padding;
-                 j++)
-            {
+            for (int j = 0; j < padding; j++)
                 putchar(' ');
-            }
 
             printf("%s", line);
         }
         else
         {
-            int blockWidth = 32;
+            int blockWidth = 34;
 
             int padding =
-                (viewport.screenCols -
-                 blockWidth) / 2;
+                (viewport.screenCols - blockWidth) / 2;
 
             if (padding < 0)
                 padding = 0;
 
-            for (int j = 0;
-                 j < padding;
-                 j++)
-            {
+            for (int j = 0; j < padding; j++)
                 putchar(' ');
-            }
 
             printf("%s", line);
         }
