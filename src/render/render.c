@@ -360,55 +360,87 @@ void drawPluginManager(void)
 {
     printf("\033[H");
 
-    printf("Plugin Manager\r\n");
-    printf("==============\r\n\r\n");
+    printf("Plugin Dashboard\r\n");
+    printf("================================================\r\n\r\n");
+
+    printf(
+        "%-12s %-9s %-10s %-8s\r\n",
+        "Name",
+        "Version",
+        "Status",
+        "Commands"
+    );
+
+    printf(
+        "------------------------------------------------\r\n"
+    );
+
+    int enabledCount = 0;
+    int disabledCount = 0;
 
     for (int i = 0; i < pluginCount(); i++)
     {
         Plugin *p = pluginGet(i);
+
         if (!p)
             continue;
 
-        if (i == pluginManager.selected)
-        {
-            printf(
-                "> [%d] %s v%s [%s]\r\n",
-                i,
-                p->name,
-                p->version,
-                p->enabled
-                    ? "Enabled"
-                    : "Disabled"
-            );
-
-            printf(
-                "    Cmd:%d Startup:%d Save:%d Search:%d Exit:%d\r\n",
-                p->commandRuns,
-                p->startupHooks,
-                p->saveHooks,
-                p->searchHooks,
-                p->exitHooks
-            );
-        }
+        if (p->enabled)
+            enabledCount++;
         else
-        {
-            printf(
-                "  [%d] %s v%s [%s]\r\n",
-                i,
-                p->name,
-                p->version,
-                p->enabled
-                    ? "Enabled"
-                    : "Disabled"
-            );
-        }
+            disabledCount++;
+
+        if (i == pluginManager.selected)
+            printf("> ");
+        else
+            printf("  ");
+
+        printf(
+            "%-10s %-9s %-10s %-8d\r\n",
+            p->name,
+            p->version,
+            p->enabled
+                ? "Enabled"
+                : "Disabled",
+            p->commandRuns
+        );
     }
 
-    const char *status = editorStatusMessage();
-    if (status && strlen(status) > 0)
+    printf(
+        "\r\n------------------------------------------------\r\n"
+    );
+
+    printf(
+        "Loaded Plugins: %d\r\n",
+        pluginCount()
+    );
+
+    printf(
+        "Enabled: %d\r\n",
+        enabledCount
+    );
+
+    printf(
+        "Disabled: %d\r\n",
+        disabledCount
+    );
+
+    printf("\r\n");
+
+    const char *status =
+        editorStatusMessage();
+
+    if (status && status[0])
     {
-        printf("\r\nStatus: %s\r\n", status);
+        printf(
+            "Status: %s\r\n\r\n",
+            status
+        );
     }
 
-    printf("\r\n[Up/Down] Navigate  [Enter] Inspect  [Space/t] Toggle  [h] Health  [r] Reload  [Esc/q] Return\r\n");
+    printf("[Enter] Details\r\n");
+    printf("[Space] Toggle\r\n");
+    printf("[r] Reload\r\n");
+    printf("[h] Health\r\n");
+    printf("[Esc] Return\r\n");
 }
