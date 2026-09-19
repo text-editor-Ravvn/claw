@@ -48,3 +48,13 @@
 [2026-09-17 14:11:34] [SEARCH] Hello Plugin saw search
 [2026-09-17 14:11:39] [SEARCH] Hello Plugin saw search
 [2026-09-17 14:13:27] [EXIT] Hello Plugin saw exit
+[2026-09-19 17:44:04] [STARTUP] Hello Plugin saw startup
+[2026-09-19 17:44:15] [EXIT] Hello Plugin saw exit
+[2026-09-19 17:44:17] [STARTUP] Hello Plugin saw startup
+[2026-09-19 17:45:11] [SEARCH] Hello Plugin saw search
+[2026-09-19 17:45:25] [SEARCH] Hello Plugin saw search
+[2026-09-19 17:53:32] [EXIT] Hello Plugin saw exit
+[2026-09-19 17:53:59] [STARTUP] Hello Plugin saw startup
+[2026-09-19 17:54:02] [SEARCH] Hello Plugin saw search
+[2026-09-19 17:54:09] [SEARCH] Hello Plugin saw search
+[2026-09-19 17:56:34] [EXIT] Hello Plugin saw exit

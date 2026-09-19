@@ -130,8 +130,22 @@ void editorRun(void)
     readKey();
 
 
-int key =
-    event.key;
+    int key =
+        event.key;
+
+    /* Clear active search highlight */
+    if (key == 27 &&
+    searchState.matchCount > 0)
+    {
+    clearSearchResults();
+
+    editorSetStatusMessage(
+        "Search cancelled"
+    );
+
+    continue;
+    }
+    
     /* ---------- Git View (read-only) ---------- */
 if (gitView.active)
 {

@@ -16,14 +16,18 @@ SearchState searchState = {0};
 
 void clearSearchResults(void)
 {
-    searchState.matchCount = 0;
-    searchState.currentMatch = 0;
+    searchState.active = 0;
+
+    searchState.replaceMode = 0;
 
     searchState.length = 0;
     searchState.query[0] = '\0';
 
     searchState.replacementLength = 0;
     searchState.replacement[0] = '\0';
+
+    searchState.matchCount = 0;
+    searchState.currentMatch = 0;
 }
 
 void openSearchPrompt(void)
