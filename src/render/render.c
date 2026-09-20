@@ -19,6 +19,7 @@ static int lastRows = 0;
 static int lastCols = 0;
 extern PluginManagerState pluginManager;
 void drawPluginManager(void);
+void drawPluginDetails(void);
 
 void renderForceClear(void)
 {
@@ -31,18 +32,25 @@ void refreshScreen(void)
 {
     printf("\033[?25l");
 
-    if (pluginManager.active)
+   if (pluginManager.active)
+{
+    printf("\033[2J");
+    printf("\033[H");
+
+    if (pluginManager.detailsView)
     {
-        printf("\033[2J");
-        printf("\033[H");
-
-        drawPluginManager();
-
-        printf("\033[?25h");
-        fflush(stdout);
-
-        return;
+        drawPluginDetails();
     }
+    else
+    {
+        drawPluginManager();
+    }
+
+    printf("\033[?25h");
+    fflush(stdout);
+
+    return;
+}
 
 /* Clear only when terminal size changes */
 if (lastRows != viewport.screenRows ||
@@ -361,18 +369,14 @@ void drawPluginManager(void)
     printf("\033[H");
 
     printf("Plugin Dashboard\r\n");
-    printf("================================================\r\n\r\n");
+    printf("======================================================================\r\n\r\n");
 
     printf(
-        "%-12s %-9s %-10s %-8s\r\n",
-        "Name",
-        "Version",
-        "Status",
-        "Commands"
+        " ID  Name                Version   Status      Commands\r\n"
     );
 
     printf(
-        "------------------------------------------------\r\n"
+        " ---------------------------------------------------------------------\r\n"
     );
 
     int enabledCount = 0;
@@ -390,13 +394,12 @@ void drawPluginManager(void)
         else
             disabledCount++;
 
-        if (i == pluginManager.selected)
-            printf("> ");
-        else
-            printf("  ");
-
         printf(
-            "%-10s %-9s %-10s %-8d\r\n",
+            "%c%-2d  %-18s  %-8s  %-10s  %-8d\r\n",
+            (i == pluginManager.selected)
+                ? '>'
+                : ' ',
+            i,
             p->name,
             p->version,
             p->enabled
@@ -407,21 +410,21 @@ void drawPluginManager(void)
     }
 
     printf(
-        "\r\n------------------------------------------------\r\n"
+        "\r\n ---------------------------------------------------------------------\r\n"
     );
 
     printf(
-        "Loaded Plugins: %d\r\n",
+        " Loaded : %d\r\n",
         pluginCount()
     );
 
     printf(
-        "Enabled: %d\r\n",
+        " Enabled: %d\r\n",
         enabledCount
     );
 
     printf(
-        "Disabled: %d\r\n",
+        " Disabled: %d\r\n",
         disabledCount
     );
 
@@ -433,14 +436,255 @@ void drawPluginManager(void)
     if (status && status[0])
     {
         printf(
-            "Status: %s\r\n\r\n",
+            " Status : %s\r\n",
             status
         );
     }
 
-    printf("[Enter] Details\r\n");
-    printf("[Space] Toggle\r\n");
-    printf("[r] Reload\r\n");
-    printf("[h] Health\r\n");
-    printf("[Esc] Return\r\n");
+    printf("\r\n");
+
+    printf(
+        " [↑↓] Navigate   [Enter] Details   [Space] Toggle\r\n"
+    );
+
+    printf(
+        " [r] Reload      [h] Health        [Esc] Return\r\n"
+    );
+}
+
+void drawPluginDetails(void)
+{
+    printf("\033[H");
+
+    Plugin *p =
+        pluginGet(
+            pluginManager.selected
+        );
+
+    if (!p)
+    {
+        printf(
+            "No plugin selected\r\n"
+        );
+
+        return;
+    }
+
+    printf(
+        "Plugin Details\r\n"
+    );
+
+    printf(
+        "====================================================================\r\n\r\n"
+    );
+
+    /* ================================================================ */
+    /* General Information */
+    /* ================================================================ */
+
+    printf(
+        "General Information\r\n"
+    );
+
+    printf(
+        "--------------------------------------------------------------------\r\n"
+    );
+
+    printf(
+        "%-20s %s\r\n",
+        "Name",
+        p->name
+    );
+
+    printf(
+        "%-20s %s\r\n",
+        "Version",
+        p->version
+    );
+
+    printf(
+        "%-20s %s\r\n",
+        "Status",
+        p->enabled
+            ? "Enabled"
+            : "Disabled"
+    );
+
+    printf(
+        "%-20s %s\r\n",
+        "Author",
+        p->author[0]
+            ? p->author
+            : "Claw Team"
+    );
+
+    printf(
+        "%-20s %s\r\n",
+        "Command",
+        p->command[0]
+            ? p->command
+            : "-"
+    );
+
+    printf(
+        "%-20s %s\r\n",
+        "File",
+        p->filename
+    );
+
+    printf(
+        "%-20s %s\r\n",
+        "Autoload",
+        p->autoLoad
+            ? "Enabled"
+            : "Disabled"
+    );
+
+    printf(
+        "%-20s %s\r\n",
+        "Events",
+        p->allowEvents
+            ? "Enabled"
+            : "Disabled"
+    );
+
+    printf("\r\n");
+
+    /* ================================================================ */
+    /* Statistics */
+    /* ================================================================ */
+
+    printf(
+        "Statistics\r\n"
+    );
+
+    printf(
+        "--------------------------------------------------------------------\r\n"
+    );
+
+    printf(
+        "%-20s %d\r\n",
+        "Load Count",
+        p->loadCount
+    );
+
+    printf(
+        "%-20s %d\r\n",
+        "Commands Executed",
+        p->commandRuns
+    );
+
+    printf(
+        "%-20s %d\r\n",
+        "Event Count",
+        p->eventCount
+    );
+
+    printf(
+        "%-20s %d\r\n",
+        "Startup Hooks",
+        p->startupHooks
+    );
+
+    printf(
+        "%-20s %d\r\n",
+        "Save Hooks",
+        p->saveHooks
+    );
+
+    printf(
+        "%-20s %d\r\n",
+        "Search Hooks",
+        p->searchHooks
+    );
+
+    printf(
+        "%-20s %d\r\n",
+        "Exit Hooks",
+        p->exitHooks
+    );
+
+    printf("\r\n");
+
+    /* ================================================================ */
+    /* Health */
+    /* ================================================================ */
+
+    printf(
+        "Health\r\n"
+    );
+
+    printf(
+        "--------------------------------------------------------------------\r\n"
+    );
+
+    printf(
+        "%-20s %s\r\n",
+        "State",
+        p->healthy
+            ? "Healthy"
+            : "Warning"
+    );
+
+    printf(
+        "%-20s %d%%\r\n",
+        "Health Score",
+        p->healthScore
+    );
+
+    printf(
+        "%-20s %d\r\n",
+        "Warnings",
+        p->warningCount
+    );
+
+    printf(
+        "%-20s %d\r\n",
+        "Errors",
+        p->errorCount
+    );
+
+    printf(
+        "%-20s %s\r\n",
+        "Last Reload",
+        "Success"
+    );
+
+    printf("\r\n");
+
+    /* ================================================================ */
+    /* Controls */
+    /* ================================================================ */
+
+    printf(
+        "Controls\r\n"
+    );
+
+    printf(
+        "--------------------------------------------------------------------\r\n"
+    );
+
+    printf(
+        "[Space] Toggle Plugin\r\n"
+    );
+
+    printf(
+        "[a]     Toggle Autoload\r\n"
+    );
+
+    printf(
+        "[e]     Toggle Events\r\n"
+    );
+
+    printf(
+        "[r]     Reload Plugin\r\n"
+    );
+
+    printf(
+        "[h]     Health Check\r\n"
+    );
+
+    printf(
+        "[Esc]   Back To Dashboard\r\n"
+    );
 }

@@ -49,6 +49,7 @@ typedef struct
 {
     int active;
     int selected;
+    int detailsView;
 } PluginManagerState;
 
 extern Plugin plugins[MAX_PLUGINS];

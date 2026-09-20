@@ -111,9 +111,18 @@ else if (
     p.commandCount = 0;
     p.errorCount = 0;
     p.eventCount = 0;
+
+    p.commandRuns = 0;
+
     p.healthScore = 100;
     p.warningCount = 0;
     p.healthy = 1;
+
+    /* Hook statistics */
+    p.startupHooks = 1;
+    p.saveHooks = 0;
+    p.searchHooks = 0;
+    p.exitHooks = 0;
 
     plugins[pluginCountValue++] = p;
 

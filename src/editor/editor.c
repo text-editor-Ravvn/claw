@@ -177,26 +177,53 @@ if (gitView.active)
    /* ---------- Plugin Manager ---------- */
 if (pluginManager.active)
 {
+    /* Esc / q */
     if (key == 27 || key == 'q')
     {
-        closePluginManager();
+        if (pluginManager.detailsView)
+        {
+            pluginManager.detailsView = 0;
+
+            editorSetStatusMessage(
+                "Plugin Dashboard"
+            );
+        }
+        else
+        {
+            closePluginManager();
+        }
+
         continue;
     }
 
-    if (key == ARROW_UP || key == 'k')
+    /* Dashboard Navigation */
+    if (!pluginManager.detailsView)
     {
-        if (pluginManager.selected > 0)
-            pluginManager.selected--;
-        continue;
+        if (key == ARROW_UP || key == 'k')
+        {
+            if (pluginManager.selected > 0)
+            {
+                pluginManager.selected--;
+            }
+
+            continue;
+        }
+
+        if (key == ARROW_DOWN || key == 'j')
+        {
+            if (
+                pluginManager.selected <
+                pluginCount() - 1
+            )
+            {
+                pluginManager.selected++;
+            }
+
+            continue;
+        }
     }
 
-    if (key == ARROW_DOWN || key == 'j')
-    {
-        if (pluginManager.selected < pluginCount() - 1)
-            pluginManager.selected++;
-        continue;
-    }
-
+    /* Open Details View */
     if (
         key == '\r' ||
         key == '\n' ||
@@ -204,6 +231,27 @@ if (pluginManager.active)
         key == 13
     )
     {
+        pluginManager.detailsView = 1;
+
+        editorSetStatusMessage(
+            "Plugin Details"
+        );
+
+        continue;
+    }
+
+        /* Toggle Plugin */
+    if (
+        key == ' ' ||
+        key == 't' ||
+        (
+            event.key == 'v' &&
+            (event.modifiers & MOD_CTRL)
+        )
+    )
+    {
+        pluginToggle();
+
         Plugin *p =
             pluginGet(
                 pluginManager.selected
@@ -211,16 +259,16 @@ if (pluginManager.active)
 
         if (p)
         {
-            char msg[256];
+            char msg[128];
 
             snprintf(
                 msg,
                 sizeof(msg),
-                "%s v%s by %s - %s",
+                "%s %s",
                 p->name,
-                p->version,
-                p->author[0] ? p->author : "Unknown",
-                p->enabled ? "Enabled" : "Disabled"
+                p->enabled
+                    ? "Enabled"
+                    : "Disabled"
             );
 
             editorSetStatusMessage(msg);
@@ -229,26 +277,103 @@ if (pluginManager.active)
         continue;
     }
 
-    if (key == ' ' || key == 't' || (event.key == 'v' && (event.modifiers & MOD_CTRL)))
+    /* Toggle Autoload */
+    if (key == 'a')
     {
-        pluginToggle();
+        Plugin *p =
+            pluginGet(
+                pluginManager.selected
+            );
+
+        if (p)
+        {
+            p->autoLoad =
+                !p->autoLoad;
+
+            char msg[128];
+
+            snprintf(
+                msg,
+                sizeof(msg),
+                "Autoload %s",
+                p->autoLoad
+                    ? "Enabled"
+                    : "Disabled"
+            );
+
+            editorSetStatusMessage(msg);
+        }
+
         continue;
     }
 
-    if (key == 'h' || (event.key == 'h' && (event.modifiers & MOD_ALT)))
+    /* Toggle Events */
+    if (key == 'e')
+    {
+        Plugin *p =
+            pluginGet(
+                pluginManager.selected
+            );
+
+        if (p)
+        {
+            p->allowEvents =
+                !p->allowEvents;
+
+            char msg[128];
+
+            snprintf(
+                msg,
+                sizeof(msg),
+                "Events %s",
+                p->allowEvents
+                    ? "Enabled"
+                    : "Disabled"
+            );
+
+            editorSetStatusMessage(msg);
+        }
+
+        continue;
+    }
+
+    /* Health Check */
+    if (
+        key == 'h' ||
+        (
+            event.key == 'h' &&
+            (event.modifiers & MOD_ALT)
+        )
+    )
     {
         pluginHealthCheck();
+
+        editorSetStatusMessage(
+            "Plugin health checked"
+        );
+
         continue;
     }
 
-    if (key == 'r' || (event.key == 'k' && (event.modifiers & MOD_CTRL)))
+    /* Reload Plugins */
+    if (
+        key == 'r' ||
+        (
+            event.key == 'k' &&
+            (event.modifiers & MOD_CTRL)
+        )
+    )
     {
         pluginReloadAll();
-        editorSetStatusMessage("Plugins reloaded");
+
+        editorSetStatusMessage(
+            "Plugins reloaded successfully"
+        );
+
         continue;
     }
 
-    /* Ignore other keys while in plugin manager modal */
+    /* Ignore all other keys */
     continue;
 }
 
@@ -620,13 +745,12 @@ void closeGitView(void)
     renderForceClear();
 }
 
-
-
 void openPluginManager(void)
 {
-
     pluginManager.active = 1;
     pluginManager.selected = 0;
+
+    pluginManager.detailsView = 0;
 
     editorSetStatusMessage(
         "Plugin Manager"
@@ -636,6 +760,8 @@ void openPluginManager(void)
 void closePluginManager(void)
 {
     pluginManager.active = 0;
+
+    pluginManager.detailsView = 0;
 
     renderForceClear();
 
