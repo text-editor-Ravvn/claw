@@ -59,7 +59,9 @@ enum EditorAction
 
     CMD_NEXT_MATCH,
 
-    CMD_PREV_MATCH
+    CMD_PREV_MATCH,
+    
+    CMD_DUPLICATE_LINE,
 };
 
 #define KEYMAP_MAX_BINDINGS 64

@@ -37,4 +37,8 @@ int isClosingDelimiter(char c);
 char matchingDelimiter(char c);
 void insertPair(char opening, char closing);
 int handleSmartCharacter(char c);
+
+/* Productivity operations */
+void duplicateLine(void);
+
 #endif

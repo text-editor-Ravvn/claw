@@ -522,3 +522,56 @@ if (indent > 0)
 cursor.x = indent;
 buffer.modified = 1;
 }
+
+void duplicateLine(void)
+{
+    if (cursor.y < 0 || cursor.y >= buffer.numRows)
+        return;
+
+    int lineIndex = cursor.y;
+
+    Row source = buffer.rows[lineIndex];
+
+    Row *newRows =
+        realloc(
+            buffer.rows,
+            sizeof(Row) * (buffer.numRows + 1)
+        );
+
+    if (!newRows)
+        return;
+
+    buffer.rows = newRows;
+
+    for (int i = buffer.numRows; i > lineIndex + 1; i--)
+    {
+        buffer.rows[i] =
+            buffer.rows[i - 1];
+    }
+
+    Row *copy =
+        &buffer.rows[lineIndex + 1];
+
+    copy->size = source.size;
+
+    copy->chars =
+        malloc((size_t)source.size + 1);
+
+    if (!copy->chars)
+        return;
+
+    memcpy(
+        copy->chars,
+        source.chars,
+        (size_t)source.size + 1
+    );
+
+    copy->hl = NULL;
+    copy->hlSize = 0;
+
+    buffer.numRows++;
+
+    cursor.y++;
+
+    buffer.modified = 1;
+}

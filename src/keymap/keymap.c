@@ -51,7 +51,7 @@ void keymapInit(void) {
   bindingCount++;
 
   bindings[bindingCount].action = CMD_PLUGIN_HELLO;
-  bindings[bindingCount].key = 'h';
+  bindings[bindingCount].key = 'o';
   bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
 
@@ -133,6 +133,11 @@ void keymapInit(void) {
   bindings[bindingCount].action = CMD_PREV_MATCH;
   bindings[bindingCount].key = 'p';
   bindings[bindingCount].modifiers = MOD_CTRL;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_DUPLICATE_LINE;
+  bindings[bindingCount].key = 'd';
+  bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
 }
 

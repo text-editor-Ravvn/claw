@@ -119,7 +119,7 @@ else
         "Ctrl+K  Reload Plugins",
         "Alt+I   Plugin Info",
         "Ctrl+E  Plugin Log",
-        "Alt+H   Hello Plugin",
+        "Alt+O   Hello Plugin",
         "Alt+J   Statistics Plugin",
         "Ctrl+O  Format Plugin",
         "Ctrl+D  Clear Plugin Logs",

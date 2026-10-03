@@ -27,6 +27,7 @@ SRC = src/main.c \
 	  src/plugin/plugin_commands.c \
 	  src/plugin/plugin_api.c \
 	  src/brackets.c \
+	  src/indent.c \
 
 OBJ = $(SRC:.c=.o)
 

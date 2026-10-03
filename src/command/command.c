@@ -303,6 +303,10 @@ case CMD_PLUGIN_RELOAD:
             previousMatch();
             break;
 
+        case CMD_DUPLICATE_LINE:
+        duplicateLine();
+        break;
+
         default:
             break;
     }

@@ -21,6 +21,7 @@
 #include "plugin_api.h"
 #include "plugin_commands.h"
 #include "brackets.h"
+#include "indent.h"
 
 char *currentFile = NULL;
 static char statusMessage[128] = "";
@@ -645,14 +646,8 @@ if (pluginManager.active)
             break;
 
         case '\t':
-        {
-            int width = configTabWidth();
-
-            for (int i = 0; i < width; i++)
-                insertChar(' ');
-
-            break;
-        }
+        indentLine();
+        break;
 
         case 127:
             deleteChar();
