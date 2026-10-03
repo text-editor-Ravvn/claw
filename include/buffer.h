@@ -42,5 +42,5 @@ int handleSmartCharacter(char c);
 void duplicateLine(void);
 void moveLineUp(void);
 void moveLineDown(void);
-
+void toggleCommentLine(void);
 #endif

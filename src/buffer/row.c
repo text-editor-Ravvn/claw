@@ -615,3 +615,83 @@ void moveLineDown(void)
 
     buffer.modified = 1;
 }
+void toggleCommentLine(void)
+{
+    if (cursor.y < 0 ||
+        cursor.y >= buffer.numRows)
+    {
+        return;
+    }
+
+    Row *row = &buffer.rows[cursor.y];
+
+    int indent = 0;
+
+    while (
+        indent < row->size &&
+        (row->chars[indent] == ' ' ||
+         row->chars[indent] == '\t')
+    )
+    {
+        indent++;
+    }
+
+    /* Uncomment */
+
+    if (
+        indent + 1 < row->size &&
+        row->chars[indent] == '/' &&
+        row->chars[indent + 1] == '/'
+    )
+    {
+        memmove(
+            &row->chars[indent],
+            &row->chars[indent + 2],
+            (size_t)(
+                row->size -
+                indent -
+                1
+            )
+        );
+
+        row->size -= 2;
+        row->chars[row->size] = '\0';
+    }
+
+    /* Comment */
+
+    else
+    {
+        char *newChars =
+            realloc(
+                row->chars,
+                (size_t)row->size + 3
+            );
+
+        if (!newChars)
+            return;
+
+        row->chars = newChars;
+
+        memmove(
+            &row->chars[indent + 2],
+            &row->chars[indent],
+            (size_t)(
+                row->size -
+                indent +
+                1
+            )
+        );
+
+        row->chars[indent] = '/';
+        row->chars[indent + 1] = '/';
+
+        row->size += 2;
+    }
+
+    free(row->hl);
+    row->hl = NULL;
+    row->hlSize = 0;
+
+    buffer.modified = 1;
+}

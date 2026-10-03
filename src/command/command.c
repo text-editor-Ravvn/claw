@@ -312,8 +312,12 @@ case CMD_PLUGIN_RELOAD:
         break;
 
         case CMD_MOVE_LINE_DOWN:
-            moveLineDown();
-            break;
+        moveLineDown();
+        break;
+
+        case CMD_COMMENT_LINE:
+        toggleCommentLine();
+        break;
 
         default:
             break;

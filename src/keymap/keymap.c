@@ -150,6 +150,11 @@ void keymapInit(void) {
   bindings[bindingCount].modifiers = MOD_SHIFT;
   bindingCount++;
 
+  bindings[bindingCount].action = CMD_COMMENT_LINE;
+  bindings[bindingCount].key = '/'; 
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
 }
 
 int keymapLookup(
