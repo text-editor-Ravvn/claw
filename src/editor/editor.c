@@ -20,6 +20,7 @@
 #include "plugin.h"
 #include "plugin_api.h"
 #include "plugin_commands.h"
+#include "brackets.h"
 
 char *currentFile = NULL;
 static char statusMessage[128] = "";
@@ -124,6 +125,7 @@ void editorRun(void)
     while (1)
 {
     viewportUpdateSize();
+    updateBracketMatch();
     refreshScreen();
 
     KeyEvent event =

@@ -2,6 +2,8 @@
 #include "buffer.h"
 
 Cursor cursor = {0, 0};
+int bracketMatchX = -1;
+int bracketMatchY = -1;
 
 extern Buffer buffer;
 

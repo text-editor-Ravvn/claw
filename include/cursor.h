@@ -9,6 +9,8 @@ typedef struct
 } Cursor;
 
 extern Cursor cursor;
+extern int bracketMatchX;
+extern int bracketMatchY;
 
 /* Move without allowing the cursor to leave the current document. */
 void moveCursorLeft(void);
