@@ -80,6 +80,39 @@ int handleSmartCharacter(char c)
 
     Row *row = &buffer.rows[cursor.y];
 
+    /* Smart closing brace alignment */
+    if (c == '}')
+    {
+        int onlySpaces = 1;
+
+        for (int i = 0; i < cursor.x; i++)
+        {
+            if (row->chars[i] != ' ')
+            {
+                onlySpaces = 0;
+                break;
+            }
+        }
+
+        if (onlySpaces)
+        {
+            int currentIndent = cursor.x;
+
+            if (currentIndent >= 4)
+            {
+                memmove(
+                    &row->chars[currentIndent - 4],
+                    &row->chars[currentIndent],
+                    (size_t)(row->size - currentIndent + 1)
+                );
+
+                row->size -= 4;
+                cursor.x -= 4;
+            }
+        }
+    }
+
+    /* Skip over existing closing delimiter */
     if (
         isClosingDelimiter(c) &&
         cursor.x < row->size &&
@@ -90,6 +123,7 @@ int handleSmartCharacter(char c)
         return 1;
     }
 
+    /* Skip over existing quote */
     if (
         (c == '"' || c == '\'') &&
         cursor.x < row->size &&
@@ -100,6 +134,7 @@ int handleSmartCharacter(char c)
         return 1;
     }
 
+    /* Auto-pair opening delimiters */
     if (isOpeningDelimiter(c))
     {
         char closing = matchingDelimiter(c);
@@ -160,8 +195,55 @@ void insertChar(char c)
     buffer.modified = 1;
 }
 
+static int handleSmartBackspace(void)
+{
+    if (cursor.y < 0 || cursor.y >= buffer.numRows)
+        return 0;
+
+    Row *row = &buffer.rows[cursor.y];
+
+    if (cursor.x == 0)
+        return 0;
+
+    /* Only trigger when cursor is inside indentation */
+    for (int i = 0; i < cursor.x; i++)
+    {
+        if (row->chars[i] != ' ')
+            return 0;
+    }
+
+    int tabWidth = 4;
+
+    if (cursor.x >= tabWidth)
+    {
+        int removeCount = tabWidth;
+
+        memmove(
+            &row->chars[cursor.x - removeCount],
+            &row->chars[cursor.x],
+            (size_t)(row->size - cursor.x + 1)
+        );
+
+        row->size -= removeCount;
+        cursor.x -= removeCount;
+
+        free(row->hl);
+        row->hl = NULL;
+        row->hlSize = 0;
+
+        buffer.modified = 1;
+
+        return 1;
+    }
+
+    return 0;
+}
+
 void deleteChar(void)
 {
+     if (handleSmartBackspace())
+        return;
+
     /* Backspace removes left; at column zero it joins with the prior row. */
     if (cursor.y >= buffer.numRows)
         return;
