@@ -1,11 +1,118 @@
 #include <stdlib.h>
 #include <string.h>
-
+#include <ctype.h>
 #include "buffer.h"
 #include "cursor.h"
 #include "history.h"
 
 extern Buffer buffer;
+
+/* ===== Phase 4: Smart Delimiter Support ===== */
+
+static int getIndentation(const char *line)
+{
+    int count = 0;
+
+    while (line[count] == ' ' || line[count] == '\t')
+        count++;
+
+    return count;
+}
+
+int isOpeningDelimiter(char c)
+{
+    return (
+        c == '(' ||
+        c == '[' ||
+        c == '{' ||
+        c == '"' ||
+        c == '\''
+    );
+}
+
+int isClosingDelimiter(char c)
+{
+    return (
+        c == ')' ||
+        c == ']' ||
+        c == '}'
+    );
+}
+
+char matchingDelimiter(char c)
+{
+    switch (c)
+    {
+        case '(': return ')';
+        case '[': return ']';
+        case '{': return '}';
+        case '"': return '"';
+        case '\'': return '\'';
+        default: return '\0';
+    }
+}
+
+void insertPair(char opening, char closing)
+{
+    if (cursor.y < 0 || cursor.y >= buffer.numRows)
+        return;
+
+    Row *row = &buffer.rows[cursor.y];
+
+    if (cursor.x < 0)
+        cursor.x = 0;
+
+    if (cursor.x > row->size)
+        cursor.x = row->size;
+
+    int originalPos = cursor.x;
+
+    insertChar(opening);
+    insertChar(closing);
+
+    cursor.x = originalPos + 1;
+}
+
+int handleSmartCharacter(char c)
+{
+    if (cursor.y < 0 || cursor.y >= buffer.numRows)
+        return 0;
+
+    Row *row = &buffer.rows[cursor.y];
+
+    if (
+        isClosingDelimiter(c) &&
+        cursor.x < row->size &&
+        row->chars[cursor.x] == c
+    )
+    {
+        cursor.x++;
+        return 1;
+    }
+
+    if (
+        (c == '"' || c == '\'') &&
+        cursor.x < row->size &&
+        row->chars[cursor.x] == c
+    )
+    {
+        cursor.x++;
+        return 1;
+    }
+
+    if (isOpeningDelimiter(c))
+    {
+        char closing = matchingDelimiter(c);
+
+        if (closing != '\0')
+        {
+            insertPair(c, closing);
+            return 1;
+        }
+    }
+
+    return 0;
+}
 
 void insertChar(char c)
 {
@@ -282,6 +389,37 @@ void insertNewLine(void)
 
     cursor.y++;
 
-    cursor.x = 0;
-    buffer.modified = 1;
+/* Auto indentation */
+int indent =
+    getIndentation(buffer.rows[cursor.y - 1].chars);
+
+if (indent > 0)
+{
+    Row *row = &buffer.rows[cursor.y];
+
+    char *newChars =
+        realloc(
+            row->chars,
+            row->size + indent + 1
+        );
+
+    if (newChars)
+    {
+        row->chars = newChars;
+
+        memmove(
+            row->chars + indent,
+            row->chars,
+            row->size + 1
+        );
+
+        for (int i = 0; i < indent; i++)
+            row->chars[i] = ' ';
+
+        row->size += indent;
+    }
+}
+
+cursor.x = indent;
+buffer.modified = 1;
 }
