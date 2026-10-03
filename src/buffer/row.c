@@ -337,8 +337,16 @@ void insertNewLine(void)
     if (cursor.x > current->size)
         cursor.x = current->size;
 
-    int leftSize = cursor.x;
-    int rightSize = current->size - cursor.x;
+   int leftSize = cursor.x;
+int rightSize = current->size - cursor.x;
+
+/* Save last character before realloc */
+char lastChar = '\0';
+
+if (leftSize > 0)
+{
+    lastChar = current->chars[leftSize - 1];
+}
 
     char *rightPart = malloc((size_t)rightSize + 1);
 
@@ -393,6 +401,12 @@ void insertNewLine(void)
 int indent =
     getIndentation(buffer.rows[cursor.y - 1].chars);
 
+/* Smart indentation after opening brace */
+if (lastChar == '{')
+{
+    indent += 4;
+}
+
 if (indent > 0)
 {
     Row *row = &buffer.rows[cursor.y];
@@ -400,7 +414,7 @@ if (indent > 0)
     char *newChars =
         realloc(
             row->chars,
-            row->size + indent + 1
+            (size_t)row->size + indent + 1
         );
 
     if (newChars)
@@ -408,13 +422,16 @@ if (indent > 0)
         row->chars = newChars;
 
         memmove(
-            row->chars + indent,
+            &row->chars[indent],
             row->chars,
-            row->size + 1
+            (size_t)row->size + 1
         );
 
-        for (int i = 0; i < indent; i++)
-            row->chars[i] = ' ';
+        memset(
+            row->chars,
+            ' ',
+            (size_t)indent
+        );
 
         row->size += indent;
     }

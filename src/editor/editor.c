@@ -661,9 +661,14 @@ if (pluginManager.active)
             break;
 
         default:
-            if (key >= 32 && key <= 126)
-                insertChar(key);
-            break;
+    if (key >= 32 && key <= 126)
+    {
+        if (!handleSmartCharacter(key))
+        {
+            insertChar(key);
+        }
+    }
+    break;
     }
     /* Update viewport after cursor movement */
     scrollEditor();

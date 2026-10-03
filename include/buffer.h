@@ -30,4 +30,11 @@ void insertChar(char c);
 void deleteChar(void);
 void deleteForward(void);
 void insertNewLine(void);
+
+/* Advanced editing operations */
+int isOpeningDelimiter(char c);
+int isClosingDelimiter(char c);
+char matchingDelimiter(char c);
+void insertPair(char opening, char closing);
+int handleSmartCharacter(char c);
 #endif
