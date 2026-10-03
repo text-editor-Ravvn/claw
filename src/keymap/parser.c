@@ -36,6 +36,18 @@ int keymapParseKey(const char *str)
         return str[0];
     }
 
+    if (strcasecmp(str, "Up") == 0)
+        return ARROW_UP;
+
+    if (strcasecmp(str, "Down") == 0)
+        return ARROW_DOWN;
+
+    if (strcasecmp(str, "Left") == 0)
+        return ARROW_LEFT;
+
+    if (strcasecmp(str, "Right") == 0)
+        return ARROW_RIGHT;
+
     return -1;
 }
 
@@ -68,6 +80,15 @@ static int parseActionName(const char *name)
 
     if (strcmp(name, "prev_match") == 0)
         return CMD_PREV_MATCH;
+
+    if (strcmp(name, "duplicate_line") == 0)
+        return CMD_DUPLICATE_LINE;
+
+    if (strcmp(name, "move_line_up") == 0)
+        return CMD_MOVE_LINE_UP;
+
+    if (strcmp(name, "move_line_down") == 0)
+        return CMD_MOVE_LINE_DOWN;
 
     return CMD_NONE;
 }

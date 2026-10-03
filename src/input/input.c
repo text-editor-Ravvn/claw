@@ -1,6 +1,6 @@
 #include <unistd.h>
 #include <sys/select.h>
-
+#include <string.h>
 #include "input.h"
 
 
@@ -99,11 +99,10 @@ KeyEvent readKey(void)
         if (ready == 0)
         {
             event.key = 27;
-            event.modifiers = 0;
             return event;
         }
 
-        char seq[2];
+        char seq[32];
 
         if (read(STDIN_FILENO, &seq[0], 1) != 1)
         {
@@ -111,54 +110,102 @@ KeyEvent readKey(void)
             return event;
         }
 
-        if (seq[0] == '[')
+        /* ALT + key */
+        if (seq[0] != '[')
         {
-            if (read(STDIN_FILENO, &seq[1], 1) != 1)
-            {
-                event.key = 27;
-                return event;
-            }
-
-            switch (seq[1])
-            {
-                case 'A':
-                    event.key = ARROW_UP;
-                    return event;
-
-                case 'B':
-                    event.key = ARROW_DOWN;
-                    return event;
-
-                case 'C':
-                    event.key = ARROW_RIGHT;
-                    return event;
-
-                case 'D':
-                    event.key = ARROW_LEFT;
-                    return event;
-            }
-
-            if (seq[1] == '3')
-            {
-                char term;
-
-                if (
-                    read(STDIN_FILENO,
-                         &term,
-                         1) == 1 &&
-                    term == '~'
-                )
-                {
-                    event.key = DELETE_KEY;
-                    return event;
-                }
-            }
-
+            event.key = seq[0];
+            event.modifiers = MOD_ALT;
             return event;
         }
 
-        event.key = seq[0];
-        event.modifiers = MOD_ALT;
+        int len = 1;
+
+        while (len < (int)sizeof(seq) - 1)
+        {
+            if (read(STDIN_FILENO, &seq[len], 1) != 1)
+                break;
+
+            if (
+                (seq[len] >= 'A' && seq[len] <= 'D') ||
+                seq[len] == '~'
+            )
+            {
+                len++;
+                break;
+            }
+
+            len++;
+        }
+
+        seq[len] = '\0';
+
+        /* Plain arrows */
+
+        if (strcmp(seq, "[A") == 0)
+        {
+            event.key = ARROW_UP;
+            return event;
+        }
+
+        if (strcmp(seq, "[B") == 0)
+        {
+            event.key = ARROW_DOWN;
+            return event;
+        }
+
+        if (strcmp(seq, "[C") == 0)
+        {
+            event.key = ARROW_RIGHT;
+            return event;
+        }
+
+        if (strcmp(seq, "[D") == 0)
+        {
+            event.key = ARROW_LEFT;
+            return event;
+        }
+
+        /* Delete */
+
+        if (strcmp(seq, "[3~") == 0)
+        {
+            event.key = DELETE_KEY;
+            return event;
+        }
+
+        int modifiers = 0;
+
+        if (strstr(seq, ";2"))
+            modifiers |= MOD_SHIFT;
+
+        if (strstr(seq, ";3"))
+            modifiers |= MOD_ALT;
+
+        if (strstr(seq, ";5"))
+            modifiers |= MOD_CTRL;
+
+        switch (seq[len - 1])
+        {
+            case 'A':
+                event.key = ARROW_UP;
+                event.modifiers = modifiers;
+                return event;
+
+            case 'B':
+                event.key = ARROW_DOWN;
+                event.modifiers = modifiers;
+                return event;
+
+            case 'C':
+                event.key = ARROW_RIGHT;
+                event.modifiers = modifiers;
+                return event;
+
+            case 'D':
+                event.key = ARROW_LEFT;
+                event.modifiers = modifiers;
+                return event;
+        }
 
         return event;
     }

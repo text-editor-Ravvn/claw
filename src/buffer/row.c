@@ -575,3 +575,43 @@ void duplicateLine(void)
 
     buffer.modified = 1;
 }
+void moveLineUp(void)
+{
+    if (cursor.y <= 0)
+        return;
+
+    Row temp =
+        buffer.rows[cursor.y - 1];
+
+    buffer.rows[cursor.y - 1] =
+        buffer.rows[cursor.y];
+
+    buffer.rows[cursor.y] =
+        temp;
+
+    cursor.y--;
+
+    buffer.modified = 1;
+}
+
+void moveLineDown(void)
+{
+    if (
+        cursor.y < 0 ||
+        cursor.y >= buffer.numRows - 1
+    )
+        return;
+
+    Row temp =
+        buffer.rows[cursor.y + 1];
+
+    buffer.rows[cursor.y + 1] =
+        buffer.rows[cursor.y];
+
+    buffer.rows[cursor.y] =
+        temp;
+
+    cursor.y++;
+
+    buffer.modified = 1;
+}

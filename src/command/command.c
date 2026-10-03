@@ -307,6 +307,14 @@ case CMD_PLUGIN_RELOAD:
         duplicateLine();
         break;
 
+        case CMD_MOVE_LINE_UP:
+        moveLineUp();
+        break;
+
+        case CMD_MOVE_LINE_DOWN:
+            moveLineDown();
+            break;
+
         default:
             break;
     }

@@ -40,5 +40,7 @@ int handleSmartCharacter(char c);
 
 /* Productivity operations */
 void duplicateLine(void);
+void moveLineUp(void);
+void moveLineDown(void);
 
 #endif

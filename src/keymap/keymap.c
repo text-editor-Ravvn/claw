@@ -139,6 +139,17 @@ void keymapInit(void) {
   bindings[bindingCount].key = 'd';
   bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
+
+  bindings[bindingCount].action = CMD_MOVE_LINE_UP;
+  bindings[bindingCount].key = ARROW_UP;
+  bindings[bindingCount].modifiers = MOD_SHIFT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_MOVE_LINE_DOWN;
+  bindings[bindingCount].key = ARROW_DOWN;
+  bindings[bindingCount].modifiers = MOD_SHIFT;
+  bindingCount++;
+
 }
 
 int keymapLookup(
