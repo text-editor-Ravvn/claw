@@ -319,6 +319,10 @@ case CMD_PLUGIN_RELOAD:
         toggleCommentLine();
         break;
 
+        case CMD_JOIN_LINES:
+        joinLineWithNext();
+        break;
+
         default:
             break;
     }

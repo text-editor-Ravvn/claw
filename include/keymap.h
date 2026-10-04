@@ -68,6 +68,8 @@ enum EditorAction
     CMD_MOVE_LINE_DOWN,
 
     CMD_COMMENT_LINE,
+
+    CMD_JOIN_LINES,
     
 };
 

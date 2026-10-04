@@ -56,7 +56,7 @@ void keymapInit(void) {
   bindingCount++;
 
   bindings[bindingCount].action = CMD_PLUGIN_STATS;
-  bindings[bindingCount].key = 'j';
+  bindings[bindingCount].key = 'p';
   bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
 
@@ -152,6 +152,11 @@ void keymapInit(void) {
 
   bindings[bindingCount].action = CMD_COMMENT_LINE;
   bindings[bindingCount].key = '/'; 
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_JOIN_LINES;
+  bindings[bindingCount].key = 'j'; 
   bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
 

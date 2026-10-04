@@ -90,6 +90,9 @@ static int parseActionName(const char *name)
     if (strcmp(name, "move_line_down") == 0)
         return CMD_MOVE_LINE_DOWN;
 
+    if (strcmp(name, "join_lines") == 0)
+    return CMD_JOIN_LINES;
+
     return CMD_NONE;
 }
 

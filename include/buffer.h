@@ -43,4 +43,6 @@ void duplicateLine(void);
 void moveLineUp(void);
 void moveLineDown(void);
 void toggleCommentLine(void);
+void joinLineWithNext(void);
+
 #endif

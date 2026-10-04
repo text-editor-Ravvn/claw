@@ -695,3 +695,58 @@ void toggleCommentLine(void)
 
     buffer.modified = 1;
 }
+void joinLineWithNext(void)
+{
+    if (cursor.y >= buffer.numRows - 1)
+        return;
+
+    Row *current =
+        &buffer.rows[cursor.y];
+
+    Row *next =
+        &buffer.rows[cursor.y + 1];
+
+    int newSize =
+        current->size +
+        next->size;
+
+    char *newChars =
+        realloc(
+            current->chars,
+            newSize + 1
+        );
+
+    if (!newChars)
+        return;
+
+    current->chars = newChars;
+
+    memcpy(
+        current->chars +
+        current->size,
+        next->chars,
+        next->size
+    );
+
+    current->size = newSize;
+
+    current->chars[newSize] = '\0';
+
+    free(next->chars);
+    free(next->hl);
+
+    memmove(
+        &buffer.rows[cursor.y + 1],
+        &buffer.rows[cursor.y + 2],
+        sizeof(Row) *
+        (
+            buffer.numRows -
+            cursor.y -
+            2
+        )
+    );
+
+    buffer.numRows--;
+
+    buffer.modified = 1;
+}
