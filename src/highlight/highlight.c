@@ -120,6 +120,8 @@ const char *highlightColor(int hlType)
         return "\033[38;5;204m"; /* soft red */
     case HL_MATCH:
         return "\033[30;43m"; /* black on yellow (search) */
+    case HL_BRACKET_MATCH:
+        return "\033[1;36m"; /* bold cyan (bracket match) */
     default:
         return "\033[m"; /* reset / normal */
     }

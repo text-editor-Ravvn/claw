@@ -48,6 +48,18 @@ int keymapParseKey(const char *str)
     if (strcasecmp(str, "Right") == 0)
         return ARROW_RIGHT;
 
+    if (strcasecmp(str, "Home") == 0)
+        return HOME_KEY;
+
+    if (strcasecmp(str, "End") == 0)
+        return END_KEY;
+
+    if (strcasecmp(str, "Tab") == 0)
+        return '\t';
+
+    if (strcasecmp(str, "BackTab") == 0)
+        return BACKTAB;
+
     return -1;
 }
 
@@ -90,8 +102,29 @@ static int parseActionName(const char *name)
     if (strcmp(name, "move_line_down") == 0)
         return CMD_MOVE_LINE_DOWN;
 
+    if (strcmp(name, "comment_line") == 0)
+        return CMD_COMMENT_LINE;
+
     if (strcmp(name, "join_lines") == 0)
-    return CMD_JOIN_LINES;
+        return CMD_JOIN_LINES;
+
+    if (strcmp(name, "unindent") == 0)
+        return CMD_UNINDENT;
+
+    if (strcmp(name, "goto_bracket") == 0)
+        return CMD_GOTO_BRACKET;
+
+    if (strcmp(name, "word_left") == 0)
+        return CMD_WORD_LEFT;
+
+    if (strcmp(name, "word_right") == 0)
+        return CMD_WORD_RIGHT;
+
+    if (strcmp(name, "home") == 0)
+        return CMD_HOME;
+
+    if (strcmp(name, "end") == 0)
+        return CMD_END;
 
     return CMD_NONE;
 }

@@ -11,6 +11,7 @@
 #include "highlight.h"
 #include <string.h>
 #include "plugin.h"
+#include "brackets.h"
 
 extern Buffer buffer;
 extern Cursor cursor;
@@ -260,6 +261,18 @@ else
             {
                 printf("%s", highlightColor(HL_MATCH));
                 prevColor = HL_MATCH;
+            }
+        }
+        else if (
+            bracketMatchY >= 0 &&
+            ((fileRow == bracketMatchY && fileCol == bracketMatchX) ||
+             (fileRow == cursor.y && fileCol == cursor.x))
+        )
+        {
+            if (prevColor != HL_BRACKET_MATCH)
+            {
+                printf("%s", highlightColor(HL_BRACKET_MATCH));
+                prevColor = HL_BRACKET_MATCH;
             }
         }
         else if (row->hl && fileCol < row->size)

@@ -4,6 +4,7 @@
 #include "buffer.h"
 #include "cursor.h"
 #include "history.h"
+#include "config.h"
 
 extern Buffer buffer;
 
@@ -212,7 +213,9 @@ static int handleSmartBackspace(void)
             return 0;
     }
 
-    int tabWidth = 4;
+    int tabWidth = configTabWidth();
+    if (tabWidth <= 0)
+        tabWidth = 4;
 
     if (cursor.x >= tabWidth)
     {
@@ -486,7 +489,8 @@ int indent =
 /* Smart indentation after opening brace */
 if (lastChar == '{')
 {
-    indent += 4;
+    int tw = configTabWidth();
+    indent += (tw > 0) ? tw : 4;
 }
 
 if (indent > 0)
@@ -589,6 +593,14 @@ void moveLineUp(void)
     buffer.rows[cursor.y] =
         temp;
 
+    free(buffer.rows[cursor.y - 1].hl);
+    buffer.rows[cursor.y - 1].hl = NULL;
+    buffer.rows[cursor.y - 1].hlSize = 0;
+
+    free(buffer.rows[cursor.y].hl);
+    buffer.rows[cursor.y].hl = NULL;
+    buffer.rows[cursor.y].hlSize = 0;
+
     cursor.y--;
 
     buffer.modified = 1;
@@ -610,6 +622,14 @@ void moveLineDown(void)
 
     buffer.rows[cursor.y] =
         temp;
+
+    free(buffer.rows[cursor.y + 1].hl);
+    buffer.rows[cursor.y + 1].hl = NULL;
+    buffer.rows[cursor.y + 1].hlSize = 0;
+
+    free(buffer.rows[cursor.y].hl);
+    buffer.rows[cursor.y].hl = NULL;
+    buffer.rows[cursor.y].hlSize = 0;
 
     cursor.y++;
 
@@ -735,6 +755,10 @@ void joinLineWithNext(void)
     free(next->chars);
     free(next->hl);
 
+    free(current->hl);
+    current->hl = NULL;
+    current->hlSize = 0;
+
     memmove(
         &buffer.rows[cursor.y + 1],
         &buffer.rows[cursor.y + 2],
@@ -749,4 +773,9 @@ void joinLineWithNext(void)
     buffer.numRows--;
 
     buffer.modified = 1;
+}
+
+void splitLineAtCursor(void)
+{
+    insertNewLine();
 }

@@ -16,7 +16,8 @@ typedef enum
     HL_MULTI_COMMENT,
     HL_PREPROCESSOR,
     HL_OPERATOR,
-    HL_MATCH
+    HL_MATCH,
+    HL_BRACKET_MATCH
 } HighlightType;
 
 /* Language definition for syntax-aware highlighting. */

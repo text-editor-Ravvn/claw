@@ -44,5 +44,6 @@ void moveLineUp(void);
 void moveLineDown(void);
 void toggleCommentLine(void);
 void joinLineWithNext(void);
+void splitLineAtCursor(void);
 
 #endif

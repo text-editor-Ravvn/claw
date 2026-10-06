@@ -173,6 +173,30 @@ KeyEvent readKey(void)
             return event;
         }
 
+        /* Shift-Tab (backtab) */
+
+        if (strcmp(seq, "[Z") == 0)
+        {
+            event.key = BACKTAB;
+            return event;
+        }
+
+        /* Home */
+
+        if (strcmp(seq, "[H") == 0)
+        {
+            event.key = HOME_KEY;
+            return event;
+        }
+
+        /* End */
+
+        if (strcmp(seq, "[F") == 0)
+        {
+            event.key = END_KEY;
+            return event;
+        }
+
         int modifiers = 0;
 
         if (strstr(seq, ";2"))

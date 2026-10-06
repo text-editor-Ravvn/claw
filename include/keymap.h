@@ -70,6 +70,18 @@ enum EditorAction
     CMD_COMMENT_LINE,
 
     CMD_JOIN_LINES,
+
+    CMD_UNINDENT,
+
+    CMD_GOTO_BRACKET,
+
+    CMD_WORD_LEFT,
+
+    CMD_WORD_RIGHT,
+
+    CMD_HOME,
+
+    CMD_END,
     
 };
 

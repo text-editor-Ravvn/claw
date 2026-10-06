@@ -649,6 +649,18 @@ if (pluginManager.active)
         indentLine();
         break;
 
+        case BACKTAB:
+            unindentLine();
+            break;
+
+        case HOME_KEY:
+            moveCursorToStart();
+            break;
+
+        case END_KEY:
+            moveCursorToEnd();
+            break;
+
         case 127:
             deleteChar();
             break;

@@ -10,6 +10,8 @@
 #include "plugin.h"
 #include "plugin_commands.h"
 #include "plugin_api.h"
+#include "indent.h"
+#include "cursor.h"
 
 extern char *currentFile;
 extern Buffer buffer;
@@ -321,6 +323,30 @@ case CMD_PLUGIN_RELOAD:
 
         case CMD_JOIN_LINES:
         joinLineWithNext();
+        break;
+
+        case CMD_UNINDENT:
+        unindentLine();
+        break;
+
+        case CMD_GOTO_BRACKET:
+        jumpToBracketMatch();
+        break;
+
+        case CMD_WORD_LEFT:
+        moveCursorWordLeft();
+        break;
+
+        case CMD_WORD_RIGHT:
+        moveCursorWordRight();
+        break;
+
+        case CMD_HOME:
+        moveCursorToStart();
+        break;
+
+        case CMD_END:
+        moveCursorToEnd();
         break;
 
         default:

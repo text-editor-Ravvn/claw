@@ -160,6 +160,36 @@ void keymapInit(void) {
   bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
 
+  bindings[bindingCount].action = CMD_UNINDENT;
+  bindings[bindingCount].key = BACKTAB;
+  bindings[bindingCount].modifiers = 0;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_GOTO_BRACKET;
+  bindings[bindingCount].key = ']';
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_WORD_LEFT;
+  bindings[bindingCount].key = ARROW_LEFT;
+  bindings[bindingCount].modifiers = MOD_CTRL;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_WORD_RIGHT;
+  bindings[bindingCount].key = ARROW_RIGHT;
+  bindings[bindingCount].modifiers = MOD_CTRL;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_HOME;
+  bindings[bindingCount].key = HOME_KEY;
+  bindings[bindingCount].modifiers = 0;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_END;
+  bindings[bindingCount].key = END_KEY;
+  bindings[bindingCount].modifiers = 0;
+  bindingCount++;
+
 }
 
 int keymapLookup(

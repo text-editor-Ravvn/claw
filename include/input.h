@@ -8,7 +8,10 @@ enum EditorKey
     ARROW_RIGHT,
     ARROW_UP,
     ARROW_DOWN,
-    DELETE_KEY
+    DELETE_KEY,
+    HOME_KEY,
+    END_KEY,
+    BACKTAB
     
 };
 

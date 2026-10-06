@@ -4,10 +4,15 @@
 #include "indent.h"
 #include "buffer.h"
 #include "cursor.h"
+#include "config.h"
 
 extern Buffer buffer;
 
-#define TAB_WIDTH 4
+static int getTabWidth(void)
+{
+    int w = configTabWidth();
+    return w > 0 ? w : 4;
+}
 
 int getIndentationLevel(const char *line)
 {
@@ -33,12 +38,13 @@ void indentLine(void)
         return;
 
     Row *row = &buffer.rows[cursor.y];
+    int tabWidth = getTabWidth();
 
     char *newChars =
         realloc(
             row->chars,
             (size_t)row->size +
-            TAB_WIDTH + 1
+            tabWidth + 1
         );
 
     if (!newChars)
@@ -47,7 +53,7 @@ void indentLine(void)
     row->chars = newChars;
 
     memmove(
-        row->chars + TAB_WIDTH,
+        row->chars + tabWidth,
         row->chars,
         (size_t)row->size + 1
     );
@@ -55,15 +61,19 @@ void indentLine(void)
     memset(
         row->chars,
         ' ',
-        TAB_WIDTH
+        tabWidth
     );
 
-    row->size += TAB_WIDTH;
+    row->size += tabWidth;
 
-    cursor.x += TAB_WIDTH;
+    cursor.x += tabWidth;
 
     if (cursor.x > row->size)
         cursor.x = row->size;
+
+    free(row->hl);
+    row->hl = NULL;
+    row->hlSize = 0;
 
     buffer.modified = 1;
 }
@@ -77,11 +87,12 @@ void unindentLine(void)
         return;
 
     Row *row = &buffer.rows[cursor.y];
+    int tabWidth = getTabWidth();
 
     int removeCount = 0;
 
     while (
-        removeCount < TAB_WIDTH &&
+        removeCount < tabWidth &&
         removeCount < row->size &&
         row->chars[removeCount] == ' '
     )
@@ -104,6 +115,10 @@ void unindentLine(void)
         cursor.x -= removeCount;
     else
         cursor.x = 0;
+
+    free(row->hl);
+    row->hl = NULL;
+    row->hlSize = 0;
 
     buffer.modified = 1;
 }

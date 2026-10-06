@@ -18,4 +18,15 @@ void moveCursorRight(void);
 void moveCursorUp(void);
 void moveCursorDown(void);
 
+/* Word-based navigation (Ctrl+Left / Ctrl+Right). */
+void moveCursorWordLeft(void);
+void moveCursorWordRight(void);
+
+/* Jump cursor to the matching bracket. */
+void jumpToBracketMatch(void);
+
+/* Line boundary navigation (Home / End). */
+void moveCursorToStart(void);
+void moveCursorToEnd(void);
+
 #endif
