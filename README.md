@@ -18,15 +18,15 @@ Current development includes a complete editor foundation, productivity features
 
 |       Property     |                      Value                     |
 |--------------------|------------------------------------------------|
-| Current Version    | v1.6                                           |
-| Active Phase       | Phase 4 — Advanced Editing Layer               |
+| Current Version    | v1.7                                           |
+| Active Phase       | Phase 5 — Workspace Environment                |
 | Development Status | Active Development                             |
-| Completed Phases   | Phase 1, Phase 2, Phase 3                      |
-| Current Focus      | Intelligent editing and productivity workflows |
+| Completed Phases   | Phase 1, Phase 2, Phase 3, Phase 4             |
+| Current Focus      | Workspace Environment & Session Management     |
 
 ### Summary
 
-Claw has completed its Core Editor Foundation, Productivity Foundation, and Developer Platform phases. Development is currently focused on advanced editing capabilities, including intelligent editing workflows, editing automation, and productivity-focused features.
+Claw has completed its Core Editor Foundation, Productivity Foundation, Developer Platform, and Advanced Editing Layer phases. Development is currently transitioning to Phase 5 (Workspace Environment), focusing on session management, project navigation, and workspace persistence.
 
 ### Completed Architecture Phases
 
@@ -36,21 +36,20 @@ Claw has completed its Core Editor Foundation, Productivity Foundation, and Deve
 
 ✓ Phase 3 — Developer Platform
 
+✓ Phase 4 — Advanced Editing Layer
+
 ### Active Development
 
-◉ Phase 4 — Advanced Editing Layer
+◉ Phase 5 — Workspace Environment
 
 Current focus areas:
 
-- Auto indentation system
-- Smart indentation engine
-- Bracket matching
-- Auto-closing brackets
-- Duplicate line operations
-- Move line up/down
-- Comment and uncomment support
-- Editing automation workflows
-- Developer productivity enhancements
+- Session management
+- Workspace tracking
+- Recent files management
+- Project navigation
+- File explorer integration
+- Workspace state persistence
 
 ### Implemented Systems
 
@@ -71,10 +70,9 @@ Current focus areas:
 - Plugin Manager
 - Plugin Dashboard
 - Status Bar System
+- Advanced Editing Engine (Phase 4)
 
 ### Upcoming Architecture Phases
-
-○ Phase 5 — Workspace Environment
 
 ○ Phase 6 — Customization Platform
 
@@ -417,31 +415,30 @@ Current focus areas:
 - Scalable project structure
 - Foundation for future IDE capabilities
 
-## In Progress
-
-### Phase 4 — Advanced Editing Layer
-
+### Advanced Editing Layer (Phase 4)
 - Smart indentation engine
 - Automatic indentation inheritance
 - Context-aware indentation after braces
-- Bracket matching and navigation
+- Bracket matching and visual highlighting
 - Auto-closing brackets and delimiters
+- Smart delimiter skip logic
 - Tab-to-space conversion
-- Duplicate line operations
-- Move line up/down commands
-- Comment and uncomment support
-- Line join and split operations
-- Smart backspace handling
-- Smart tab behavior
+- Duplicate line operations (`Alt+D`)
+- Move line up/down commands (`Shift+↑` / `Shift+↓`)
+- Comment and uncomment support (`Alt+/`)
+- Line join (`Alt+J`) and line split operations
+- Smart backspace handling (indentation zone aware)
+- Smart tab and unindent behavior (`Tab` / `Shift-Tab`)
+- Line boundary navigation (`Home` / `End`)
+- Word-based navigation (`Ctrl+←` / `Ctrl+→`)
+- Bracket jump navigation (`Alt+]`)
 - Indentation-aware new line creation
 - Cursor-aware editing workflows
 - Advanced line manipulation tools
 - Editing productivity shortcuts
-- Improved code navigation workflows
 - Advanced editing command framework
-- Extensible editing architecture
 
-## Planned Features
+## In Progress
 
 ### Phase 5 — Workspace Environment
 
@@ -450,6 +447,8 @@ Current focus areas:
 - Workspace configuration files
 - Session persistence and restoration
 - Recent workspace tracking
+
+## Planned Features
 - Quick workspace switching
 - Workspace-aware navigation
 - Workspace startup profiles
@@ -1961,18 +1960,21 @@ Advanced Editing Commands
 
 ### Phase 4 — Advanced Editing Layer
 
-**Status:** In Progress
+**Status:** Completed
 
 - Smart indentation engine
 - Indentation-aware new line creation
 - Auto-closing brackets
-- Bracket matching
-- Smart tab handling
+- Bracket matching and visual highlighting
+- Jump-to-bracket navigation (`Alt+]`)
+- Word-based navigation (`Ctrl+←` / `Ctrl+→`)
+- Line boundary navigation (`Home` / `End`)
+- Smart tab and unindent handling (`Tab` / `Shift-Tab`)
 - Smart backspace handling
-- Duplicate line operations
-- Move line up/down
-- Comment / Uncomment support
-- Line join operations
+- Duplicate line operations (`Alt+D`)
+- Move line up/down (`Shift+↑` / `Shift+↓`)
+- Comment / Uncomment support (`Alt+/`)
+- Line join operations (`Alt+J`)
 - Line split operations
 - Editing productivity commands
 - Advanced cursor workflows
@@ -1982,7 +1984,7 @@ Advanced Editing Commands
 
 ### Phase 5 — Workspace Environment
 
-**Status:** Planned
+**Status:** In Progress
 
 - Session management
 - Workspace tracking
