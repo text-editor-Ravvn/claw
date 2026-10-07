@@ -22,12 +22,19 @@
 #include "plugin_commands.h"
 #include "brackets.h"
 #include "indent.h"
+#include "workspace.h"
+#include "recent.h"
+#include "session.h"
+#include "bookmark.h"
+#include "explorer.h"
+#include "file_switcher.h"
 
 char *currentFile = NULL;
 static char statusMessage[128] = "";
 static int quitRequested = 0;
 
 SavePrompt savePrompt = {0};
+GotoLinePrompt gotoPrompt = {0};
 GitViewState gitView = {0};
 PluginManagerState pluginManager = {0};
 
@@ -42,6 +49,53 @@ void openSavePrompt(void)
 void closeSavePrompt(void)
 {
     savePrompt.active = 0;
+}
+
+void openGotoPrompt(void)
+{
+    gotoPrompt.active = 1;
+    gotoPrompt.length = 0;
+    gotoPrompt.input[0] = '\0';
+    editorSetStatusMessage("");
+}
+
+void closeGotoPrompt(void)
+{
+    gotoPrompt.active = 0;
+}
+
+void performGotoLine(void)
+{
+    if (gotoPrompt.length == 0)
+        return;
+
+    int line = 1;
+    int col = 1;
+    if (sscanf(gotoPrompt.input, "%d:%d", &line, &col) < 1)
+        return;
+
+    if (line < 1)
+        line = 1;
+    if (line > buffer.numRows)
+        line = buffer.numRows;
+
+    cursor.y = line - 1;
+
+    int rowLen = (cursor.y < buffer.numRows) ? buffer.rows[cursor.y].size : 0;
+    if (col < 1)
+        col = 1;
+    if (col - 1 > rowLen)
+        col = rowLen + 1;
+
+    cursor.x = col - 1;
+
+    viewport.rowOffset = cursor.y - (viewport.screenRows / 2);
+    if (viewport.rowOffset < 0)
+        viewport.rowOffset = 0;
+
+    char statusBuf[64];
+    snprintf(statusBuf, sizeof(statusBuf), "Jumped to line %d, col %d", cursor.y + 1, cursor.x + 1);
+    editorSetStatusMessage(statusBuf);
 }
 
 void editorInit(void)
@@ -117,6 +171,17 @@ void editorInit(void)
     historyInit();
     highlightInit();
     viewportInit();
+
+    workspaceInit();
+    workspaceLoadConfig();
+    recentInit();
+    bookmarkInit();
+    sessionInit();
+
+    if (currentFile)
+    {
+        recentAddFile(currentFile);
+    }
 
     gitRefreshStatus(currentFile);
 }
@@ -380,6 +445,147 @@ if (pluginManager.active)
     continue;
 }
 
+    /* ---------- File Explorer modal input ---------- */
+    if (explorerState.active)
+    {
+        if (key == 27)
+        {
+            explorerClose();
+            renderForceClear();
+            continue;
+        }
+
+        if (key == ARROW_UP)
+        {
+            explorerSelectPrev();
+            continue;
+        }
+
+        if (key == ARROW_DOWN)
+        {
+            explorerSelectNext();
+            continue;
+        }
+
+        if (key == 127 || key == ARROW_LEFT)
+        {
+            explorerGoUp();
+            continue;
+        }
+
+        if (key == '\r' || key == '\n')
+        {
+            if (explorerEnter())
+            {
+                highlightInit();
+                gitRefreshStatus(currentFile);
+                renderForceClear();
+            }
+            continue;
+        }
+
+        continue;
+    }
+
+    /* ---------- Quick File Switcher modal input ---------- */
+    if (fileSwitcherState.active)
+    {
+        if (key == 27)
+        {
+            fileSwitcherClose();
+            renderForceClear();
+            continue;
+        }
+
+        if (key == ARROW_UP)
+        {
+            fileSwitcherSelectPrev();
+            continue;
+        }
+
+        if (key == ARROW_DOWN)
+        {
+            fileSwitcherSelectNext();
+            continue;
+        }
+
+        if (key == 127)
+        {
+            fileSwitcherBackspace();
+            continue;
+        }
+
+        if (key == '\r' || key == '\n')
+        {
+            const char *sel = fileSwitcherGetSelected();
+            if (sel)
+            {
+                char chosen[512];
+                snprintf(chosen, sizeof(chosen), "%s", sel);
+                if (openFile(chosen))
+                {
+                    if (currentFile)
+                        free(currentFile);
+                    currentFile = strdup(chosen);
+                    recentAddFile(chosen);
+                    highlightInit();
+                    gitRefreshStatus(currentFile);
+                    renderForceClear();
+                }
+            }
+            fileSwitcherClose();
+            continue;
+        }
+
+        if (key >= 32 && key <= 126)
+        {
+            fileSwitcherAddChar((char)key);
+            continue;
+        }
+
+        continue;
+    }
+
+    /* ---------- Go-to-line prompt modal input ---------- */
+    if (gotoPrompt.active)
+    {
+        if (key == 27)
+        {
+            closeGotoPrompt();
+            editorSetStatusMessage("Go-to-line cancelled");
+            continue;
+        }
+
+        if (key == '\r' || key == '\n')
+        {
+            performGotoLine();
+            closeGotoPrompt();
+            scrollEditor();
+            continue;
+        }
+
+        if (key == 127)
+        {
+            if (gotoPrompt.length > 0)
+            {
+                gotoPrompt.input[--gotoPrompt.length] = '\0';
+            }
+            continue;
+        }
+
+        if ((key >= '0' && key <= '9') || key == ':')
+        {
+            if (gotoPrompt.length < (int)sizeof(gotoPrompt.input) - 1)
+            {
+                gotoPrompt.input[gotoPrompt.length++] = (char)key;
+                gotoPrompt.input[gotoPrompt.length] = '\0';
+            }
+            continue;
+        }
+
+        continue;
+    }
+
     /* ---------- Save-as prompt modal input ---------- */
     if (savePrompt.active)
     {
@@ -605,6 +811,9 @@ if (pluginManager.active)
         scrollEditor();
         continue;
     }
+
+    sessionAutoSave();
+    recentSaveDefault();
 
     pluginTriggerEvent(
         PLUGIN_EVENT_EXIT

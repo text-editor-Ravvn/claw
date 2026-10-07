@@ -12,6 +12,9 @@
 #include <string.h>
 #include "plugin.h"
 #include "brackets.h"
+#include "bookmark.h"
+#include "explorer.h"
+#include "file_switcher.h"
 
 extern Buffer buffer;
 extern Cursor cursor;
@@ -21,6 +24,8 @@ static int lastCols = 0;
 extern PluginManagerState pluginManager;
 void drawPluginManager(void);
 void drawPluginDetails(void);
+void drawFileExplorer(void);
+void drawFileSwitcher(void);
 
 void renderForceClear(void)
 {
@@ -32,6 +37,26 @@ void renderForceClear(void)
 void refreshScreen(void)
 {
     printf("\033[?25l");
+
+    if (explorerState.active)
+    {
+        printf("\033[2J");
+        printf("\033[H");
+        drawFileExplorer();
+        printf("\033[?25h");
+        fflush(stdout);
+        return;
+    }
+
+    if (fileSwitcherState.active)
+    {
+        printf("\033[2J");
+        printf("\033[H");
+        drawFileSwitcher();
+        printf("\033[?25h");
+        fflush(stdout);
+        return;
+    }
 
    if (pluginManager.active)
 {
@@ -129,6 +154,17 @@ else
         "Ctrl+W  Plugin Help",
         "",
 
+        "WORKSPACE & NAVIGATION",
+        "Alt+E   File Explorer",
+        "Alt+Q   Quick File Switcher",
+        "Alt+G   Go to Line",
+        "Alt+B   Toggle Bookmark",
+        "Alt+Down/Up  Next/Prev Bookmark",
+        "Alt+W   Workspace Refresh",
+        "Alt+S   Save Session",
+        "Alt+R   Restore Session",
+        "",
+
         "Esc     Exit Views",
         "Ctrl+X  Quit Editor"
     };
@@ -195,9 +231,18 @@ else
         {
             if (fileRow < buffer.numRows)
             {
-                printf("\033[90m%*d \033[m",
-                       gutter - 1,
-                       fileRow + 1);
+                if (bookmarkIsBookmarked(fileRow))
+                {
+                    printf("\033[1;33m%*d*\033[m",
+                           gutter - 1,
+                           fileRow + 1);
+                }
+                else
+                {
+                    printf("\033[90m%*d \033[m",
+                           gutter - 1,
+                           fileRow + 1);
+                }
             }
             else
             {
@@ -324,55 +369,73 @@ else
     printf("\r\n");
     printf("\033[K");
 
-   if (savePrompt.active)
+    if (savePrompt.active)
     {
         printf(
             "Save as: %s",
             savePrompt.filename
         );
     }
-    else if (searchState.active)
-{
-    if (searchState.replaceMode)
+    else if (gotoPrompt.active)
     {
         printf(
-            "Replace: %s",
-            searchState.replacement
+            "Go to line: %s",
+            gotoPrompt.input
+        );
+    }
+    else if (searchState.active)
+    {
+        if (searchState.replaceMode)
+        {
+            printf(
+                "Replace: %s",
+                searchState.replacement
+            );
+        }
+        else
+        {
+            printf(
+                "Search: %s",
+                searchState.query
+            );
+        }
+    }
+    else
+    {
+        printf(
+            "%s",
+            editorStatusMessage()
+        );
+    }
+
+    if (gotoPrompt.active)
+    {
+        printf(
+            "\033[%d;%dH",
+            viewport.screenRows,
+            (int)strlen("Go to line: ") + gotoPrompt.length + 1
         );
     }
     else
     {
-    printf(
-        "Search: %s",
-        searchState.query
-    );
+        int screenRow =
+            cursor.y - viewport.rowOffset + 1;
+
+        int screenCol =
+            cursor.x - viewport.colOffset + gutter + 1;
+
+        if (screenRow < 1)
+            screenRow = 1;
+
+        if (screenCol < 1)
+            screenCol = 1;
+
+        printf(
+            "\033[%d;%dH",
+            screenRow,
+            screenCol
+        );
     }
-    }
-    else
-    {
-    printf(
-        "%s",
-        editorStatusMessage()
-    );
-    }
-
-    int screenRow =
-        cursor.y - viewport.rowOffset + 1;
-
-    int screenCol =
-        cursor.x - viewport.colOffset + gutter + 1;
-
-    if (screenRow < 1)
-        screenRow = 1;
-
-    if (screenCol < 1)
-        screenCol = 1;
-
-    printf(
-        "\033[%d;%dH",
-        screenRow,
-        screenCol
-    );
 
     printf("\033[?25h");
     fflush(stdout);
@@ -700,4 +763,112 @@ void drawPluginDetails(void)
     printf(
         "[Esc]   Back To Dashboard\r\n"
     );
+}
+
+void drawFileExplorer(void)
+{
+    printf("\033[H");
+    printf("\033[1;36m Claw Workspace File Explorer\033[m\r\n");
+    printf("======================================================================\r\n");
+    printf(" Current: \033[1m%s\033[m\r\n", explorerState.currentDir);
+    printf("----------------------------------------------------------------------\r\n");
+
+    int maxDisplay = viewport.screenRows - 8;
+    if (maxDisplay < 5)
+        maxDisplay = 5;
+
+    int start = explorerState.selectedIndex - (maxDisplay / 2);
+    if (start < 0)
+        start = 0;
+    if (start + maxDisplay > explorerState.count)
+        start = explorerState.count > maxDisplay ? explorerState.count - maxDisplay : 0;
+
+    int end = start + maxDisplay;
+    if (end > explorerState.count)
+        end = explorerState.count;
+
+    if (explorerState.count == 0)
+    {
+        printf(" (empty directory)\r\n");
+    }
+
+    for (int i = start; i < end; i++)
+    {
+        ExplorerEntry *e = &explorerState.entries[i];
+        char cursorChar = (i == explorerState.selectedIndex) ? '>' : ' ';
+
+        if (i == explorerState.selectedIndex)
+            printf("\033[7m");
+
+        if (e->isDir)
+        {
+            printf(" %c [DIR]  %-40s\r\n", cursorChar, e->name);
+        }
+        else
+        {
+            printf(" %c [FILE] %-40s  %6ld B\r\n", cursorChar, e->name, e->sizeBytes);
+        }
+
+        if (i == explorerState.selectedIndex)
+            printf("\033[m");
+    }
+
+    for (int i = end - start; i < maxDisplay; i++)
+    {
+        printf("\r\n");
+    }
+
+    printf("----------------------------------------------------------------------\r\n");
+    printf(" [Enter] Open/Descend  [Backspace/Left] Parent Dir  [Up/Down] Navigate  [Esc] Close\r\n");
+}
+
+void drawFileSwitcher(void)
+{
+    printf("\033[H");
+    printf("\033[1;35m Quick File Switcher\033[m\r\n");
+    printf("======================================================================\r\n");
+    printf(" Filter: \033[1m%s\033[m_\r\n", fileSwitcherState.query);
+    printf("----------------------------------------------------------------------\r\n");
+
+    int maxDisplay = viewport.screenRows - 8;
+    if (maxDisplay < 5)
+        maxDisplay = 5;
+
+    if (fileSwitcherState.filteredCount == 0)
+    {
+        printf(" (no matching files)\r\n");
+    }
+
+    int start = fileSwitcherState.selectedIndex - (maxDisplay / 2);
+    if (start < 0)
+        start = 0;
+    if (start + maxDisplay > fileSwitcherState.filteredCount)
+        start = fileSwitcherState.filteredCount > maxDisplay ? fileSwitcherState.filteredCount - maxDisplay : 0;
+
+    int end = start + maxDisplay;
+    if (end > fileSwitcherState.filteredCount)
+        end = fileSwitcherState.filteredCount;
+
+    for (int i = start; i < end; i++)
+    {
+        int realIdx = fileSwitcherState.filteredIndices[i];
+        const char *path = fileSwitcherState.allFiles[realIdx];
+        char cursorChar = (i == fileSwitcherState.selectedIndex) ? '>' : ' ';
+
+        if (i == fileSwitcherState.selectedIndex)
+            printf("\033[7m");
+
+        printf(" %c %-60s\r\n", cursorChar, path);
+
+        if (i == fileSwitcherState.selectedIndex)
+            printf("\033[m");
+    }
+
+    for (int i = end - start; i < maxDisplay; i++)
+    {
+        printf("\r\n");
+    }
+
+    printf("----------------------------------------------------------------------\r\n");
+    printf(" [Enter] Select  [Up/Down] Navigate  [Type to Filter]  [Esc] Cancel\r\n");
 }

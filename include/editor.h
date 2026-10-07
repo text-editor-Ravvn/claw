@@ -41,6 +41,20 @@ void editorSetStatusMessage(const char *message);
 void openSavePrompt(void);
 void closeSavePrompt(void);
 
+/* Go to line prompt state and helpers */
+typedef struct
+{
+    int active;
+    char input[32];
+    int length;
+} GotoLinePrompt;
+
+extern GotoLinePrompt gotoPrompt;
+
+void openGotoPrompt(void);
+void closeGotoPrompt(void);
+void performGotoLine(void);
+
 /* Temporary Git view helpers */
 void openGitView(const char *tempFile);
 void closeGitView(void);

@@ -190,6 +190,56 @@ void keymapInit(void) {
   bindings[bindingCount].modifiers = 0;
   bindingCount++;
 
+  bindings[bindingCount].action = CMD_GOTO_LINE;
+  bindings[bindingCount].key = 'g';
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_BOOKMARK_TOGGLE;
+  bindings[bindingCount].key = 'b';
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_BOOKMARK_NEXT;
+  bindings[bindingCount].key = ARROW_DOWN;
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_BOOKMARK_PREV;
+  bindings[bindingCount].key = ARROW_UP;
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_BOOKMARK_CLEAR;
+  bindings[bindingCount].key = 'c';
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_QUICK_SWITCH;
+  bindings[bindingCount].key = 'q';
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_FILE_EXPLORER;
+  bindings[bindingCount].key = 'e';
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_WORKSPACE_OPEN;
+  bindings[bindingCount].key = 'w';
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_SESSION_SAVE;
+  bindings[bindingCount].key = 's';
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_SESSION_RESTORE;
+  bindings[bindingCount].key = 'r';
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
 }
 
 int keymapLookup(

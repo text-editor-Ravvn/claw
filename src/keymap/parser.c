@@ -126,6 +126,36 @@ static int parseActionName(const char *name)
     if (strcmp(name, "end") == 0)
         return CMD_END;
 
+    if (strcmp(name, "goto_line") == 0)
+        return CMD_GOTO_LINE;
+
+    if (strcmp(name, "bookmark_toggle") == 0)
+        return CMD_BOOKMARK_TOGGLE;
+
+    if (strcmp(name, "bookmark_next") == 0)
+        return CMD_BOOKMARK_NEXT;
+
+    if (strcmp(name, "bookmark_prev") == 0)
+        return CMD_BOOKMARK_PREV;
+
+    if (strcmp(name, "bookmark_clear") == 0)
+        return CMD_BOOKMARK_CLEAR;
+
+    if (strcmp(name, "quick_switch") == 0)
+        return CMD_QUICK_SWITCH;
+
+    if (strcmp(name, "file_explorer") == 0)
+        return CMD_FILE_EXPLORER;
+
+    if (strcmp(name, "workspace_open") == 0)
+        return CMD_WORKSPACE_OPEN;
+
+    if (strcmp(name, "session_save") == 0)
+        return CMD_SESSION_SAVE;
+
+    if (strcmp(name, "session_restore") == 0)
+        return CMD_SESSION_RESTORE;
+
     return CMD_NONE;
 }
 

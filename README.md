@@ -18,15 +18,15 @@ Current development includes a complete editor foundation, productivity features
 
 |       Property     |                      Value                     |
 |--------------------|------------------------------------------------|
-| Current Version    | v1.7                                           |
-| Active Phase       | Phase 5 — Workspace Environment                |
+| Current Version    | v1.8                                           |
+| Active Phase       | Phase 6 — Customization Platform               |
 | Development Status | Active Development                             |
-| Completed Phases   | Phase 1, Phase 2, Phase 3, Phase 4             |
-| Current Focus      | Workspace Environment & Session Management     |
+| Completed Phases   | Phase 1, Phase 2, Phase 3, Phase 4, Phase 5     |
+| Current Focus      | Theme Engine & Customization Platform           |
 
 ### Summary
 
-Claw has completed its Core Editor Foundation, Productivity Foundation, Developer Platform, and Advanced Editing Layer phases. Development is currently transitioning to Phase 5 (Workspace Environment), focusing on session management, project navigation, and workspace persistence.
+Claw has completed its Core Editor Foundation, Productivity Foundation, Developer Platform, Advanced Editing Layer, and Workspace Environment phases. Development is currently transitioning to Phase 6 (Customization Platform), focusing on theme engine, appearance profiles, and customizable UI layouts.
 
 ### Completed Architecture Phases
 
@@ -38,18 +38,19 @@ Claw has completed its Core Editor Foundation, Productivity Foundation, Develope
 
 ✓ Phase 4 — Advanced Editing Layer
 
+✓ Phase 5 — Workspace Environment
+
 ### Active Development
 
-◉ Phase 5 — Workspace Environment
+◉ Phase 6 — Customization Platform
 
 Current focus areas:
 
-- Session management
-- Workspace tracking
-- Recent files management
-- Project navigation
-- File explorer integration
-- Workspace state persistence
+- Theme engine
+- Color schemes
+- User-defined themes
+- Appearance profiles
+- Status bar customization
 
 ### Implemented Systems
 
@@ -71,6 +72,10 @@ Current focus areas:
 - Plugin Dashboard
 - Status Bar System
 - Advanced Editing Engine (Phase 4)
+- Workspace Environment Engine (Phase 5)
+- Session Management & Persistence (Phase 5)
+- File Explorer & Quick Switcher (Phase 5)
+- Bookmark Navigation System (Phase 5)
 
 ### Upcoming Architecture Phases
 
@@ -438,22 +443,21 @@ Current focus areas:
 - Editing productivity shortcuts
 - Advanced editing command framework
 
-## In Progress
+## Completed Features
 
 ### Phase 5 — Workspace Environment
 
-- Workspace management system
-- Multi-workspace support
-- Workspace configuration files
-- Session persistence and restoration
-- Recent workspace tracking
+- Workspace management system & dynamic root detection (.claw / .git)
+- Workspace configuration system (`.claw/workspace.conf` & overrides)
+- Recent files & workspace history tracker (MRU)
+- Full session serialization & automatic restoration
+- Go-to-line navigation workflow (`Alt+G` / `:line`)
+- Comprehensive bookmark system with gutter indicator & cyclic jumping (`Alt+B`, `Alt+Down`, `Alt+Up`, `Alt+C`)
+- Interactive Quick File Switcher modal (`Alt+Q`)
+- Built-in Workspace File Explorer dashboard (`Alt+E`)
+- Dynamic status bar workspace branding & bookmark statistics
 
-## Planned Features
-- Quick workspace switching
-- Workspace-aware navigation
-- Workspace startup profiles
-- Project context management
-- Development environment organization
+## In Progress
 
 ### Phase 6 — Customization Platform
 
@@ -1984,24 +1988,23 @@ Advanced Editing Commands
 
 ### Phase 5 — Workspace Environment
 
-**Status:** In Progress
+**Status:** Completed
 
-- Session management
-- Workspace tracking
-- Recent files
-- Project navigation
-- File explorer
-- Workspace persistence
-- Quick file switching
-- Bookmark system
-- Go-To-Line workflows
-- Workspace restoration
+- Session management & state restoration
+- Workspace tracking & dynamic root detection
+- Recent files & workspace history (MRU)
+- Project navigation & Go-To-Line workflows
+- Built-in workspace file explorer
+- Workspace persistence & auto-save
+- Quick file switching modal
+- Full bookmark system with gutter indicator & cyclic jumping
+- Workspace configuration files (.claw/workspace.conf)
 
 ---
 
 ### Phase 6 — Customization Platform
 
-**Status:** Planned
+**Status:** In Progress
 
 - Theme engine
 - Color schemes
@@ -2401,9 +2404,9 @@ Advanced Editing Commands
 | Phase 1  | Core Editor Foundation      | Complete    | Core editing architecture and terminal interaction systems |
 | Phase 2  | Productivity Foundation     | Complete    | Essential productivity and workflow features               |
 | Phase 3  | Developer Platform          | Complete    | Git integration, plugins, and developer tooling            |
-| Phase 4  | Advanced Editing Layer      | In Progress | Intelligent editing and automation capabilities            |
-| Phase 5  | Workspace Environment       | Planned     | Project workspaces and session management                  |
-| Phase 6  | Customization Platform      | Planned     | Themes, profiles, and editor personalization               |
+| Phase 4  | Advanced Editing Layer      | Complete    | Intelligent editing and automation capabilities            |
+| Phase 5  | Workspace Environment       | Complete    | Project workspaces, file explorer, session & navigation    |
+| Phase 6  | Customization Platform      | In Progress | Themes, profiles, and editor personalization               |
 | Phase 7  | Project Tooling             | Planned     | Development automation and project utilities               |
 | Phase 8  | IDE Foundation              | Planned     | Multi-buffer editing and IDE infrastructure                |
 | Phase 9  | Source Control Expansion    | Planned     | Advanced repository management capabilities                |

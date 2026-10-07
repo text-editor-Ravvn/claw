@@ -8,6 +8,8 @@
 #include "viewport.h"
 #include "highlight.h"
 #include "git.h"
+#include "workspace.h"
+#include "bookmark.h"
 
 extern Buffer buffer;
 extern Cursor cursor;
@@ -81,6 +83,19 @@ void drawStatusBar(void)
 }
 
     /* ---------------- Normal Status Bar ---------------- */
+    char wsInfo[128] = "";
+    if (workspaceIsActive())
+    {
+        snprintf(wsInfo, sizeof(wsInfo), " [%s]", workspaceGetName());
+    }
+
+    char bmInfo[64] = "";
+    int bmCount = bookmarkCount();
+    if (bmCount > 0)
+    {
+        snprintf(bmInfo, sizeof(bmInfo), " | Bm:%d", bmCount);
+    }
+
     if (gitCurrentBranch(branch, sizeof(branch)))
     {
         if (currentFile)
@@ -126,12 +141,14 @@ void drawStatusBar(void)
         snprintf(
             left,
             sizeof(left),
-            " Claw v%s | %s%s | %s | %s | %d Lines",
+            " Claw v%s%s | %s%s | %s | %s%s | %d Lines",
             CLAW_VERSION,
+            wsInfo,
             currentFile ? currentFile : "[No Name]",
             buffer.modified ? " [Modified]" : "",
             highlightLanguageName(),
             gitInfo,
+            bmInfo,
             buffer.numRows
         );
     }
@@ -140,11 +157,13 @@ void drawStatusBar(void)
         snprintf(
             left,
             sizeof(left),
-            " Claw v%s | %s%s | %s | %d Lines",
+            " Claw v%s%s | %s%s | %s%s | %d Lines",
             CLAW_VERSION,
+            wsInfo,
             currentFile ? currentFile : "[No Name]",
             buffer.modified ? " [Modified]" : "",
             highlightLanguageName(),
+            bmInfo,
             buffer.numRows
         );
     }

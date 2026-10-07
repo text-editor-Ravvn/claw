@@ -12,6 +12,11 @@
 #include "plugin_api.h"
 #include "indent.h"
 #include "cursor.h"
+#include "workspace.h"
+#include "session.h"
+#include "bookmark.h"
+#include "explorer.h"
+#include "file_switcher.h"
 
 extern char *currentFile;
 extern Buffer buffer;
@@ -348,6 +353,111 @@ case CMD_PLUGIN_RELOAD:
         case CMD_END:
         moveCursorToEnd();
         break;
+
+        case CMD_GOTO_LINE:
+        openGotoPrompt();
+        break;
+
+        case CMD_BOOKMARK_TOGGLE:
+        {
+            int res = bookmarkToggle(cursor.y);
+            static char bmMsg[64];
+            if (res == 1)
+            {
+                snprintf(bmMsg, sizeof(bmMsg), "Bookmark added at line %d", cursor.y + 1);
+            }
+            else if (res == 0)
+            {
+                snprintf(bmMsg, sizeof(bmMsg), "Bookmark removed from line %d", cursor.y + 1);
+            }
+            else
+            {
+                snprintf(bmMsg, sizeof(bmMsg), "Bookmark limit reached");
+            }
+            editorSetStatusMessage(bmMsg);
+            break;
+        }
+
+        case CMD_BOOKMARK_NEXT:
+        {
+            int next = bookmarkNext(cursor.y);
+            if (next >= 0)
+            {
+                cursor.y = next;
+                cursor.x = 0;
+                static char bmMsg[64];
+                snprintf(bmMsg, sizeof(bmMsg), "Jumped to bookmark at line %d", next + 1);
+                editorSetStatusMessage(bmMsg);
+            }
+            else
+            {
+                editorSetStatusMessage("No bookmarks set");
+            }
+            break;
+        }
+
+        case CMD_BOOKMARK_PREV:
+        {
+            int prev = bookmarkPrev(cursor.y);
+            if (prev >= 0)
+            {
+                cursor.y = prev;
+                cursor.x = 0;
+                static char bmMsg[64];
+                snprintf(bmMsg, sizeof(bmMsg), "Jumped to bookmark at line %d", prev + 1);
+                editorSetStatusMessage(bmMsg);
+            }
+            else
+            {
+                editorSetStatusMessage("No bookmarks set");
+            }
+            break;
+        }
+
+        case CMD_BOOKMARK_CLEAR:
+            bookmarkClearAll();
+            editorSetStatusMessage("All bookmarks cleared");
+            break;
+
+        case CMD_QUICK_SWITCH:
+            fileSwitcherOpen();
+            break;
+
+        case CMD_FILE_EXPLORER:
+            explorerOpen(workspaceIsActive() ? workspaceGetRoot() : ".");
+            break;
+
+        case CMD_WORKSPACE_OPEN:
+            workspaceInit();
+            workspaceLoadConfig();
+            {
+                static char wsMsg[256];
+                snprintf(wsMsg, sizeof(wsMsg), "Workspace: %s", workspaceGetName());
+                editorSetStatusMessage(wsMsg);
+            }
+            break;
+
+        case CMD_SESSION_SAVE:
+            if (sessionAutoSave())
+            {
+                editorSetStatusMessage("Session saved successfully");
+            }
+            else
+            {
+                editorSetStatusMessage("Session save failed");
+            }
+            break;
+
+        case CMD_SESSION_RESTORE:
+            if (sessionAutoRestore())
+            {
+                editorSetStatusMessage("Session restored");
+            }
+            else
+            {
+                editorSetStatusMessage("No saved session found");
+            }
+            break;
 
         default:
             break;

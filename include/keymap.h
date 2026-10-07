@@ -82,10 +82,30 @@ enum EditorAction
     CMD_HOME,
 
     CMD_END,
-    
+
+    CMD_GOTO_LINE,
+
+    CMD_BOOKMARK_TOGGLE,
+
+    CMD_BOOKMARK_NEXT,
+
+    CMD_BOOKMARK_PREV,
+
+    CMD_BOOKMARK_CLEAR,
+
+    CMD_QUICK_SWITCH,
+
+    CMD_FILE_EXPLORER,
+
+    CMD_WORKSPACE_OPEN,
+
+    CMD_SESSION_SAVE,
+
+    CMD_SESSION_RESTORE,
+
 };
 
-#define KEYMAP_MAX_BINDINGS 64
+#define KEYMAP_MAX_BINDINGS 128
 
 typedef struct
 {
