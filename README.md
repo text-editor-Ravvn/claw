@@ -97,56 +97,29 @@ Current focus areas:
 
 ## Current Objectives
 
-### Phase 4 — Advanced Editing Layer
+### Phase 6 — Customization Platform
 
-#### Editing Intelligence
-- Complete smart indentation engine
-- Improve context-aware indentation handling
-- Implement bracket matching and navigation
-- Add auto-closing brackets and delimiters
-- Introduce intelligent cursor positioning
+#### Theme Engine
+- Implement modular color theme loader and runtime palette manager
+- Support 256-color and 24-bit TrueColor terminal rendering
+- Provide built-in themes (claw-dark, monokai, solarized, nord, dracula)
+- Support custom user-defined themes in `~/.config/claw/themes/`
 
-#### Advanced Editing Operations
-- Implement duplicate line functionality
-- Add move line up/down operations
-- Introduce line join functionality
-- Implement line split operations
-- Add advanced line manipulation workflows
+#### UI Personalization
+- Configurable status bar segments, formatting, and positions
+- Customizable line number styling and gutter spacing
+- Adjustable cursor styles (block, underline, bar)
+- Runtime appearance switching without restarting the editor
 
-#### Code Editing Productivity
-- Implement comment/uncomment commands
-- Improve smart backspace behavior
-- Improve smart tab handling
-- Add indentation-aware editing operations
-- Reduce repetitive editing tasks
+#### Profile & Configuration System
+- Named user configuration profiles (e.g., minimal, coding, presentation)
+- Per-language style overrides and indentation definitions
+- Hot-reloading of configuration files upon modification
 
-#### Navigation Improvements
-- Improve cursor movement accuracy
-- Add word-based navigation
-- Improve code traversal workflows
-- Enhance editing responsiveness
-- Optimize navigation performance
-
-#### Architecture Development
-- Expand editing command framework
-- Standardize editing action workflows
-- Improve buffer-edit synchronization
-- Strengthen editing subsystem modularity
-- Prepare architecture for future IDE features
-
-#### Stability & Quality
-- Improve editing reliability
-- Eliminate edge-case editing bugs
-- Strengthen undo/redo integration
-- Improve memory safety during editing operations
-- Maintain lightweight performance characteristics
-
-#### Preparation for Phase 5
-- Establish foundations for Workspace Environment
-- Improve editor state management
-- Prepare workspace-aware architecture
-- Improve project-level scalability
-- Ensure clean integration with future platform features
+#### Preparation for Phase 7
+- Layout architecture for split panes and secondary views
+- Integration points for project tooling and build outputs
+- Modularity benchmarks for theme and customization performance
 
 ## Completed Features
 
@@ -1214,21 +1187,22 @@ git --version
 ### Current Development Status
 
 ```text
-Current Phase: Phase 4 — Advanced Editing System
+Current Phase: Phase 6 — Customization Platform
 
 Status: Active Development
 
 Completed:
-✓ Core Editor Foundation
-✓ Editing & Productivity Features
-✓ Extensibility Platform
+✓ Phase 1 — Core Editor Foundation
+✓ Phase 2 — Productivity Foundation
+✓ Phase 3 — Developer Platform
+✓ Phase 4 — Advanced Editing Layer
+✓ Phase 5 — Workspace Environment
 
 In Progress:
-• Smart Indentation
-• Auto-Closing Delimiters
-• Bracket Intelligence
-• Advanced Line Operations
-• Editing Productivity Workflows
+• Theme Engine & Palettes
+• Appearance Profiles
+• Status Bar Customization
+• UI Layouts & Syntax Colorschemes
 ```
 
 ---
@@ -1411,29 +1385,69 @@ Event Hooks        Startup/Save/Search/Exit Hooks
 
 ```text
 Editor View        Primary Editing Workspace
+File Explorer      Workspace Directory Browser
+Quick Switcher     Interactive Recent & Project File Search
 Git Blame View     Repository Line History
 Plugin Dashboard   Plugin Overview
 Plugin Details     Plugin Information & Controls
 Search Mode        Search Interface
 Replace Mode       Search & Replace Interface
+Go-to-Line Mode    Line & Column Jumping Interface
 Save-As Mode       Filename Entry Interface
 ```
 
-### Upcoming Controls (Phase 4)
+### Workspace & Navigation Controls (Phase 5)
 
 ```text
-Auto Indentation
-Smart Backspace
-Smart Tab Handling
-Auto-Closing Brackets
-Bracket Matching
-Duplicate Line
-Move Line Up
-Move Line Down
-Comment / Uncomment
-Line Join
-Line Split
-Advanced Editing Commands
+Alt + E       Open Workspace File Explorer
+Alt + Q       Open Quick File Switcher
+Alt + G       Go to Line Prompt (line or line:col)
+Alt + B       Toggle Line Bookmark
+Alt + ↓       Jump to Next Bookmark (Cyclic)
+Alt + ↑       Jump to Previous Bookmark (Cyclic)
+Alt + C       Clear All Bookmarks
+Alt + W       Workspace Status & Root Refresh
+Alt + S       Save Current Session State
+Alt + R       Restore Last Session State
+```
+
+### Workspace File Explorer
+
+```text
+↑ / ↓          Navigate Directory Entries
+Enter          Open Selected File / Enter Subdirectory
+Backspace / ←  Navigate to Parent Directory
+Esc            Close File Explorer & Return to Editor
+```
+
+### Quick File Switcher
+
+```text
+Type Filter    Substring Filter Candidates in Real Time
+↑ / ↓          Navigate Matched File List
+Enter          Open Selected File Instantly
+Backspace      Delete Character from Query
+Esc            Cancel Switcher
+```
+
+### Go-To-Line Prompt
+
+```text
+Type Line      Enter Line Number or line:col (e.g., 42 or 42:10)
+Enter          Execute Jump & Center Viewport
+Backspace      Delete Character
+Esc            Cancel Jump
+```
+
+### Upcoming Controls (Phase 6)
+
+```text
+Theme Switching
+Custom Color Schemes
+Status Bar Customization
+UI Layout Profiles
+Gutter Width & Appearance Overrides
+Runtime Profile Selection
 ```
 
 ---
@@ -2377,23 +2391,46 @@ Advanced Editing Commands
 
 #### Completed
 
-- Auto indentation system
-- Smart indentation engine
+- Auto indentation and smart indentation engine
 - Indentation-aware new line creation
+- Auto-closing brackets and delimiter skip logic
+- Bracket matching and visual highlighting
+- Smart backspace handling (indentation zone aware)
+- Smart tab and unindent behavior (`Tab` / `Shift-Tab`)
+- Duplicate line operations (`Alt+D`)
+- Move line up/down (`Shift+↑` / `Shift+↓`)
+- Comment / Uncomment support (`Alt+/`)
+- Line join operations (`Alt+J`) and line split
+- Word-based navigation (`Ctrl+←` / `Ctrl+→`)
+- Line boundary navigation (`Home` / `End`)
+- Jump to matching delimiter (`Alt+]`)
+
+---
+
+### Phase 5 — Workspace Environment
+
+#### Completed
+
+- Dynamic workspace root detection (`.claw`, `.git`, or working directory)
+- Workspace configuration files (`.claw/workspace.conf` with cascading overrides)
+- Recent files & workspace history tracker (MRU ordering & persistence)
+- Editor session serialization & automatic restoration (`session.claw`)
+- Go-to-line navigation workflow (`Alt+G` / `:line`)
+- Comprehensive bookmark system with gutter indicator & cyclic jumping (`Alt+B`, `Alt+Down`, `Alt+Up`, `Alt+C`)
+- Interactive Quick File Switcher modal (`Alt+Q`)
+- Built-in Workspace File Explorer dashboard (`Alt+E`)
+- Status bar workspace branding & active bookmark indicators
+
+---
+
+### Phase 6 — Customization Platform
 
 #### In Progress
 
-- Auto-closing brackets
-- Bracket matching
-- Smart backspace handling
-- Smart tab handling
-- Duplicate line operations
-- Move line up/down
-- Comment / Uncomment support
-- Line join operations
-- Line split operations
-- Editing productivity commands
-- Advanced editing automation
+- Theme engine and color scheme definitions
+- Custom user theme loading from `~/.config/claw/themes/`
+- Status bar layout and segment customization
+- User appearance profiles and runtime switching
 
 ---
 
