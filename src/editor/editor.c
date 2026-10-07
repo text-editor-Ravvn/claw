@@ -66,12 +66,16 @@ void closeGotoPrompt(void)
 
 void performGotoLine(void)
 {
-    if (gotoPrompt.length == 0)
+    if (gotoPrompt.length == 0 || buffer.numRows <= 0)
         return;
+
+    const char *str = gotoPrompt.input;
+    if (*str == ':')
+        str++;
 
     int line = 1;
     int col = 1;
-    if (sscanf(gotoPrompt.input, "%d:%d", &line, &col) < 1)
+    if (sscanf(str, "%d:%d", &line, &col) < 1)
         return;
 
     if (line < 1)
@@ -177,6 +181,11 @@ void editorInit(void)
     recentInit();
     bookmarkInit();
     sessionInit();
+
+    if (workspaceIsActive())
+    {
+        recentAddWorkspace(workspaceGetRoot());
+    }
 
     if (currentFile)
     {
@@ -477,6 +486,9 @@ if (pluginManager.active)
         {
             if (explorerEnter())
             {
+                bookmarkClearAll();
+                viewport.rowOffset = 0;
+                viewport.colOffset = 0;
                 highlightInit();
                 gitRefreshStatus(currentFile);
                 renderForceClear();
@@ -528,6 +540,9 @@ if (pluginManager.active)
                         free(currentFile);
                     currentFile = strdup(chosen);
                     recentAddFile(chosen);
+                    bookmarkClearAll();
+                    viewport.rowOffset = 0;
+                    viewport.colOffset = 0;
                     highlightInit();
                     gitRefreshStatus(currentFile);
                     renderForceClear();
@@ -902,6 +917,12 @@ void editorShutdown(void)
     fflush(stdout);
 
     bufferFree();
+
+    if (currentFile)
+    {
+        free(currentFile);
+        currentFile = NULL;
+    }
 }
 
 const char *editorStatusMessage(void)

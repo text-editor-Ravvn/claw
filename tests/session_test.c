@@ -5,6 +5,20 @@
 #include "recent.h"
 #include "session.h"
 #include "workspace.h"
+#include "cursor.h"
+#include "viewport.h"
+#include "buffer.h"
+
+Cursor cursor = {0};
+Viewport viewport = {0};
+Buffer buffer = {0};
+char *currentFile = NULL;
+
+int openFile(const char *filename)
+{
+    (void)filename;
+    return 1;
+}
 
 int main(void)
 {
@@ -26,15 +40,28 @@ int main(void)
     assert(strcmp(recentGetWorkspace(0), "/path/two") == 0);
 
     /* Test session serialization */
+    cursor.x = 5;
+    cursor.y = 12;
+    viewport.rowOffset = 4;
+    viewport.colOffset = 0;
+    currentFile = "test_doc.c";
+
     int ok = sessionSave("tests/test_session.tmp");
     assert(ok == 1);
 
     /* Verify file exists and has content */
     FILE *fp = fopen("tests/test_session.tmp", "r");
     assert(fp != NULL);
-    char buf[128];
-    assert(fgets(buf, sizeof(buf), fp) != NULL);
+    char buf[256];
+    int foundCursorY = 0;
+    while (fgets(buf, sizeof(buf), fp))
+    {
+        if (strstr(buf, "cursor_y=12"))
+            foundCursorY = 1;
+    }
     fclose(fp);
+    assert(foundCursorY == 1);
+
     remove("tests/test_session.tmp");
 
     printf("session_test passed!\n");

@@ -3,6 +3,15 @@ claw
 buffer_test
 file_test
 file_test_input.tmp
+input_test
+workspace_test
+session_test
+bookmark_test
+phase5_test
+bin/
+config/recent.txt
+config/session.claw
 *.exe
 for fututre we have to prevent ctrl n and p without calling ctrl f
 for future terminal window rendering make it dynamically stable
+

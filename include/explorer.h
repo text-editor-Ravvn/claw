@@ -4,8 +4,8 @@
 #include <stddef.h>
 
 #define EXPLORER_MAX_ENTRIES 256
-#define EXPLORER_PATH_MAX 1024
-#define EXPLORER_NAME_MAX 256
+#define EXPLORER_PATH_MAX 2048
+#define EXPLORER_NAME_MAX 512
 
 typedef struct
 {

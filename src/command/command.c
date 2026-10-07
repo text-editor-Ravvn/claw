@@ -17,6 +17,10 @@
 #include "bookmark.h"
 #include "explorer.h"
 #include "file_switcher.h"
+#include "viewport.h"
+#include "highlight.h"
+#include "recent.h"
+#include "render.h"
 
 extern char *currentFile;
 extern Buffer buffer;
@@ -385,6 +389,10 @@ case CMD_PLUGIN_RELOAD:
             {
                 cursor.y = next;
                 cursor.x = 0;
+                viewport.rowOffset = cursor.y - (viewport.screenRows / 2);
+                if (viewport.rowOffset < 0)
+                    viewport.rowOffset = 0;
+                scrollEditor();
                 static char bmMsg[64];
                 snprintf(bmMsg, sizeof(bmMsg), "Jumped to bookmark at line %d", next + 1);
                 editorSetStatusMessage(bmMsg);
@@ -403,6 +411,10 @@ case CMD_PLUGIN_RELOAD:
             {
                 cursor.y = prev;
                 cursor.x = 0;
+                viewport.rowOffset = cursor.y - (viewport.screenRows / 2);
+                if (viewport.rowOffset < 0)
+                    viewport.rowOffset = 0;
+                scrollEditor();
                 static char bmMsg[64];
                 snprintf(bmMsg, sizeof(bmMsg), "Jumped to bookmark at line %d", prev + 1);
                 editorSetStatusMessage(bmMsg);
@@ -430,6 +442,10 @@ case CMD_PLUGIN_RELOAD:
         case CMD_WORKSPACE_OPEN:
             workspaceInit();
             workspaceLoadConfig();
+            if (workspaceIsActive())
+            {
+                recentAddWorkspace(workspaceGetRoot());
+            }
             {
                 static char wsMsg[256];
                 snprintf(wsMsg, sizeof(wsMsg), "Workspace: %s", workspaceGetName());
@@ -451,6 +467,9 @@ case CMD_PLUGIN_RELOAD:
         case CMD_SESSION_RESTORE:
             if (sessionAutoRestore())
             {
+                highlightInit();
+                gitRefreshStatus(currentFile);
+                renderForceClear();
                 editorSetStatusMessage("Session restored");
             }
             else

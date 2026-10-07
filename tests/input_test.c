@@ -59,12 +59,22 @@ int main(void)
     assert(keymapLookup('s', MOD_CTRL) == CMD_SAVE);
     assert(keymapLookup('x', MOD_CTRL) == CMD_QUIT);
 
-    /* Plugin commands accessible via Alt */
+    /* Plugin and line operation commands accessible via Alt */
     assert(keymapLookup('m', MOD_ALT) == CMD_PLUGIN_MANAGER);
-    assert(keymapLookup('p', MOD_ALT) == CMD_PLUGIN_MANAGER);
+    assert(keymapLookup('p', MOD_ALT) == CMD_PLUGIN_STATS);
     assert(keymapLookup('i', MOD_ALT) == CMD_PLUGIN_INFO);
-    assert(keymapLookup('j', MOD_ALT) == CMD_PLUGIN_STATS);
+    assert(keymapLookup('j', MOD_ALT) == CMD_JOIN_LINES);
     assert(keymapLookup('h', MOD_ALT) == CMD_PLUGIN_HEALTH);
+
+    /* Phase 5 workspace navigation commands */
+    assert(keymapLookup('g', MOD_ALT) == CMD_GOTO_LINE);
+    assert(keymapLookup('b', MOD_ALT) == CMD_BOOKMARK_TOGGLE);
+    assert(keymapLookup('c', MOD_ALT) == CMD_BOOKMARK_CLEAR);
+    assert(keymapLookup('q', MOD_ALT) == CMD_QUICK_SWITCH);
+    assert(keymapLookup('e', MOD_ALT) == CMD_FILE_EXPLORER);
+    assert(keymapLookup('w', MOD_ALT) == CMD_WORKSPACE_OPEN);
+    assert(keymapLookup('s', MOD_ALT) == CMD_SESSION_SAVE);
+    assert(keymapLookup('r', MOD_ALT) == CMD_SESSION_RESTORE);
 
     printf("All input and keymap tests passed!\n");
     return 0;

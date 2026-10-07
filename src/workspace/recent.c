@@ -13,6 +13,13 @@ static void getDefaultRecentPath(char *outPath, size_t outSize)
     const char *xdg = getenv("XDG_CONFIG_HOME");
     if (xdg && strlen(xdg) > 0)
     {
+        char clawDir[512];
+        snprintf(clawDir, sizeof(clawDir), "%s/claw", xdg);
+#ifdef _WIN32
+        mkdir(clawDir);
+#else
+        mkdir(clawDir, 0755);
+#endif
         snprintf(outPath, outSize, "%s/claw/recent.txt", xdg);
         return;
     }
@@ -20,6 +27,19 @@ static void getDefaultRecentPath(char *outPath, size_t outSize)
     const char *home = getenv("HOME");
     if (home && strlen(home) > 0)
     {
+        char clawDir[512];
+        snprintf(clawDir, sizeof(clawDir), "%s/.config", home);
+#ifdef _WIN32
+        mkdir(clawDir);
+#else
+        mkdir(clawDir, 0755);
+#endif
+        snprintf(clawDir, sizeof(clawDir), "%s/.config/claw", home);
+#ifdef _WIN32
+        mkdir(clawDir);
+#else
+        mkdir(clawDir, 0755);
+#endif
         snprintf(outPath, outSize, "%s/.config/claw/recent.txt", home);
         return;
     }
@@ -59,7 +79,7 @@ void recentAddFile(const char *path)
 
     for (int i = limit; i > 0; i--)
     {
-        snprintf(recentTracker.files[i], sizeof(recentTracker.files[i]), "%s", recentTracker.files[i - 1]);
+        memmove(recentTracker.files[i], recentTracker.files[i - 1], sizeof(recentTracker.files[i]));
     }
 
     snprintf(recentTracker.files[0], sizeof(recentTracker.files[0]), "%s", path);
@@ -98,7 +118,7 @@ void recentAddWorkspace(const char *path)
 
     for (int i = limit; i > 0; i--)
     {
-        snprintf(recentTracker.workspaces[i], sizeof(recentTracker.workspaces[i]), "%s", recentTracker.workspaces[i - 1]);
+        memmove(recentTracker.workspaces[i], recentTracker.workspaces[i - 1], sizeof(recentTracker.workspaces[i]));
     }
 
     snprintf(recentTracker.workspaces[0], sizeof(recentTracker.workspaces[0]), "%s", path);
@@ -207,7 +227,10 @@ void recentSaveDefault(void)
 {
     char defPath[512];
     getDefaultRecentPath(defPath, sizeof(defPath));
-    recentSave(defPath);
+    if (!recentSave(defPath))
+    {
+        recentSave("config/recent.txt");
+    }
 }
 
 void recentInit(void)
@@ -215,5 +238,8 @@ void recentInit(void)
     memset(&recentTracker, 0, sizeof(recentTracker));
     char defPath[512];
     getDefaultRecentPath(defPath, sizeof(defPath));
-    recentLoad(defPath);
+    if (!recentLoad(defPath))
+    {
+        recentLoad("config/recent.txt");
+    }
 }

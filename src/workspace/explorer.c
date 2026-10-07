@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 #include <dirent.h>
 #include <sys/stat.h>
 
@@ -9,6 +10,7 @@
 #include "fileio.h"
 #include "editor.h"
 #include "recent.h"
+#include "bookmark.h"
 
 ExplorerState explorerState = {0};
 extern char *currentFile;
@@ -51,7 +53,7 @@ void explorerRefresh(void)
 
         ExplorerEntry *entry = &explorerState.entries[explorerState.count];
         snprintf(entry->name, sizeof(entry->name), "%s", d->d_name);
-        snprintf(entry->fullPath, sizeof(entry->fullPath), "%s/%s",
+        snprintf(entry->fullPath, sizeof(entry->fullPath), "%.1500s/%s",
                  explorerState.currentDir, d->d_name);
 
         struct stat st;
@@ -158,6 +160,7 @@ int explorerEnter(void)
                 free(currentFile);
             currentFile = strdup(sel->fullPath);
             recentAddFile(sel->fullPath);
+            bookmarkClearAll();
             explorerClose();
             return 1;
         }
@@ -174,6 +177,13 @@ void explorerGoUp(void)
     if (lastSep && lastSep != explorerState.currentDir)
     {
         *lastSep = '\0';
+        explorerState.selectedIndex = 0;
+        explorerState.scrollOffset = 0;
+        explorerRefresh();
+    }
+    else if (!lastSep && strcmp(explorerState.currentDir, ".") == 0)
+    {
+        snprintf(explorerState.currentDir, sizeof(explorerState.currentDir), "..");
         explorerState.selectedIndex = 0;
         explorerState.scrollOffset = 0;
         explorerRefresh();

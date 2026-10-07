@@ -70,7 +70,7 @@ int workspaceDetectRoot(const char *startPath, char *outRoot, size_t outSize)
         current[--len] = '\0';
     }
 
-    char candidate[WORKSPACE_PATH_MAX];
+    char candidate[WORKSPACE_PATH_MAX + 64];
 
     while (1)
     {
@@ -128,7 +128,7 @@ int workspaceOpen(const char *path)
 
     /* Check for .claw configuration file */
     snprintf(currentWorkspace.configPath, sizeof(currentWorkspace.configPath),
-             "%s/.claw/workspace.conf", detectedRoot);
+             "%.1000s/.claw/workspace.conf", detectedRoot);
 
     struct stat st;
     if (stat(currentWorkspace.configPath, &st) != 0)
@@ -163,7 +163,9 @@ const char *workspaceGetRoot(void)
 
 const char *workspaceGetName(void)
 {
-    return currentWorkspace.active ? currentWorkspace.name : "None";
+    if (currentWorkspace.active && currentWorkspace.name[0] != '\0')
+        return currentWorkspace.name;
+    return "None";
 }
 
 int workspaceIsActive(void)

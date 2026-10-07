@@ -166,6 +166,7 @@ void fileSwitcherAddChar(char c)
     {
         fileSwitcherState.query[fileSwitcherState.queryLen++] = c;
         fileSwitcherState.query[fileSwitcherState.queryLen] = '\0';
+        fileSwitcherState.selectedIndex = 0;
         fileSwitcherFilter();
     }
 }
@@ -175,6 +176,7 @@ void fileSwitcherBackspace(void)
     if (fileSwitcherState.queryLen > 0)
     {
         fileSwitcherState.query[--fileSwitcherState.queryLen] = '\0';
+        fileSwitcherState.selectedIndex = 0;
         fileSwitcherFilter();
     }
 }

@@ -38,6 +38,13 @@ static void getDefaultSessionPath(char *outPath, size_t outSize)
     const char *xdg = getenv("XDG_CONFIG_HOME");
     if (xdg && strlen(xdg) > 0)
     {
+        char clawDir[SESSION_PATH_MAX];
+        snprintf(clawDir, sizeof(clawDir), "%s/claw", xdg);
+#ifdef _WIN32
+        mkdir(clawDir);
+#else
+        mkdir(clawDir, 0755);
+#endif
         snprintf(outPath, outSize, "%s/claw/session.claw", xdg);
         return;
     }
@@ -45,6 +52,19 @@ static void getDefaultSessionPath(char *outPath, size_t outSize)
     const char *home = getenv("HOME");
     if (home && strlen(home) > 0)
     {
+        char clawDir[SESSION_PATH_MAX];
+        snprintf(clawDir, sizeof(clawDir), "%s/.config", home);
+#ifdef _WIN32
+        mkdir(clawDir);
+#else
+        mkdir(clawDir, 0755);
+#endif
+        snprintf(clawDir, sizeof(clawDir), "%s/.config/claw", home);
+#ifdef _WIN32
+        mkdir(clawDir);
+#else
+        mkdir(clawDir, 0755);
+#endif
         snprintf(outPath, outSize, "%s/.config/claw/session.claw", home);
         return;
     }
@@ -172,14 +192,18 @@ int sessionAutoSave(void)
 {
     char defPath[SESSION_PATH_MAX];
     getDefaultSessionPath(defPath, sizeof(defPath));
-    return sessionSave(defPath);
+    if (sessionSave(defPath))
+        return 1;
+    return sessionSave("config/session.claw");
 }
 
 int sessionAutoRestore(void)
 {
     char defPath[SESSION_PATH_MAX];
     getDefaultSessionPath(defPath, sizeof(defPath));
-    return sessionRestore(defPath);
+    if (sessionRestore(defPath))
+        return 1;
+    return sessionRestore("config/session.claw");
 }
 
 void sessionInit(void)
