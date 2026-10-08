@@ -6,6 +6,7 @@
 #include "highlight.h"
 #include "editor.h"
 #include "buffer.h"
+#include "theme.h"
 
 extern Buffer buffer;
 extern char *currentFile;
@@ -96,35 +97,13 @@ const char *highlightLanguageName(void)
     return "Plain Text";
 }
 
-const char *highlightColor(int hlType)
+const char *highlightColor(
+    int hlType
+)
 {
-    switch (hlType)
-    {
-    case HL_KEYWORD:
-        return "\033[38;5;176m"; /* soft magenta / purple */
-    case HL_TYPE:
-        return "\033[38;5;80m"; /* teal / cyan */
-    case HL_STRING:
-        return "\033[38;5;114m"; /* soft green */
-    case HL_CHAR_LITERAL:
-        return "\033[38;5;114m"; /* same green as strings */
-    case HL_NUMBER:
-        return "\033[38;5;209m"; /* warm orange */
-    case HL_COMMENT:
-        return "\033[38;5;102m"; /* dim gray */
-    case HL_MULTI_COMMENT:
-        return "\033[38;5;102m"; /* dim gray */
-    case HL_PREPROCESSOR:
-        return "\033[38;5;179m"; /* golden yellow */
-    case HL_OPERATOR:
-        return "\033[38;5;204m"; /* soft red */
-    case HL_MATCH:
-        return "\033[30;43m"; /* black on yellow (search) */
-    case HL_BRACKET_MATCH:
-        return "\033[1;36m"; /* bold cyan (bracket match) */
-    default:
-        return "\033[m"; /* reset / normal */
-    }
+    return themeColor(
+        hlType
+    );
 }
 
 void highlightRow(Row *row, int rowIndex)

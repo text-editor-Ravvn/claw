@@ -2454,6 +2454,8 @@ Runtime Profile Selection
 
 ---
 
+## LICENSE
+
 MIT License
 
 Copyright (c) 2026 Aryan Gupta & Pranav Chauhan

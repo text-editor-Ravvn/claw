@@ -33,7 +33,8 @@ SRC = src/main.c \
 	  src/workspace/session.c \
 	  src/workspace/bookmark.c \
 	  src/workspace/explorer.c \
-	  src/workspace/file_switcher.c
+	  src/workspace/file_switcher.c \
+	  src/theme/theme.c \
 
 OBJ = $(SRC:.c=.o)
 

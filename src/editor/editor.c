@@ -28,6 +28,7 @@
 #include "bookmark.h"
 #include "explorer.h"
 #include "file_switcher.h"
+#include "theme.h"
 
 char *currentFile = NULL;
 static char statusMessage[128] = "";
@@ -122,6 +123,7 @@ void editorInit(void)
        (typically ~/.config/claw/claw.conf), then falls back to the
        relative config/ directory for development convenience. */
     configInit();
+    themeInit();
     configLoad("config/default.conf");
 
     {
