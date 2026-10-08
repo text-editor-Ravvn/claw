@@ -21,6 +21,7 @@
 #include "highlight.h"
 #include "recent.h"
 #include "render.h"
+#include "theme.h"
 
 extern char *currentFile;
 extern Buffer buffer;
@@ -477,6 +478,24 @@ case CMD_PLUGIN_RELOAD:
                 editorSetStatusMessage("No saved session found");
             }
             break;
+
+            case CMD_THEME_NEXT:
+            {
+                themeNext();
+
+                char msg[128];
+
+                snprintf(
+                    msg,
+                    sizeof(msg),
+                    "Theme: %s",
+                    themeCurrentName()
+                );
+
+                editorSetStatusMessage(msg);
+
+                break;
+            }
 
         default:
             break;

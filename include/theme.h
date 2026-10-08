@@ -17,7 +17,22 @@ typedef struct
 }
 Theme;
 
+typedef enum
+{
+    THEME_DEFAULT,
+    THEME_DRACULA,
+    THEME_NORD,
+    THEME_GRUVBOX,
+    THEME_LIGHT
+} ThemeType;
+
+void themeSet(ThemeType theme);
+
 void themeInit(void);
+
+int themeNext(void);
+
+const char *themeCurrentName(void);
 
 const char *themeColor(
     int hlType

@@ -124,6 +124,7 @@ void editorInit(void)
        relative config/ directory for development convenience. */
     configInit();
     themeInit();
+    themeSet(THEME_DEFAULT);
     configLoad("config/default.conf");
 
     {

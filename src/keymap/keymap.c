@@ -240,6 +240,11 @@ void keymapInit(void) {
   bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
 
+  bindings[bindingCount].action = CMD_THEME_NEXT;
+  bindings[bindingCount].key = 't';
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
 }
 
 int keymapLookup(

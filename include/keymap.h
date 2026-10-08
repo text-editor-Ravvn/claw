@@ -103,6 +103,8 @@ enum EditorAction
 
     CMD_SESSION_RESTORE,
 
+    CMD_THEME_NEXT,
+
 };
 
 #define KEYMAP_MAX_BINDINGS 128
