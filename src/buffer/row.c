@@ -5,6 +5,7 @@
 #include "cursor.h"
 #include "history.h"
 #include "config.h"
+#include "search.h"
 
 extern Buffer buffer;
 
@@ -194,6 +195,7 @@ void insertChar(char c)
 
     cursor.x++;
     buffer.modified = 1;
+    refreshSearchMatches();
 }
 
 static int handleSmartBackspace(void)
@@ -235,6 +237,7 @@ static int handleSmartBackspace(void)
         row->hlSize = 0;
 
         buffer.modified = 1;
+        refreshSearchMatches();
 
         return 1;
     }
@@ -278,6 +281,7 @@ void deleteChar(void)
 
         cursor.x--;
         buffer.modified = 1;
+        refreshSearchMatches();
 
         return;
     }
@@ -336,6 +340,7 @@ void deleteChar(void)
 
     cursor.x = oldSize;
     buffer.modified = 1;
+    refreshSearchMatches();
 }
 
 void deleteForward(void)
@@ -365,6 +370,7 @@ void deleteForward(void)
         row->hl = NULL;
         row->hlSize = 0;
         buffer.modified = 1;
+        refreshSearchMatches();
         return;
     }
 
@@ -402,6 +408,7 @@ void deleteForward(void)
             buffer.rows = newRows;
         cursor.x = oldSize;
         buffer.modified = 1;
+        refreshSearchMatches();
     }
 }
 

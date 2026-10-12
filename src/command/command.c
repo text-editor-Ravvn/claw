@@ -482,17 +482,7 @@ case CMD_PLUGIN_RELOAD:
             case CMD_THEME_NEXT:
             {
                 themeNext();
-
-                char msg[128];
-
-                snprintf(
-                    msg,
-                    sizeof(msg),
-                    "Theme: %s",
-                    themeCurrentName()
-                );
-
-                editorSetStatusMessage(msg);
+                editorSetStatusMessage("");
 
                 break;
             }

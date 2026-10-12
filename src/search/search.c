@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #include "search.h"
 #include "editor.h"
@@ -11,6 +12,27 @@
 
 extern Buffer buffer;
 extern Cursor cursor;
+
+static int isWordCharacter(unsigned char c)
+{
+    return isalnum(c) || c == '_';
+}
+
+static int isWholeWordMatch(
+    const char *line,
+    const char *match,
+    size_t queryLength)
+{
+    int leftBoundary =
+        match == line ||
+        !isWordCharacter((unsigned char)match[-1]);
+
+    int rightBoundary =
+        match[queryLength] == '\0' ||
+        !isWordCharacter((unsigned char)match[queryLength]);
+
+    return leftBoundary && rightBoundary;
+}
 
 SearchState searchState = {0};
 
@@ -94,21 +116,20 @@ void performSearch(void)
             if (!match)
                 break;
 
-            if (searchState.matchCount < 256)
+            
+            if (isWholeWordMatch(
+                    buffer.rows[row].chars,
+                    match,
+                    (size_t)searchState.length))
             {
-                searchState.matchRows[
-                    searchState.matchCount
-                ] = row;
+                if (searchState.matchCount < 256)
+                {
+                    int i = searchState.matchCount++;
 
-                searchState.matchCols[
-                    searchState.matchCount
-                ] =
-                (int)(
-                    match -
-                    buffer.rows[row].chars
-                );
-
-                searchState.matchCount++;
+                    searchState.matchRows[i] = row;
+                    searchState.matchCols[i] =
+                        (int)(match - buffer.rows[row].chars);
+                }
             }
 
             start = match + 1;
@@ -304,6 +325,78 @@ void replaceCurrentMatch(void)
     }
 
     editorSetStatusMessage(status);
+}
+
+void refreshSearchMatches(void)
+{
+    if (searchState.length <= 0)
+        return;
+
+    int savedX = cursor.x;
+    int savedY = cursor.y;
+    int oldRow = -1;
+    int oldCol = -1;
+
+    if (searchState.currentMatch >= 0 &&
+        searchState.currentMatch < searchState.matchCount)
+    {
+        oldRow = searchState.matchRows[searchState.currentMatch];
+        oldCol = searchState.matchCols[searchState.currentMatch];
+    }
+
+    searchState.matchCount = 0;
+    searchState.currentMatch = 0;
+
+    for (int row = 0; row < buffer.numRows; row++)
+    {
+        char *start = buffer.rows[row].chars;
+
+        while (1)
+        {
+            char *match = strstr(start, searchState.query);
+            
+            
+            if (!match)
+                break;
+
+            if (isWholeWordMatch(
+                    buffer.rows[row].chars,
+                    match,
+                    (size_t)searchState.length))
+            {
+                if (searchState.matchCount < 256)
+                {
+                    searchState.matchRows[
+                        searchState.matchCount
+                    ] = row;
+
+                    searchState.matchCols[
+                        searchState.matchCount
+                    ] = (int)(
+                        match - buffer.rows[row].chars
+                    );
+
+                    searchState.matchCount++;
+                }
+            }
+
+            start = match + 1;
+        }
+    }
+
+
+    for (int i = 0; i < searchState.matchCount; i++)
+    {
+        if (searchState.matchRows[i] == oldRow &&
+            searchState.matchCols[i] == oldCol)
+        {
+            searchState.currentMatch = i;
+            break;
+        }
+    }
+
+    cursor.x = savedX;
+    cursor.y = savedY;
 }
 
 int replaceAllMatches(void)

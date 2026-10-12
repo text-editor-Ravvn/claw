@@ -10,6 +10,7 @@
 #include "git.h"
 #include "workspace.h"
 #include "bookmark.h"
+#include "theme.h"
 
 extern Buffer buffer;
 extern Cursor cursor;
@@ -141,7 +142,7 @@ void drawStatusBar(void)
         snprintf(
             left,
             sizeof(left),
-            " Claw v%s%s | %s%s | %s | %s%s | %d Lines",
+            " Claw v%s%s | %s%s | %s | %s%s | Theme: %s | %d Lines",
             CLAW_VERSION,
             wsInfo,
             currentFile ? currentFile : "[No Name]",
@@ -149,6 +150,7 @@ void drawStatusBar(void)
             highlightLanguageName(),
             gitInfo,
             bmInfo,
+            themeCurrentName(),
             buffer.numRows
         );
     }
@@ -157,13 +159,14 @@ void drawStatusBar(void)
         snprintf(
             left,
             sizeof(left),
-            " Claw v%s%s | %s%s | %s%s | %d Lines",
+            " Claw v%s%s | %s%s | %s%s | Theme: %s | %d Lines",
             CLAW_VERSION,
             wsInfo,
             currentFile ? currentFile : "[No Name]",
             buffer.modified ? " [Modified]" : "",
             highlightLanguageName(),
             bmInfo,
+            themeCurrentName(),
             buffer.numRows
         );
     }

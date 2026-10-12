@@ -32,5 +32,6 @@ void openReplacePrompt(void);
 void replaceCurrentMatch(void);
 int replaceAllMatches(void);
 void clearSearchResults(void);
+void refreshSearchMatches(void);
 
 #endif

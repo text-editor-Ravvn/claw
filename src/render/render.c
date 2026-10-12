@@ -292,9 +292,20 @@ else
                 ];
 
             if (fileRow == matchRow &&
+                matchRow >= 0 &&
+                matchRow < buffer.numRows &&
+                matchCol >= 0 &&
+                searchState.length > 0 &&
+                matchCol + searchState.length <=
+                    buffer.rows[matchRow].size &&
                 fileCol >= matchCol &&
                 fileCol < matchCol +
-                          searchState.length)
+                          searchState.length &&
+                strncmp(
+                    buffer.rows[matchRow].chars + matchCol,
+                    searchState.query,
+                    (size_t)searchState.length
+                ) == 0)
             {
                 highlight = 1;
             }
@@ -307,6 +318,11 @@ else
                 printf("%s", highlightColor(HL_MATCH));
                 prevColor = HL_MATCH;
             }
+        }
+        else if (prevColor == HL_MATCH)
+        {
+            printf("\033[m");
+            prevColor = -1;
         }
         else if (
             bracketMatchY >= 0 &&

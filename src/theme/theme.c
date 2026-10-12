@@ -11,7 +11,7 @@ static Theme defaultTheme =
     "\033[38;5;244m", /* comment */
     "\033[38;5;208m", /* preprocessor */
     "\033[38;5;111m", /* operator */
-    "\033[48;5;24m",  /* match */
+    "\033[38;2;0;0;0m\033[48;2;255;255;84m",  /* match */
     "\033[39m"        /* normal */
 };
 
