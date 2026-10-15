@@ -15,6 +15,7 @@
 #include "bookmark.h"
 #include "explorer.h"
 #include "file_switcher.h"
+#include "layout.h"
 
 extern Buffer buffer;
 extern Cursor cursor;
@@ -94,13 +95,30 @@ else
 }
 
     int showWelcome =
-        (configShowWelcome() &&
+        (layoutState.showWelcome &&
          currentFile == NULL &&
          buffer.numRows == 1 &&
          buffer.rows[0].size == 0);
 
-    int gutter = viewport.gutterWidth;
+    int gutter = layoutState.showLineNumbers ? viewport.gutterWidth : 0;
     int textCols = viewport.screenCols - gutter;
+    int leftPadding = 0;
+
+    if(layoutState.centeredMode && !layoutState.wideMode)
+    {
+        const int centeredWidth = 100;
+        int availableWidth = viewport.screenCols - gutter;
+
+        if(availableWidth > centeredWidth)
+            textCols = centeredWidth;
+        else
+            textCols = availableWidth;
+
+        if(textCols < 1)
+        textCols = 1;
+
+        leftPadding = (viewport.screenCols - gutter - textCols)/2;
+    }
 
     if (textCols < 1)
         textCols = 1;
@@ -225,6 +243,10 @@ else
     printf("\r\n");
     continue;
 }
+
+
+    if(!showWelcome && leftPadding > 0)
+      printf("%*s", leftPadding, "");
 
         /* Draw line number gutter. */
         if (gutter > 0)
@@ -377,7 +399,7 @@ else
 
     printf("\033[K");
 
-    if (configShowStatusBar())
+    if (layoutState.showStatusBar)
         drawStatusBar();
     else
         printf("\033[K");
@@ -438,7 +460,7 @@ else
             cursor.y - viewport.rowOffset + 1;
 
         int screenCol =
-            cursor.x - viewport.colOffset + gutter + 1;
+            cursor.x - viewport.colOffset + gutter + leftPadding + 1;
 
         if (screenRow < 1)
             screenRow = 1;

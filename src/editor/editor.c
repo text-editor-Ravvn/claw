@@ -29,6 +29,7 @@
 #include "explorer.h"
 #include "file_switcher.h"
 #include "theme.h"
+#include "layout.h"
 
 char *currentFile = NULL;
 static char statusMessage[128] = "";
@@ -159,6 +160,7 @@ void editorInit(void)
             configLoad("config/claw.conf");
     }
 
+    layoutInit();
     /* Set up key bindings from defaults, then overlay the chosen keymap. */
     keymapInit();
 
@@ -225,7 +227,7 @@ void editorRun(void)
 
     continue;
     }
-    
+
     /* ---------- Git View (read-only) ---------- */
 if (gitView.active)
 {
@@ -906,7 +908,7 @@ if (pluginManager.active)
     }
     /* Update viewport after cursor movement */
     scrollEditor();
-   
+
 }
 }
 

@@ -94,7 +94,7 @@ void keymapInit(void) {
   bindings[bindingCount].key = 'w';
   bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
-  
+
   bindings[bindingCount].action = CMD_QUIT;
   bindings[bindingCount].key = 'x';
   bindings[bindingCount].modifiers = MOD_CTRL;
@@ -151,12 +151,12 @@ void keymapInit(void) {
   bindingCount++;
 
   bindings[bindingCount].action = CMD_COMMENT_LINE;
-  bindings[bindingCount].key = '/'; 
+  bindings[bindingCount].key = '/';
   bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_JOIN_LINES;
-  bindings[bindingCount].key = 'j'; 
+  bindings[bindingCount].key = 'j';
   bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
 
@@ -242,6 +242,31 @@ void keymapInit(void) {
 
   bindings[bindingCount].action = CMD_THEME_NEXT;
   bindings[bindingCount].key = 't';
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_LAYOUT_LINE_NUMBERS;
+  bindings[bindingCount].key = '1';
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_LAYOUT_STATUS_BAR;
+  bindings[bindingCount].key = '2';
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_LAYOUT_WELCOME;
+  bindings[bindingCount].key = '3';
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_LAYOUT_CENTERED;
+  bindings[bindingCount].key = '4';
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_LAYOUT_WIDE;
+  bindings[bindingCount].key = '5';
   bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
 

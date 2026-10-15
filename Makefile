@@ -12,6 +12,7 @@ SRC = src/main.c \
       src/buffer/cursor.c \
       src/render/render.c \
       src/ui/statusbar.c \
+	  src/layout/layout.c \
       src/fileio/fileio.c \
 	  src/viewport/viewport.c \
 	  src/search/search.c \
