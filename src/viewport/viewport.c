@@ -5,6 +5,7 @@
 #include "cursor.h"
 #include "config.h"
 #include "buffer.h"
+#include "layout.h"
 #define HSCROLL_MARGIN 10
 extern Cursor cursor;
 extern Buffer buffer;
@@ -98,15 +99,15 @@ void viewportUpdateSize(void)
     );
 
     /* Compute gutter width: digits for the largest line number + separator. */
-    if (configShowLineNumbers())
+    if (layoutState.showLineNumbers)
     {
         int digits = digitCount(buffer.numRows);
 
-        if (digits < 3)
-            digits = 3;
+        if (digits < 2)
+            digits = 2;
 
         /* digits + one space + separator bar + one space */
-        viewport.gutterWidth = digits + 2;
+        viewport.gutterWidth = digits + 1;
     }
     else
     {

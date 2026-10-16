@@ -47,6 +47,14 @@ void refreshScreen(void)
         return;
     }
 
+    if (layoutSettingsMenu.active)
+    {
+        drawLayoutSettings();
+        printf("\033[?25h");
+        fflush(stdout);
+        return;
+    }
+
     if (explorerState.active)
     {
         printf("\033[2J");

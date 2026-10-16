@@ -488,58 +488,12 @@ case CMD_PLUGIN_RELOAD:
                 break;
             }
 
-            case CMD_LAYOUT_LINE_NUMBERS:
-            {
-                layoutToggleLineNumbers();
-                editorSetStatusMessage(
-                    layoutState.showLineNumbers ? "Line numbers enabled" : "Line numbers disabled"
-                );
-
-                break;
-            }
-
-            case CMD_LAYOUT_STATUS_BAR:
-            {
-                layoutToggleStatusBar();
-                editorSetStatusMessage(
-                    layoutState.showStatusBar ? "Status bar enabled" : "Status bar disabled"
-                );
-
-                break;
-            }
-
-            case CMD_LAYOUT_WELCOME:
-            {
-                layoutToggleWelcome();
-                editorSetStatusMessage(
-                    layoutState.showWelcome ? "Welcome screen enabled" : "Welcome screen disabled"
-                );
-
-                break;
-            }
-
-            case CMD_LAYOUT_CENTERED:
-            {
-                layoutToggleCenteredMode();
-                editorSetStatusMessage(
-                    layoutState.centeredMode ? "Centered mode enabled" : "Centered mode disabled"
-                );
-
-                break;
-            }
-
-            case CMD_LAYOUT_WIDE:
-            {
-                layoutToggleWideMode();
-                editorSetStatusMessage(
-                    layoutState.wideMode ? "Wide mode enabled" : "Wide mode disabled"
-                );
-
-                break;
-            }
-
             case CMD_STATUSBAR_SETTINGS:
                 openStatusBarSettings();
+                break;
+
+            case CMD_LAYOUT_SETTINGS:
+                openLayoutSettings();
                 break;
 
         default:

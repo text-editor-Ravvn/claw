@@ -222,6 +222,7 @@ void editorInit(void)
 
 
 StatusBarSettingsMenu statusBarSettingsMenu = {0};
+LayoutSettingsMenu layoutSettingsMenu = {0};
 
 static const char *statusBarOptionNames[STATUSBAR_OPTION_COUNT] = {
     "CLAW version",
@@ -364,6 +365,123 @@ void drawStatusBarSettings(void)
     fflush(stdout);
 }
 
+static const char *layoutOptionNames[LAYOUT_OPTION_COUNT] = {
+    "Line numbers",
+    "Status bar",
+    "Welcome screen",
+    "Centered mode",
+    "Wide mode"
+};
+
+void openLayoutSettings(void)
+{
+    layoutSettingsMenu.values[0] = !!layoutState.showLineNumbers;
+    layoutSettingsMenu.values[1] = !!layoutState.showStatusBar;
+    layoutSettingsMenu.values[2] = !!layoutState.showWelcome;
+    layoutSettingsMenu.values[3] = !!layoutState.centeredMode;
+    layoutSettingsMenu.values[4] = !!layoutState.wideMode;
+
+    for (int i = 0; i < LAYOUT_OPTION_COUNT; i++)
+        layoutSettingsMenu.original[i] = layoutSettingsMenu.values[i];
+
+    layoutSettingsMenu.selected = 0;
+    layoutSettingsMenu.active = 1;
+    editorSetStatusMessage("");
+}
+
+void closeLayoutSettings(void)
+{
+    layoutSettingsMenu.active = 0;
+}
+
+void applyLayoutSettings(void)
+{
+    layoutState.showLineNumbers = layoutSettingsMenu.values[0];
+    layoutState.showStatusBar = layoutSettingsMenu.values[1];
+    layoutState.showWelcome = layoutSettingsMenu.values[2];
+    layoutState.centeredMode = layoutSettingsMenu.values[3];
+    layoutState.wideMode = layoutSettingsMenu.values[4];
+}
+
+void drawLayoutSettings(void)
+{
+    int rows = viewport.screenRows;
+    int cols = viewport.screenCols;
+
+    int panelWidth = cols - 4;
+    if (panelWidth > 56)
+        panelWidth = 56;
+    if (panelWidth < 36)
+        panelWidth = cols;
+    if (panelWidth > cols)
+        panelWidth = cols;
+
+    int left = (cols - panelWidth) / 2;
+    if (left < 0)
+        left = 0;
+
+    printf("\033[2J");
+
+    int row = 1;
+
+    printf("\033[%d;%dH+", row++, left + 1);
+    for (int i = 0; i < panelWidth - 2; i++)
+        putchar('-');
+    putchar('+');
+
+    const char *title = "LAYOUT SETTINGS";
+    printf("\033[%d;%dH|", row, left + 1);
+    printf("\033[%d;%dH%s", row, left + (panelWidth - (int)strlen(title)) / 2 + 1, title);
+    printf("\033[%d;%dH|", row++, left + panelWidth);
+
+    printf("\033[%d;%dH+", row++, left + 1);
+    for (int i = 0; i < panelWidth - 2; i++)
+        putchar('-');
+    putchar('+');
+
+    row++;
+
+    for (int i = 0; i < LAYOUT_OPTION_COUNT; i++)
+    {
+        printf("\033[%d;%dH|", row, left + 1);
+
+        if (i == layoutSettingsMenu.selected)
+            printf("\033[7m");
+
+        printf("\033[%d;%dH[%c] %-24s %s",
+               row,
+               left + 3,
+               layoutSettingsMenu.values[i] ? 'x' : ' ',
+               layoutOptionNames[i],
+               layoutSettingsMenu.values[i] ? "ON" : "OFF");
+
+        if (i == layoutSettingsMenu.selected)
+            printf("\033[0m");
+
+        printf("\033[%d;%dH|", row++, left + panelWidth);
+    }
+
+    row++;
+    printf("\033[%d;%dH|", row, left + 1);
+    printf("\033[%d;%dHUp/Down: Navigate  Space: Toggle",
+           row++, left + 3);
+    printf("\033[%d;%dH|", row - 1, left + panelWidth);
+
+    printf("\033[%d;%dH|", row, left + 1);
+    printf("\033[%d;%dHEnter: Apply  Esc: Cancel",
+           row++, left + 3);
+    printf("\033[%d;%dH|", row - 1, left + panelWidth);
+
+    printf("\033[%d;%dH+", row++, left + 1);
+    for (int i = 0; i < panelWidth - 2; i++)
+        putchar('-');
+    putchar('+');
+
+    (void)rows;
+    printf("\033[?25l");
+    fflush(stdout);
+}
+
 void editorRun(void)
 {
     /* Redraw current state, wait for one command, then apply it. */
@@ -434,6 +552,49 @@ void editorRun(void)
 
         continue;
     }
+
+    /* ---------- Layout Settings Menu ---------- */
+        if (layoutSettingsMenu.active)
+        {
+            if (key == 27)
+            {
+                closeLayoutSettings();
+                editorSetStatusMessage("Layout settings cancelled");
+                continue;
+            }
+
+            if (key == ARROW_UP)
+            {
+                if (layoutSettingsMenu.selected > 0)
+                    layoutSettingsMenu.selected--;
+                continue;
+            }
+
+            if (key == ARROW_DOWN)
+            {
+                if (layoutSettingsMenu.selected < LAYOUT_OPTION_COUNT - 1)
+                    layoutSettingsMenu.selected++;
+                continue;
+            }
+
+            if (key == ' ')
+            {
+                int selected = layoutSettingsMenu.selected;
+                layoutSettingsMenu.values[selected] =
+                    !layoutSettingsMenu.values[selected];
+                continue;
+            }
+
+            if (key == '\r' || key == '\n')
+            {
+                applyLayoutSettings();
+                closeLayoutSettings();
+                editorSetStatusMessage("Layout settings applied");
+                continue;
+            }
+
+            continue;
+        }
 
     /* Clear active search highlight */
     if (key == 27 &&

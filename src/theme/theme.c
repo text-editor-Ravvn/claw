@@ -67,14 +67,86 @@ static Theme lightTheme =
     "\033[30m"
 };
 
+static Theme catppuccinTheme =
+{
+    "\033[38;5;203m",
+    "\033[38;5;111m",
+    "\033[38;5;150m",
+    "\033[38;5;216m",
+    "\033[38;5;103m",
+    "\033[38;5;183m",
+    "\033[38;5;189m",
+    "\033[38;5;0m\033[48;5;183m",
+    "\033[38;5;189m"
+};
+
+static Theme tokyoNightTheme =
+{
+    "\033[38;5;141m",
+    "\033[38;5;110m",
+    "\033[38;5;114m",
+    "\033[38;5;179m",
+    "\033[38;5;60m",
+    "\033[38;5;111m",
+    "\033[38;5;117m",
+    "\033[38;5;0m\033[48;5;110m",
+    "\033[38;5;189m"
+};
+
+static Theme monokaiTheme =
+{
+    "\033[38;5;197m",
+    "\033[38;5;81m",
+    "\033[38;5;186m",
+    "\033[38;5;141m",
+    "\033[38;5;244m",
+    "\033[38;5;208m",
+    "\033[38;5;81m",
+    "\033[38;5;0m\033[48;5;221m",
+    "\033[38;5;253m"
+};
+
+static Theme solarizedTheme =
+{
+    "\033[38;5;166m",
+    "\033[38;5;37m",
+    "\033[38;5;37m",
+    "\033[38;5;136m",
+    "\033[38;5;244m",
+    "\033[38;5;166m",
+    "\033[38;5;37m",
+    "\033[38;5;0m\033[48;5;136m",
+    "\033[38;5;239m"
+};
+
+static Theme kanagawaTheme =
+{
+    "\033[38;2;149;127;184m",
+    "\033[38;2;127;180;202m",
+    "\033[38;2;152;187;108m",
+    "\033[38;2;230;195;132m",
+    "\033[38;2;114;113;125m",
+    "\033[38;2;126;156;216m",
+    "\033[38;2;196;167;231m",
+    "\033[38;2;29;32;46m\033[48;2;210;187;142m",
+    "\033[38;2;220;215;186m"
+};
+
 static Theme *themes[] =
 {
     &defaultTheme,
     &draculaTheme,
     &nordTheme,
     &gruvboxTheme,
-    &lightTheme
+    &lightTheme,
+    &catppuccinTheme,
+    &tokyoNightTheme,
+    &monokaiTheme,
+    &solarizedTheme,
+    &kanagawaTheme
 };
+
+#define THEME_COUNT (sizeof(themes)/sizeof(themes[0]))
 
 static int currentThemeIndex = 0;
 
@@ -83,33 +155,12 @@ static Theme *activeTheme =
 
 void themeSet(ThemeType theme)
 {
-    switch (theme)
-    {
-        case THEME_DRACULA:
-    activeTheme = &draculaTheme;
-    currentThemeIndex = 1;
-    break;
+    if(theme < 0 || theme >= THEME_COUNT)
+       theme = THEME_DEFAULT;
 
-case THEME_NORD:
-    activeTheme = &nordTheme;
-    currentThemeIndex = 2;
-    break;
+    currentThemeIndex = (int)theme;
+    activeTheme = themes[currentThemeIndex];
 
-case THEME_GRUVBOX:
-    activeTheme = &gruvboxTheme;
-    currentThemeIndex = 3;
-    break;
-
-case THEME_LIGHT:
-    activeTheme = &lightTheme;
-    currentThemeIndex = 4;
-    break;
-
-default:
-    activeTheme = &defaultTheme;
-    currentThemeIndex = 0;
-    break;
-    }
 }
 
 void themeInit(void)
@@ -154,33 +205,35 @@ const char *themeColor(
 
 const char *themeCurrentName(void)
 {
-    if (activeTheme == &defaultTheme)
-        return "default";
+    static const char *themeNames[] =
+    {
+        "default",
+        "dracula",
+        "nord",
+        "gruvbox",
+        "light",
+        "catppuccin",
+        "tokyo-night",
+        "monokai",
+        "solarized",
+        "kanagawa"
+    };
 
-    if (activeTheme == &draculaTheme)
-        return "dracula";
+    if (currentThemeIndex < 0 ||
+        currentThemeIndex >= (int)THEME_COUNT)
+        return "unknown";
 
-    if (activeTheme == &nordTheme)
-        return "nord";
-
-    if (activeTheme == &gruvboxTheme)
-        return "gruvbox";
-
-    if (activeTheme == &lightTheme)
-        return "light";
-
-    return "unknown";
+    return themeNames[currentThemeIndex];
 }
 
 int themeNext(void)
 {
     currentThemeIndex++;
 
-    if (currentThemeIndex >= 5)
+    if (currentThemeIndex >= (int)THEME_COUNT)
         currentThemeIndex = 0;
 
-    activeTheme =
-        themes[currentThemeIndex];
+    activeTheme = themes[currentThemeIndex];
 
     return 1;
 }

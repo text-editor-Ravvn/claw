@@ -245,33 +245,13 @@ void keymapInit(void) {
   bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
 
-  bindings[bindingCount].action = CMD_LAYOUT_LINE_NUMBERS;
-  bindings[bindingCount].key = '1';
-  bindings[bindingCount].modifiers = MOD_ALT;
-  bindingCount++;
-
-  bindings[bindingCount].action = CMD_LAYOUT_STATUS_BAR;
-  bindings[bindingCount].key = '2';
-  bindings[bindingCount].modifiers = MOD_ALT;
-  bindingCount++;
-
-  bindings[bindingCount].action = CMD_LAYOUT_WELCOME;
-  bindings[bindingCount].key = '3';
-  bindings[bindingCount].modifiers = MOD_ALT;
-  bindingCount++;
-
-  bindings[bindingCount].action = CMD_LAYOUT_CENTERED;
-  bindings[bindingCount].key = '4';
-  bindings[bindingCount].modifiers = MOD_ALT;
-  bindingCount++;
-
-  bindings[bindingCount].action = CMD_LAYOUT_WIDE;
-  bindings[bindingCount].key = '5';
-  bindings[bindingCount].modifiers = MOD_ALT;
-  bindingCount++;
-
   bindings[bindingCount].action = CMD_STATUSBAR_SETTINGS;
   bindings[bindingCount].key = '6';
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_LAYOUT_SETTINGS;
+  bindings[bindingCount].key = '7';
   bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
 

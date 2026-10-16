@@ -77,4 +77,22 @@ void closeStatusBarSettings(void);
 void drawStatusBarSettings(void);
 int saveStatusBarSettings(void);
 
+/* Layout Bar customization menu state*/
+#define LAYOUT_OPTION_COUNT 5
+
+typedef struct
+{
+    int active;
+    int selected;
+    int original[LAYOUT_OPTION_COUNT];
+    int values[LAYOUT_OPTION_COUNT];
+} LayoutSettingsMenu;
+
+extern LayoutSettingsMenu layoutSettingsMenu;
+
+void openLayoutSettings(void);
+void closeLayoutSettings(void);
+void drawLayoutSettings(void);
+void applyLayoutSettings(void);
+
 #endif

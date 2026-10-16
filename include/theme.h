@@ -23,7 +23,12 @@ typedef enum
     THEME_DRACULA,
     THEME_NORD,
     THEME_GRUVBOX,
-    THEME_LIGHT
+    THEME_LIGHT,
+    THEME_CATPPUCCIN,
+    THEME_TOKYO_NIGHT,
+    THEME_MONOKAI,
+    THEME_SOLARIZED,
+    THEME_KANAGAWA
 } ThemeType;
 
 void themeSet(ThemeType theme);

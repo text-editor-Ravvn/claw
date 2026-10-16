@@ -14,7 +14,7 @@ static char userConfigPath[512] = "";
 void configInit(void) {
   /* Compiled-in defaults matching a reasonable editing experience. */
   editorConfig.tabWidth = 4;
-  editorConfig.showLineNumbers = 0;
+  editorConfig.showLineNumbers = 1;
   editorConfig.showWelcome = 1;
   editorConfig.showStatusBar = 1;
   editorConfig.statusbarShowVersion = -1;
