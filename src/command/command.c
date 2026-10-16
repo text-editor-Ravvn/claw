@@ -538,6 +538,10 @@ case CMD_PLUGIN_RELOAD:
                 break;
             }
 
+            case CMD_STATUSBAR_SETTINGS:
+                openStatusBarSettings();
+                break;
+
         default:
             break;
     }

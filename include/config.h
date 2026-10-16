@@ -15,6 +15,16 @@ typedef struct
     /* Whether the status bar is drawn at the bottom. */
     int showStatusBar;
 
+    /*Optional fields displayed in the normal status bar.*/
+    int statusbarShowVersion;
+    int statusbarShowWorkspace;
+    int statusbarShowFilename;
+    int statusbarShowLanguage;
+    int statusbarShowGit;
+    int statusbarShowBookmarks;
+    int statusbarShowTheme;
+    int statusbarShowLineCount;
+
     /* Name of the active keymap file (without path or extension). */
     char keymapName[64];
 
@@ -29,12 +39,31 @@ void configInit(void);
    Returns 1 on success, 0 if the file could not be opened.
    Unknown keys are silently ignored. */
 int configLoad(const char *path);
+void configSetUserPath(const char *path);
+/*Save only the status bar settings to the active user configurations*/
+int configSaveStatusBarSettings(
+    const int values[],
+    int count
+);
+
+int configApplyStatusBarSettings(
+    const int values[],
+    int count
+);
 
 /* Typed accessors for the current configuration. */
 int configTabWidth(void);
 int configShowLineNumbers(void);
 int configShowWelcome(void);
 int configShowStatusBar(void);
+int configStatusbarShowVersion(void);
+int configStatusbarShowWorkspace(void);
+int configStatusbarShowFilename(void);
+int configStatusbarShowLanguage(void);
+int configStatusbarShowGit(void);
+int configStatusbarShowBookmarks(void);
+int configStatusbarShowTheme(void);
+int configStatusbarShowLineCount(void);
 const char *configKeymapName(void);
 
 #endif

@@ -11,6 +11,7 @@
 #include "workspace.h"
 #include "bookmark.h"
 #include "theme.h"
+#include "config.h"
 
 extern Buffer buffer;
 extern Cursor cursor;
@@ -84,92 +85,90 @@ void drawStatusBar(void)
 }
 
     /* ---------------- Normal Status Bar ---------------- */
-    char wsInfo[128] = "";
-    if (workspaceIsActive())
+
+    char *separator = "";
+    size_t used = 0;
+
+    left[0] = '\0';
+
+     /*
+     * Append optional fields safely. Each field is added only when
+     * its corresponding configuration option is enabled.
+     */
+    #define APPEND_FIELD(...)                                                   \
+    do                                                                      \
+    {                                                                       \
+        int written = snprintf(                                             \
+            left + used, sizeof(left) - used, "%s", separator);             \
+        if (written < 0 || (size_t)written >= sizeof(left) - used)           \
+            goto statusbar_done;                                            \
+        used += (size_t)written;                                            \
+        separator = " | ";                                                  \
+        written = snprintf(                                                 \
+            left + used, sizeof(left) - used, __VA_ARGS__);                 \
+        if (written < 0 || (size_t)written >= sizeof(left) - used)           \
+            goto statusbar_done;                                            \
+        used += (size_t)written;                                            \
+    } while (0)
+
+    if (configStatusbarShowVersion())
+        APPEND_FIELD("Claw v%s", CLAW_VERSION);
+
+    if (configStatusbarShowWorkspace() && workspaceIsActive())
+        APPEND_FIELD("%s", workspaceGetName());
+
+    if (configStatusbarShowFilename())
     {
-        snprintf(wsInfo, sizeof(wsInfo), " [%s]", workspaceGetName());
+        APPEND_FIELD("%s%s",
+                     currentFile ? currentFile : "[No Name]",
+                     buffer.modified ? " [Modified]" : "");
+    }
+    else if (buffer.modified)
+    {
+        APPEND_FIELD("[Modified]");
     }
 
-    char bmInfo[64] = "";
-    int bmCount = bookmarkCount();
-    if (bmCount > 0)
-    {
-        snprintf(bmInfo, sizeof(bmInfo), " | Bm:%d", bmCount);
-    }
+    if (configStatusbarShowLanguage())
+        APPEND_FIELD("%s", highlightLanguageName());
 
-    if (gitCurrentBranch(branch, sizeof(branch)))
+    if (configStatusbarShowGit() &&
+        gitCurrentBranch(branch, sizeof(branch)))
     {
-        if (currentFile)
+        if (!currentFile)
         {
-            if (!gitFileTracked(currentFile))
-            {
-                snprintf(
-                    gitInfo,
-                    sizeof(gitInfo),
-                    "Git:%s?",
-                    branch
-                );
-            }
-            else if (buffer.modified)
-            {
-                snprintf(
-                    gitInfo,
-                    sizeof(gitInfo),
-                    "Git:%s*",
-                    branch
-                );
-            }
-            else
-            {
-                snprintf(
-                    gitInfo,
-                    sizeof(gitInfo),
-                    "Git:%s",
-                    branch
-                );
-            }
+            snprintf(gitInfo, sizeof(gitInfo), "Git:%s", branch);
+        }
+        else if (!gitFileTracked(currentFile))
+        {
+            snprintf(gitInfo, sizeof(gitInfo), "Git:%s?", branch);
+        }
+        else if (buffer.modified)
+        {
+            snprintf(gitInfo, sizeof(gitInfo), "Git:%s*", branch);
         }
         else
         {
-            snprintf(
-                gitInfo,
-                sizeof(gitInfo),
-                "Git:%s",
-                branch
-            );
+            snprintf(gitInfo, sizeof(gitInfo), "Git:%s", branch);
         }
 
-        snprintf(
-            left,
-            sizeof(left),
-            " Claw v%s%s | %s%s | %s | %s%s | Theme: %s | %d Lines",
-            CLAW_VERSION,
-            wsInfo,
-            currentFile ? currentFile : "[No Name]",
-            buffer.modified ? " [Modified]" : "",
-            highlightLanguageName(),
-            gitInfo,
-            bmInfo,
-            themeCurrentName(),
-            buffer.numRows
-        );
+        APPEND_FIELD("%s", gitInfo);
     }
-    else
+
+    if (configStatusbarShowBookmarks())
     {
-        snprintf(
-            left,
-            sizeof(left),
-            " Claw v%s%s | %s%s | %s%s | Theme: %s | %d Lines",
-            CLAW_VERSION,
-            wsInfo,
-            currentFile ? currentFile : "[No Name]",
-            buffer.modified ? " [Modified]" : "",
-            highlightLanguageName(),
-            bmInfo,
-            themeCurrentName(),
-            buffer.numRows
-        );
+        int bmCount = bookmarkCount();
+        if (bmCount > 0)
+            APPEND_FIELD("Bm:%d", bmCount);
     }
+
+    if (configStatusbarShowTheme())
+        APPEND_FIELD("Theme: %s", themeCurrentName());
+
+    if (configStatusbarShowLineCount())
+        APPEND_FIELD("%d Lines", buffer.numRows);
+
+    statusbar_done:
+    #undef APPEND_FIELD
 
     snprintf(
         right,

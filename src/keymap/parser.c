@@ -156,6 +156,9 @@ static int parseActionName(const char *name)
     if (strcmp(name, "session_restore") == 0)
         return CMD_SESSION_RESTORE;
 
+    if (strcmp(name, "statusbar_settings") == 0)
+        return CMD_STATUSBAR_SETTINGS;
+
     return CMD_NONE;
 }
 

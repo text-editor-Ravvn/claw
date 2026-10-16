@@ -128,34 +128,54 @@ void editorInit(void)
     themeSet(THEME_DEFAULT);
     configLoad("config/default.conf");
 
+
     {
-        char userConfigPath[512];
+        char candidatePath[512] = "";
+        char savePath[512] = "";
         int loaded = 0;
 
-        /* Try $XDG_CONFIG_HOME/claw/claw.conf first. */
         const char *xdg = getenv("XDG_CONFIG_HOME");
+        const char *home = getenv("HOME");
 
-        if (xdg && strlen(xdg) > 0)
+        /* Prefer the XDG configuration directory. */
+        if (xdg && xdg[0] != '\0')
         {
-            snprintf(userConfigPath, sizeof(userConfigPath),
+            snprintf(candidatePath, sizeof(candidatePath),
                      "%s/claw/claw.conf", xdg);
-            loaded = configLoad(userConfigPath);
+            loaded = configLoad(candidatePath);
+
+            if (loaded)
+                snprintf(savePath, sizeof(savePath), "%s", candidatePath);
         }
 
-        /* Fall back to ~/.config/claw/claw.conf. */
+        /* Fall back to the standard home configuration directory. */
+        if (!loaded && home && home[0] != '\0')
+        {
+            snprintf(candidatePath, sizeof(candidatePath),
+                     "%s/.config/claw/claw.conf", home);
+            loaded = configLoad(candidatePath);
+
+            if (loaded)
+                snprintf(savePath, sizeof(savePath), "%s", candidatePath);
+        }
+
+        /*
+         * If no user config exists, choose a destination for future
+         * saves without modifying the bundled configuration files.
+         */
         if (!loaded)
         {
-            const char *home = getenv("HOME");
-
-            if (home && strlen(home) > 0)
-            {
-                snprintf(userConfigPath, sizeof(userConfigPath),
+            if (xdg && xdg[0] != '\0')
+                snprintf(savePath, sizeof(savePath),
+                         "%s/claw/claw.conf", xdg);
+            else if (home && home[0] != '\0')
+                snprintf(savePath, sizeof(savePath),
                          "%s/.config/claw/claw.conf", home);
-                loaded = configLoad(userConfigPath);
-            }
         }
 
-        /* Final fallback: relative config/claw.conf (dev mode). */
+        configSetUserPath(savePath);
+
+        /* Keep the development fallback for loading. */
         if (!loaded)
             configLoad("config/claw.conf");
     }
@@ -199,6 +219,151 @@ void editorInit(void)
 
     gitRefreshStatus(currentFile);
 }
+
+
+StatusBarSettingsMenu statusBarSettingsMenu = {0};
+
+static const char *statusBarOptionNames[STATUSBAR_OPTION_COUNT] = {
+    "CLAW version",
+    "Workspace name",
+    "File name",
+    "Programming language",
+    "Git branch/status",
+    "Bookmark count",
+    "Theme name",
+    "Total line count"
+};
+
+static void loadStatusBarValues(int values[])
+{
+    values[0] = !!configStatusbarShowVersion();
+    values[1] = !!configStatusbarShowWorkspace();
+    values[2] = !!configStatusbarShowFilename();
+    values[3] = !!configStatusbarShowLanguage();
+    values[4] = !!configStatusbarShowGit();
+    values[5] = !!configStatusbarShowBookmarks();
+    values[6] = !!configStatusbarShowTheme();
+    values[7] = !!configStatusbarShowLineCount();
+}
+
+void openStatusBarSettings(void)
+{
+    loadStatusBarValues(statusBarSettingsMenu.values);
+
+    for (int i = 0; i < STATUSBAR_OPTION_COUNT; i++)
+        statusBarSettingsMenu.original[i] =
+            statusBarSettingsMenu.values[i];
+
+    statusBarSettingsMenu.selected = 0;
+    statusBarSettingsMenu.active = 1;
+
+    editorSetStatusMessage("");
+}
+
+void closeStatusBarSettings(void)
+{
+    statusBarSettingsMenu.active = 0;
+}
+
+int saveStatusBarSettings(void)
+{
+    return configApplyStatusBarSettings(
+        statusBarSettingsMenu.values,
+        STATUSBAR_OPTION_COUNT
+    );
+}
+
+
+
+
+void drawStatusBarSettings(void)
+{
+    int rows = viewport.screenRows;
+    int cols = viewport.screenCols;
+
+    int panelWidth = cols - 4;
+    if (panelWidth > 64)
+        panelWidth = 64;
+    if (panelWidth < 36)
+        panelWidth = cols;
+
+    if (panelWidth > cols)
+        panelWidth = cols;
+
+    int left = (cols - panelWidth) / 2;
+    if (left < 0)
+        left = 0;
+
+    /* Absolute cursor positioning: ESC[row;columnH */
+    printf("\033[2J");
+
+    int row = 1;
+
+    /* Top border */
+    printf("\033[%d;%dH+", row++, left + 1);
+    for (int i = 0; i < panelWidth - 2; i++)
+        putchar('-');
+    putchar('+');
+
+    /* Title */
+    printf("\033[%d;%dH|", row, left + 1);
+    const char *title = "STATUS BAR SETTINGS";
+    int titleCol = left + (panelWidth - (int)strlen(title)) / 2 + 1;
+    printf("\033[%d;%dH%s", row++, titleCol, title);
+    printf("\033[%d;%dH|", row - 1, left + panelWidth);
+
+    /* Divider */
+    printf("\033[%d;%dH+", row, left + 1);
+    for (int i = 0; i < panelWidth - 2; i++)
+        putchar('-');
+    putchar('+');
+    row += 2;
+
+    printf("\033[%d;%dHChoose which fields to display:", row++, left + 2);
+    row++;
+
+    for (int i = 0; i < STATUSBAR_OPTION_COUNT; i++)
+    {
+        char line[128];
+
+        snprintf(line, sizeof(line), "[%c] %-25s %s",
+                 statusBarSettingsMenu.values[i] ? 'x' : ' ',
+                 statusBarOptionNames[i],
+                 statusBarSettingsMenu.values[i] ? "ON" : "OFF");
+
+        printf("\033[%d;%dH|", row, left + 1);
+
+        if (i == statusBarSettingsMenu.selected)
+            printf("\033[7m");
+
+        printf("\033[%d;%dH%-*.*s",
+               row, left + 3,
+               panelWidth - 4, panelWidth - 4, line);
+
+        printf("\033[0m\033[%d;%dH|", row++, left + panelWidth);
+    }
+
+    /* Bottom border */
+    printf("\033[%d;%dH+", row, left + 1);
+    for (int i = 0; i < panelWidth - 2; i++)
+        putchar('-');
+    putchar('+');
+    row += 2;
+
+    /* Help text is placed inside the panel and clipped to its width. */
+    printf("\033[%d;%dH%-*.*s",
+           row, left + 2,
+           panelWidth - 4, panelWidth - 4,
+           "Up/Down: Navigate  Space: Toggle  Enter: Save  Esc: Cancel");
+
+    /* Don't draw beyond a short terminal. */
+    if (rows > 0 && row > rows)
+        printf("\033[%d;1H", rows);
+
+    printf("\033[0m\033[?25l");
+    fflush(stdout);
+}
+
 void editorRun(void)
 {
     /* Redraw current state, wait for one command, then apply it. */
@@ -214,6 +379,61 @@ void editorRun(void)
 
     int key =
         event.key;
+
+    /* ---------- Status Bar Settings Menu ---------- */
+    if (statusBarSettingsMenu.active)
+    {
+        if (key == 27)
+        {
+            closeStatusBarSettings();
+            editorSetStatusMessage("Status bar settings cancelled");
+            continue;
+        }
+
+        if (key == ARROW_UP)
+        {
+            if (statusBarSettingsMenu.selected > 0)
+                statusBarSettingsMenu.selected--;
+            continue;
+        }
+
+        if (key == ARROW_DOWN)
+        {
+            if (statusBarSettingsMenu.selected <
+                STATUSBAR_OPTION_COUNT - 1)
+                statusBarSettingsMenu.selected++;
+            continue;
+        }
+
+        if (key == ' ')
+        {
+            int selected = statusBarSettingsMenu.selected;
+            statusBarSettingsMenu.values[selected] =
+                !statusBarSettingsMenu.values[selected];
+            continue;
+        }
+
+        if (key == '\r' || key == '\n')
+        {
+            if (saveStatusBarSettings())
+            {
+                closeStatusBarSettings();
+                editorSetStatusMessage(
+                    "Status bar settings saved"
+                );
+            }
+            else
+            {
+                editorSetStatusMessage(
+                    "Could not save status bar settings"
+                );
+            }
+
+            continue;
+        }
+
+        continue;
+    }
 
     /* Clear active search highlight */
     if (key == 27 &&

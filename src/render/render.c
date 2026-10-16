@@ -39,6 +39,14 @@ void refreshScreen(void)
 {
     printf("\033[?25l");
 
+    if (statusBarSettingsMenu.active)
+    {
+        drawStatusBarSettings();
+        printf("\033[?25h");
+        fflush(stdout);
+        return;
+    }
+
     if (explorerState.active)
     {
         printf("\033[2J");

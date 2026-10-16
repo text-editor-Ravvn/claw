@@ -59,4 +59,22 @@ void performGotoLine(void);
 void openGitView(const char *tempFile);
 void closeGitView(void);
 
+/* Status Bar customization menu state*/
+#define STATUSBAR_OPTION_COUNT 8
+
+typedef struct
+{
+    int active;
+    int selected;
+    int original[STATUSBAR_OPTION_COUNT];
+    int values[STATUSBAR_OPTION_COUNT];
+} StatusBarSettingsMenu;
+
+extern StatusBarSettingsMenu statusBarSettingsMenu;
+
+void openStatusBarSettings(void);
+void closeStatusBarSettings(void);
+void drawStatusBarSettings(void);
+int saveStatusBarSettings(void);
+
 #endif

@@ -270,6 +270,11 @@ void keymapInit(void) {
   bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
 
+  bindings[bindingCount].action = CMD_STATUSBAR_SETTINGS;
+  bindings[bindingCount].key = '6';
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
 }
 
 int keymapLookup(
