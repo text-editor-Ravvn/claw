@@ -8,6 +8,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <limits.h>
+#include <unistd.h>
 
 #include "highlight.h"
 
@@ -904,6 +905,257 @@ int themeDeleteCustom(size_t index)
             currentThemeIndex = THEME_DEFAULT;
         }
     }
+
+    return 1;
+}
+
+int themeExportCustom(size_t index, const char *destinationPath)
+{
+    if (index >= customThemeCount ||
+        !destinationPath || !*destinationPath)
+        return 0;
+
+    const char *sourcePath = customThemes[index].path;
+
+    if (!sourcePath[0] || strcmp(sourcePath, destinationPath) == 0)
+        return 0;
+
+    FILE *source = fopen(sourcePath, "rb");
+    if (!source)
+        return 0;
+
+    /* Create a new destination; never overwrite an existing file. */
+    FILE *destination = fopen(destinationPath, "wbx");
+    if (!destination)
+    {
+        fclose(source);
+        return 0;
+    }
+
+    char buffer[4096];
+    size_t bytesRead;
+    int success = 1;
+
+    while ((bytesRead = fread(buffer, 1, sizeof(buffer), source)) > 0)
+    {
+        if (fwrite(buffer, 1, bytesRead, destination) != bytesRead)
+        {
+            success = 0;
+            break;
+        }
+    }
+
+    if (ferror(source))
+        success = 0;
+
+    if (fflush(destination) != 0)
+        success = 0;
+
+    if (fclose(source) != 0)
+        success = 0;
+
+    if (fclose(destination) != 0)
+        success = 0;
+
+    if (!success)
+        remove(destinationPath);
+
+    return success;
+}
+
+int themeImportCustom(const char *sourcePath)
+{
+    if (!sourcePath || !*sourcePath)
+        return 0;
+
+    themeInit();
+
+    if (customThemeCount >= MAX_CUSTOM_THEMES)
+        return 0;
+
+    char directory[PATH_MAX];
+    const char *xdg = getenv("XDG_CONFIG_HOME");
+    const char *home = getenv("HOME");
+    int written;
+
+    if (xdg && *xdg)
+        written = snprintf(directory, sizeof(directory),
+                           "%s/claw/themes", xdg);
+    else if (home && *home)
+        written = snprintf(directory, sizeof(directory),
+                           "%s/.config/claw/themes", home);
+    else
+        return 0;
+
+    if (written < 0 || (size_t)written >= sizeof(directory) ||
+        !ensureThemeDirectory(directory))
+        return 0;
+
+    char tempPath[PATH_MAX];
+    written = snprintf(tempPath, sizeof(tempPath),
+        "%s/.claw-import-XXXXXX", directory);
+
+    if (written < 0 || (size_t)written >= sizeof(tempPath))
+        return 0;
+
+    /* Copy into a temporary managed file without overwriting anything. */
+    FILE *source = fopen(sourcePath, "rb");
+    if (!source)
+        return 0;
+
+    int tempFd = mkstemp(tempPath);
+    if (tempFd < 0)
+    {
+        fclose(source);
+        return 0;
+    }
+
+    FILE *destination = fdopen(tempFd, "wb");
+    if (!destination)
+    {
+        close(tempFd);
+        fclose(source);
+        remove(tempPath);
+        return 0;
+    }
+
+    char buffer[4096];
+    size_t bytesRead;
+    int ok = 1;
+
+    while ((bytesRead = fread(buffer, 1, sizeof(buffer), source)) > 0)
+    {
+        if (fwrite(buffer, 1, bytesRead, destination) != bytesRead)
+        {
+            ok = 0;
+            break;
+        }
+    }
+
+    if (ferror(source))
+        ok = 0;
+
+    if (fflush(destination) != 0)
+        ok = 0;
+
+    if (fclose(source) != 0)
+        ok = 0;
+
+    if (fclose(destination) != 0)
+        ok = 0;
+
+    if (!ok)
+    {
+        remove(tempPath);
+        return 0;
+    }
+
+    /* Reuse the existing parser and its color validation. */
+    if (!loadCustomThemeFile(tempPath))
+    {
+        remove(tempPath);
+        return 0;
+    }
+
+    size_t index = customThemeCount - 1;
+    CustomTheme *imported = &customThemes[index];
+
+    /* Enforce the same safe filename characters as Theme Maker. */
+    for (const char *p = imported->name; *p; p++)
+    {
+        if (!((*p >= 'a' && *p <= 'z') ||
+              (*p >= 'A' && *p <= 'Z') ||
+              (*p >= '0' && *p <= '9') ||
+              *p == ' ' || *p == '-' || *p == '_'))
+        {
+            customThemeCount--;
+            remove(tempPath);
+            return 0;
+        }
+    }
+
+    /* Reject duplicate custom names and built-in theme names. */
+    static const char *builtInNames[] = {
+        "default", "dracula", "nord", "gruvbox", "light",
+        "catppuccin", "tokyo-night", "monokai", "solarized",
+        "kanagawa"
+    };
+
+    for (size_t i = 0;
+         i < sizeof(builtInNames) / sizeof(builtInNames[0]); i++)
+    {
+        if (strcmp(imported->name, builtInNames[i]) == 0)
+        {
+            customThemeCount--;
+            remove(tempPath);
+            return 0;
+        }
+    }
+
+    for (size_t i = 0; i < index; i++)
+    {
+        if (strcmp(customThemes[i].name, imported->name) == 0)
+        {
+            customThemeCount--;
+            remove(tempPath);
+            return 0;
+        }
+    }
+
+    /* Build a filename from the validated theme name. */
+    char filename[THEME_NAME_SIZE * 2];
+    size_t out = 0;
+
+    for (const char *p = imported->name;
+         *p && out < sizeof(filename) - 6; p++)
+    {
+        char c = *p;
+
+        if (c == ' ')
+            c = '-';
+
+        if (c >= 'A' && c <= 'Z')
+            c = (char)(c - 'A' + 'a');
+
+        filename[out++] = c;
+    }
+
+    filename[out] = '\0';
+
+    char finalPath[PATH_MAX];
+    written = snprintf(finalPath, sizeof(finalPath),
+                       "%s/%s.conf", directory, filename);
+
+    if (written < 0 || (size_t)written >= sizeof(finalPath))
+    {
+        customThemeCount--;
+        remove(tempPath);
+        return 0;
+    }
+
+    /*
+     * Link atomically so an existing destination is never overwritten.
+     * Both paths are in the managed theme directory.
+     */
+
+    if (link(tempPath, finalPath) != 0)
+    {
+        customThemeCount--;
+        remove(tempPath);
+        return 0;
+    }
+
+    if (remove(tempPath) != 0)
+    {
+        /* The imported theme is valid; the temporary copy may remain. */
+    }
+
+    /* Track the managed copy, not the external source. */
+    snprintf(imported->path, sizeof(imported->path), "%s", finalPath);
+
+    themeCancelPreview();
+    currentThemeIndex = (int)(THEME_COUNT + index);
+    activeTheme = &imported->theme;
 
     return 1;
 }

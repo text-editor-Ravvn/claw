@@ -501,6 +501,85 @@ void editorRun(void)
     {
         size_t count = themeCustomCount();
 
+        if (themeManagerMenu.pathPromptActive)
+        {
+            if (key == 27)
+            {
+                themeManagerMenu.pathPromptActive = 0;
+                themeManagerMenu.path[0] = '\0';
+                themeManagerMenu.pathLength = 0;
+                editorSetStatusMessage("Theme operation cancelled");
+                continue;
+            }
+
+            if (key == '\r' || key == '\n')
+            {
+                int success = 0;
+
+                if (themeManagerMenu.pathLength > 0)
+                {
+                    if (themeManagerMenu.exportMode)
+                    {
+                        success = themeExportCustom(
+                            (size_t)themeManagerMenu.selected,
+                            themeManagerMenu.path);
+                    }
+                    else
+                    {
+                        success = themeImportCustom(
+                            themeManagerMenu.path);
+                    }
+                }
+
+                themeManagerMenu.pathPromptActive = 0;
+                themeManagerMenu.path[0] = '\0';
+                themeManagerMenu.pathLength = 0;
+
+                if (success)
+                {
+                    snprintf(themeManagerMenu.message,
+                        sizeof(themeManagerMenu.message),
+                        "%s successful",
+                        themeManagerMenu.exportMode ? "Export" : "Import");
+                }
+                else
+                {
+                    snprintf(themeManagerMenu.message,
+                        sizeof(themeManagerMenu.message),
+                        "%s failed: check path, file, or duplicate",
+                        themeManagerMenu.exportMode ? "Export" : "Import");
+                }
+
+                editorSetStatusMessage(themeManagerMenu.message);
+
+                continue;
+            }
+
+            if (key == 127 || key == 8)
+            {
+                if (themeManagerMenu.pathLength > 0)
+                {
+                    themeManagerMenu.pathLength--;
+                    themeManagerMenu.path[
+                        themeManagerMenu.pathLength] = '\0';
+                }
+                continue;
+            }
+
+            if (key >= 32 && key <= 126 &&
+                themeManagerMenu.pathLength <
+                    (int)sizeof(themeManagerMenu.path) - 1)
+            {
+                themeManagerMenu.path[
+                    themeManagerMenu.pathLength++] = (char)key;
+
+                themeManagerMenu.path[
+                    themeManagerMenu.pathLength] = '\0';
+            }
+
+            continue;
+        }
+
         if (themeManagerMenu.confirmDelete)
         {
             if (key == 'y' || key == 'Y')
@@ -568,6 +647,26 @@ void editorRun(void)
             (size_t)themeManagerMenu.selected < count)
         {
             themeManagerMenu.confirmDelete = 1;
+            continue;
+        }
+
+        if (key == 'i' || key == 'I')
+        {
+            themeManagerMenu.pathPromptActive = 1;
+            themeManagerMenu.exportMode = 0;
+            themeManagerMenu.pathLength = 0;
+            themeManagerMenu.path[0] = '\0';
+            continue;
+        }
+
+        if ((key == 'e' || key == 'E') &&
+            count > 0 &&
+            (size_t)themeManagerMenu.selected < count)
+        {
+            themeManagerMenu.pathPromptActive = 1;
+            themeManagerMenu.exportMode = 1;
+            themeManagerMenu.pathLength = 0;
+            themeManagerMenu.path[0] = '\0';
             continue;
         }
 
@@ -1806,7 +1905,12 @@ void openThemeManager(void)
     themeManagerMenu.active = 1;
     themeManagerMenu.selected = 0;
     themeManagerMenu.confirmDelete = 0;
+    themeManagerMenu.pathPromptActive = 0;
+    themeManagerMenu.exportMode = 0;
+    themeManagerMenu.pathLength = 0;
+    themeManagerMenu.path[0] = '\0';
     editorSetStatusMessage("");
+    themeManagerMenu.message[0] = '\0';
 }
 
 void closeThemeManager(void)
@@ -1873,6 +1977,22 @@ void drawThemeManager(void)
     printf("\033[%d;%dH", startY + 11, startX);
     printf("\033[1;36m+----------------------------------------------------------+\033[0m");
 
+    if (themeManagerMenu.pathPromptActive)
+    {
+        printf("\033[%d;%dH", startY + 10, startX);
+        printf("| %s: %-48.48s |",
+               themeManagerMenu.exportMode
+                   ? "Export path"
+                   : "Import path",
+               themeManagerMenu.path);
+    }
+    else if (themeManagerMenu.message[0] != '\0')
+    {
+        printf("\033[%d;%dH", startY + 10, startX + 2);
+        printf("\033[1;33m%-56.56s\033[0m",
+               themeManagerMenu.message);
+    }
+
     printf("\033[%d;%dH", startY + 12, startX);
 
     if (themeManagerMenu.confirmDelete && count > 0 &&
@@ -1883,7 +2003,7 @@ void drawThemeManager(void)
     }
     else
     {
-        printf("Up/Down: select  Enter: activate  D: delete  Esc: exit");
+        printf("Up/Down: select Enter: activate D: delete I: import E: export");
     }
 
     printf("\033[%d;%dH", startY + 13, startX);

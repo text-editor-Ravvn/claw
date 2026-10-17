@@ -58,4 +58,8 @@ int themeActivateCustom(size_t index);
 
 int themeDeleteCustom(size_t index);
 
+int themeImportCustom(const char *sourcePath);
+
+int themeExportCustom(size_t index, const char *destinationPath);
+
 #endif

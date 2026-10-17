@@ -122,6 +122,11 @@ typedef struct
     int active;
     int selected;
     int confirmDelete;
+    int pathPromptActive;
+    int exportMode;
+    int pathLength;
+    char path[512];
+    char message[160];
 } ThemeManagerMenu;
 
 extern ThemeManagerMenu themeManagerMenu;
