@@ -34,10 +34,27 @@ void renderForceClear(void)
     lastCols = 0;
 }
 
-
 void refreshScreen(void)
 {
     printf("\033[?25l");
+
+
+    if (themeManagerMenu.active)
+    {
+        drawThemeManager();
+        printf("\033[?25h");
+        fflush(stdout);
+        return;
+    }
+
+
+    if (themeMakerMenu.active)
+    {
+        drawThemeMaker();
+        printf("\033[?25h");
+        fflush(stdout);
+        return;
+    }
 
     if (statusBarSettingsMenu.active)
     {

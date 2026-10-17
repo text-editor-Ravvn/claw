@@ -223,6 +223,8 @@ void editorInit(void)
 
 StatusBarSettingsMenu statusBarSettingsMenu = {0};
 LayoutSettingsMenu layoutSettingsMenu = {0};
+ThemeMakerMenu themeMakerMenu = {0};
+ThemeManagerMenu themeManagerMenu = {0};
 
 static const char *statusBarOptionNames[STATUSBAR_OPTION_COUNT] = {
     "CLAW version",
@@ -273,9 +275,6 @@ int saveStatusBarSettings(void)
         STATUSBAR_OPTION_COUNT
     );
 }
-
-
-
 
 void drawStatusBarSettings(void)
 {
@@ -494,9 +493,212 @@ void editorRun(void)
     KeyEvent event =
     readKey();
 
-
     int key =
         event.key;
+
+    /* ---------- Custom Theme Manager Menu ---------- */
+    if (themeManagerMenu.active)
+    {
+        size_t count = themeCustomCount();
+
+        if (themeManagerMenu.confirmDelete)
+        {
+            if (key == 'y' || key == 'Y')
+            {
+                if (themeDeleteCustom((size_t)themeManagerMenu.selected))
+                {
+                    count = themeCustomCount();
+
+                    if (count == 0)
+                        themeManagerMenu.selected = 0;
+                    else if ((size_t)themeManagerMenu.selected >= count)
+                        themeManagerMenu.selected = (int)count - 1;
+
+                    themeManagerMenu.confirmDelete = 0;
+                    editorSetStatusMessage("Custom theme deleted");
+                }
+                else
+                {
+                    themeManagerMenu.confirmDelete = 0;
+                    editorSetStatusMessage("Could not delete custom theme");
+                }
+            }
+            else if (key == 'n' || key == 'N' || key == 27)
+            {
+                themeManagerMenu.confirmDelete = 0;
+            }
+
+            continue;
+        }
+
+        if (key == 27)
+        {
+            closeThemeManager();
+            continue;
+        }
+
+        if (key == ARROW_UP)
+        {
+            if (themeManagerMenu.selected > 0)
+                themeManagerMenu.selected--;
+            continue;
+        }
+
+        if (key == ARROW_DOWN)
+        {
+            if (count > 0 &&
+                themeManagerMenu.selected < (int)count - 1 &&
+                themeManagerMenu.selected < 4)
+                themeManagerMenu.selected++;
+            continue;
+        }
+
+        if (key == '\r' || key == '\n')
+        {
+            if (count > 0 &&
+                themeActivateCustom((size_t)themeManagerMenu.selected))
+            {
+                editorSetStatusMessage("Custom theme activated");
+            }
+            continue;
+        }
+
+        if ((key == 'd' || key == 'D') &&
+            count > 0 &&
+            (size_t)themeManagerMenu.selected < count)
+        {
+            themeManagerMenu.confirmDelete = 1;
+            continue;
+        }
+
+        /* Consume all other keys while the manager is open. */
+        continue;
+    }
+
+    /* ---------- Custom Theme Maker Menu ---------- */
+    if (themeMakerMenu.active)
+    {
+        if (key == 27)
+        {
+            closeThemeMaker();
+            editorSetStatusMessage("Theme Maker cancelled");
+            continue;
+        }
+
+        if (key == 127 || key == 8)
+        {
+            if (themeMakerMenu.nameLength > 0) {
+                themeMakerMenu.nameLength--;
+                themeMakerMenu.name[themeMakerMenu.nameLength] = '\0';
+
+                if (themeMakerMenu.nameLength > 0) {
+                    themePreviewCustom(themeMakerMenu.name, themeMakerMenu.codes);
+                }
+            }
+            continue;
+        }
+
+        if (event.key == 's' && (event.modifiers & MOD_CTRL))
+        {
+            saveThemeMaker();
+            continue;
+        }
+
+        if (event.key == 'r' && (event.modifiers & MOD_CTRL))
+        {
+            resetThemeMaker();
+            editorSetStatusMessage("Theme Maker reset");
+            continue;
+        }
+
+        if (key == ARROW_UP)
+        {
+            if (themeMakerMenu.selected > 0)
+                themeMakerMenu.selected--;
+            continue;
+        }
+
+        if (key == ARROW_DOWN)
+        {
+            if (themeMakerMenu.selected < THEME_MAKER_COLOR_COUNT)
+                themeMakerMenu.selected++;
+            continue;
+        }
+
+        if (key == ARROW_LEFT || key == ARROW_RIGHT)
+        {
+            if (themeMakerMenu.selected > 0)
+            {
+                int index = themeMakerMenu.selected - 1;
+
+                if (key == ARROW_LEFT &&
+                    themeMakerMenu.codes[index] > 0)
+                    themeMakerMenu.codes[index]--;
+
+                if (key == ARROW_RIGHT &&
+                    themeMakerMenu.codes[index] < 107)
+                    themeMakerMenu.codes[index]++;
+
+                themePreviewCustom(
+                    themeMakerMenu.name,
+                    themeMakerMenu.codes
+                );
+            }
+
+            continue;
+        }
+
+        if (themeMakerMenu.selected == 0)
+        {
+            if (key == 127)
+            {
+                if (themeMakerMenu.nameLength > 1)
+                {
+                    themeMakerMenu.nameLength--;
+                    themeMakerMenu.name[themeMakerMenu.nameLength] = '\0';
+
+                    themePreviewCustom(
+                        themeMakerMenu.name,
+                        themeMakerMenu.codes
+                    );
+                }
+
+                continue;
+            }
+
+            if (key >= 32 && key <= 126 &&
+                themeMakerMenu.nameLength <
+                    THEME_MAKER_NAME_SIZE - 1)
+            {
+                int valid =
+                    (key >= 'a' && key <= 'z') ||
+                    (key >= 'A' && key <= 'Z') ||
+                    (key >= '0' && key <= '9') ||
+                    key == ' ' || key == '-' || key == '_';
+
+                if (valid)
+                {
+                    themeMakerMenu.name[
+                        themeMakerMenu.nameLength++
+                    ] = (char)key;
+
+                    themeMakerMenu.name[
+                        themeMakerMenu.nameLength
+                    ] = '\0';
+
+                    themePreviewCustom(
+                        themeMakerMenu.name,
+                        themeMakerMenu.codes
+                    );
+                }
+            }
+
+            continue;
+        }
+
+        /* Consume every key while the Theme Maker is active. */
+        continue;
+    }
 
     /* ---------- Status Bar Settings Menu ---------- */
     if (statusBarSettingsMenu.active)
@@ -1396,4 +1598,294 @@ void closePluginManager(void)
     editorSetStatusMessage(
         "Returned to editor"
     );
+}
+
+/* ---------- Custom Theme Maker ---------- */
+
+static const int themeMakerDefaultCodes[THEME_MAKER_COLOR_COUNT] = {
+    36, /* keyword */
+    34, /* type */
+    32, /* string */
+    35, /* number */
+    90, /* comment */
+    33, /* preprocessor */
+    37, /* operator */
+    96, /* match */
+    37  /* normal */
+};
+
+void resetThemeMaker(void)
+{
+    snprintf(
+        themeMakerMenu.name,
+        sizeof(themeMakerMenu.name),
+        "%s",
+        "MyTheme"
+    );
+
+    themeMakerMenu.nameLength =
+        (int)strlen(themeMakerMenu.name);
+
+    for (int i = 0; i < THEME_MAKER_COLOR_COUNT; i++)
+    {
+        themeMakerMenu.codes[i] =
+            themeMakerDefaultCodes[i];
+    }
+
+    themePreviewCustom(
+        themeMakerMenu.name,
+        themeMakerMenu.codes
+    );
+}
+
+void openThemeMaker(void)
+{
+    themeMakerMenu.active = 1;
+    themeMakerMenu.selected = 0;
+
+    resetThemeMaker();
+
+    editorSetStatusMessage("");
+}
+
+void closeThemeMaker(void)
+{
+    themeCancelPreview();
+    themeMakerMenu.active = 0;
+
+    renderForceClear();
+}
+
+int saveThemeMaker(void)
+{
+    if (!themeSaveCustom(
+            themeMakerMenu.name,
+            themeMakerMenu.codes))
+    {
+        editorSetStatusMessage(
+            "Could not save theme; check its name and uniqueness"
+        );
+
+        return 0;
+    }
+
+    themeMakerMenu.active = 0;
+    renderForceClear();
+
+    editorSetStatusMessage("Custom theme saved and activated");
+
+    return 1;
+}
+
+
+void drawThemeMaker(void)
+{
+    static const char *labels[THEME_MAKER_COLOR_COUNT] = {
+        "Keyword",
+        "Type",
+        "String",
+        "Number",
+        "Comment",
+        "Preprocessor",
+        "Operator",
+        "Match",
+        "Normal text"
+    };
+
+    /* Display name + nine color parameters. */
+    int rows = viewport.screenRows;
+    int cols = viewport.screenCols;
+    int panelWidth = cols - 4;
+
+    if (panelWidth > 64)
+        panelWidth = 64;
+    if (panelWidth < 36)
+        panelWidth = cols;
+    if (panelWidth > cols)
+        panelWidth = cols;
+
+    int left = (cols - panelWidth) / 2;
+    if (left < 0)
+        left = 0;
+
+    printf("\033[2J");
+
+    int row = 1;
+    printf("\033[%d;%dH+", row++, left + 1);
+    for (int i = 0; i < panelWidth - 2; i++)
+        putchar('-');
+    putchar('+');
+
+    const char *title = "CUSTOM THEME MAKER";
+    printf("\033[%d;%dH|", row, left + 1);
+    printf("\033[%d;%dH%s",
+           row, left + (panelWidth - (int)strlen(title)) / 2 + 1,
+           title);
+    printf("\033[%d;%dH|", row++, left + panelWidth);
+
+    printf("\033[%d;%dH+", row++, left + 1);
+    for (int i = 0; i < panelWidth - 2; i++)
+        putchar('-');
+    putchar('+');
+
+    row++;
+    printf("\033[%d;%dHTheme name: %-*.*s",
+           row++, left + 3,
+           panelWidth - 16, panelWidth - 16,
+           themeMakerMenu.name);
+
+    for (int i = 0; i < THEME_MAKER_COLOR_COUNT; i++)
+    {
+        int codeIndex = i;
+        int selected = themeMakerMenu.selected == i + 1;
+
+        printf("\033[%d;%dH", row, left + 1);
+        putchar('|');
+
+        if (selected)
+            printf("\033[7m");
+
+        printf("\033[%d;%dH%-16s ANSI: %3d",
+               row, left + 3,
+               labels[i], themeMakerMenu.codes[codeIndex]);
+
+        printf("\033[0m\033[%d;%dH|", row++, left + panelWidth);
+    }
+
+    row++;
+    printf("\033[%d;%dHLive preview:", row++, left + 3);
+    printf("\033[%d;%dH", row++, left + 3);
+
+    printf("%sint ", themeColor(HL_KEYWORD));
+    printf("%smain", themeColor(HL_TYPE));
+    printf("%s(void) {", themeColor(HL_NORMAL));
+    printf("\033[0m");
+
+    printf("\033[%d;%dH", row++, left + 5);
+    printf("%schar *s = ", themeColor(HL_TYPE));
+    printf("%s\"Hello, CLAW!\"", themeColor(HL_STRING));
+    printf("\033[0m;");
+
+    printf("\033[%d;%dH", row++, left + 5);
+    printf("%s// Sample comment", themeColor(HL_COMMENT));
+    printf("\033[0m");
+
+    printf("\033[%d;%dH", row++, left + 5);
+    printf("%sreturn ", themeColor(HL_KEYWORD));
+    printf("%s0", themeColor(HL_NUMBER));
+    printf("%s;", themeColor(HL_NORMAL));
+    printf("\033[0m");
+
+    printf("\033[%d;%dH", row++, left + 3);
+    printf("%s}", themeColor(HL_NORMAL));
+    printf("\033[0m");
+
+    row++;
+    printf("\033[%d;%dH%-*.*s",
+           row++, left + 3,
+           panelWidth - 6, panelWidth - 6,
+           "Up/Down: Select  Left/Right: Adjust color");
+
+    printf("\033[%d;%dH%-*.*s",
+           row++, left + 3,
+           panelWidth - 6, panelWidth - 6,
+           "Ctrl+S: Save  Ctrl+R: Reset  Esc: Cancel");
+
+    if (rows > 0 && row > rows)
+        printf("\033[%d;1H", rows);
+
+    printf("\033[0m\033[?25l");
+    fflush(stdout);
+}
+
+
+/* ---------- Custom Theme Manager ---------- */
+
+void openThemeManager(void)
+{
+    themeManagerMenu.active = 1;
+    themeManagerMenu.selected = 0;
+    themeManagerMenu.confirmDelete = 0;
+    editorSetStatusMessage("");
+}
+
+void closeThemeManager(void)
+{
+    themeManagerMenu.active = 0;
+    themeManagerMenu.confirmDelete = 0;
+    renderForceClear();
+}
+
+void drawThemeManager(void)
+{
+    int width = 60;
+    int height = 14;
+    int startX = (viewport.screenCols - width) / 2;
+    int startY = (viewport.screenRows - height) / 2;
+
+    size_t count = themeCustomCount();
+
+    printf("\033[2J\033[H");
+    printf("\033[%d;%dH", startY, startX);
+    printf("\033[1;36m+----------------------------------------------------------+\033[0m");
+
+    printf("\033[%d;%dH", startY + 1, startX);
+    printf("\033[1;36m|                  CUSTOM THEME MANAGER                   |\033[0m");
+
+    printf("\033[%d;%dH", startY + 2, startX);
+    printf("\033[1;36m+----------------------------------------------------------+\033[0m");
+
+    printf("\033[%d;%dH", startY + 3, startX);
+    printf("| Current theme: %-42.42s |", themeCurrentName());
+
+    if (count == 0)
+    {
+        printf("\033[%d;%dH", startY + 5, startX + 3);
+        printf("No custom themes saved yet.");
+        printf("\033[%d;%dH", startY + 7, startX + 3);
+        printf("Use Alt+3 to create one in Theme Maker.");
+    }
+    else
+    {
+        int visible = (count < 5) ? (int)count : 5;
+
+        for (int i = 0; i < visible; i++)
+        {
+            size_t index = (size_t)i;
+            const char *name = themeCustomName(index);
+            int active = name &&
+                         strcmp(name, themeCurrentName()) == 0;
+
+            printf("\033[%d;%dH", startY + 5 + i, startX + 3);
+
+            if ((int)index == themeManagerMenu.selected)
+                printf("\033[7m");
+
+            printf("%c %-36.36s %s",
+                   ((int)index == themeManagerMenu.selected) ? '>' : ' ',
+                   name ? name : "(invalid)",
+                   active ? "[ACTIVE]" : "");
+
+            printf("\033[0m");
+        }
+    }
+
+    printf("\033[%d;%dH", startY + 11, startX);
+    printf("\033[1;36m+----------------------------------------------------------+\033[0m");
+
+    printf("\033[%d;%dH", startY + 12, startX);
+
+    if (themeManagerMenu.confirmDelete && count > 0 &&
+        (size_t)themeManagerMenu.selected < count)
+    {
+        printf("Delete '%s'? Y: confirm  N/Esc: cancel",
+               themeCustomName((size_t)themeManagerMenu.selected));
+    }
+    else
+    {
+        printf("Up/Down: select  Enter: activate  D: delete  Esc: exit");
+    }
+
+    printf("\033[%d;%dH", startY + 13, startX);
+    printf("\033[1;36m+----------------------------------------------------------+\033[0m");
 }

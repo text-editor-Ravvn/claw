@@ -109,6 +109,10 @@ enum EditorAction
 
     CMD_LAYOUT_SETTINGS,
 
+    CMD_THEME_MAKER,
+
+    CMD_THEME_MANAGER,
+
 };
 
 #define KEYMAP_MAX_BINDINGS 128

@@ -2,6 +2,7 @@
 #define THEME_H
 
 #include "highlight.h"
+#include <stddef.h>
 
 typedef struct
 {
@@ -35,6 +36,12 @@ void themeSet(ThemeType theme);
 
 void themeInit(void);
 
+int themePreviewCustom(const char *name, const int codes[9]);
+
+void themeCancelPreview(void);
+
+int themeSaveCustom(const char *name, const int codes[9]);
+
 int themeNext(void);
 
 const char *themeCurrentName(void);
@@ -42,5 +49,13 @@ const char *themeCurrentName(void);
 const char *themeColor(
     int hlType
 );
+
+size_t themeCustomCount(void);
+
+const char *themeCustomName(size_t index);
+
+int themeActivateCustom(size_t index);
+
+int themeDeleteCustom(size_t index);
 
 #endif

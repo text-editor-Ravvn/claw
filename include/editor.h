@@ -95,4 +95,39 @@ void closeLayoutSettings(void);
 void drawLayoutSettings(void);
 void applyLayoutSettings(void);
 
+/* Custom Theme Maker */
+#define THEME_MAKER_COLOR_COUNT 9
+#define THEME_MAKER_NAME_SIZE 64
+
+typedef struct
+{
+    int active;
+    int selected;
+    char name[THEME_MAKER_NAME_SIZE];
+    int nameLength;
+    int codes[THEME_MAKER_COLOR_COUNT];
+} ThemeMakerMenu;
+
+extern ThemeMakerMenu themeMakerMenu;
+
+void openThemeMaker(void);
+void closeThemeMaker(void);
+void drawThemeMaker(void);
+int saveThemeMaker(void);
+void resetThemeMaker(void);
+
+/* Custom Theme Manager */
+typedef struct
+{
+    int active;
+    int selected;
+    int confirmDelete;
+} ThemeManagerMenu;
+
+extern ThemeManagerMenu themeManagerMenu;
+
+void openThemeManager(void);
+void closeThemeManager(void);
+void drawThemeManager(void);
+
 #endif

@@ -246,12 +246,22 @@ void keymapInit(void) {
   bindingCount++;
 
   bindings[bindingCount].action = CMD_STATUSBAR_SETTINGS;
-  bindings[bindingCount].key = '6';
+  bindings[bindingCount].key = '1';
   bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_LAYOUT_SETTINGS;
-  bindings[bindingCount].key = '7';
+  bindings[bindingCount].key = '2';
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_THEME_MAKER;
+  bindings[bindingCount].key = '3';
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_THEME_MANAGER;
+  bindings[bindingCount].key = '4';
   bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
 

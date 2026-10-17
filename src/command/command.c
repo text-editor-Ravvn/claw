@@ -496,6 +496,14 @@ case CMD_PLUGIN_RELOAD:
                 openLayoutSettings();
                 break;
 
+            case CMD_THEME_MAKER:
+                openThemeMaker();
+                break;
+
+            case CMD_THEME_MANAGER:
+                openThemeManager();
+                break;
+
         default:
             break;
     }
