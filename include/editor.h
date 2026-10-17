@@ -103,6 +103,7 @@ typedef struct
 {
     int active;
     int selected;
+    int editingIndex;
     char name[THEME_MAKER_NAME_SIZE];
     int nameLength;
     int codes[THEME_MAKER_COLOR_COUNT];

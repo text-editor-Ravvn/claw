@@ -670,6 +670,61 @@ void editorRun(void)
             continue;
         }
 
+            if ((key == 'm' || key == 'M') &&
+            count > 0 &&
+            (size_t)themeManagerMenu.selected < count)
+        {
+            size_t index = (size_t)themeManagerMenu.selected;
+            const char *name = themeCustomName(index);
+
+            if (name &&
+                themeGetCustomColors(index, themeMakerMenu.codes))
+            {
+                snprintf(
+                    themeMakerMenu.name,
+                    sizeof(themeMakerMenu.name),
+                    "%s",
+                    name
+                );
+
+                themeMakerMenu.nameLength =
+                    (int)strlen(themeMakerMenu.name);
+
+                themeMakerMenu.editingIndex = (int)index;
+                themeMakerMenu.active = 1;
+                themeMakerMenu.selected = 0;
+
+                themeManagerMenu.active = 0;
+
+                if (!themePreviewCustom(
+                        themeMakerMenu.name,
+                        themeMakerMenu.codes))
+                {
+                    themeMakerMenu.active = 0;
+                    themeManagerMenu.active = 1;
+                    themeMakerMenu.editingIndex = -1;
+
+                    editorSetStatusMessage(
+                        "Could not preview selected theme"
+                    );
+                }
+                else
+                {
+                    editorSetStatusMessage(
+                        "Editing custom theme: Ctrl+S saves, Esc cancels"
+                    );
+                }
+            }
+            else
+            {
+                editorSetStatusMessage(
+                    "Could not load selected theme colours"
+                );
+            }
+
+            continue;
+        }
+
         /* Consume all other keys while the manager is open. */
         continue;
     }
@@ -1741,6 +1796,7 @@ void openThemeMaker(void)
 {
     themeMakerMenu.active = 1;
     themeMakerMenu.selected = 0;
+    themeMakerMenu.editingIndex = -1;
 
     resetThemeMaker();
 
@@ -1751,30 +1807,49 @@ void closeThemeMaker(void)
 {
     themeCancelPreview();
     themeMakerMenu.active = 0;
+    themeMakerMenu.editingIndex = -1;
 
     renderForceClear();
 }
 
 int saveThemeMaker(void)
 {
-    if (!themeSaveCustom(
+    int success;
+
+    if (themeMakerMenu.editingIndex >= 0)
+    {
+        success = themeUpdateCustom(
+            (size_t)themeMakerMenu.editingIndex,
             themeMakerMenu.name,
-            themeMakerMenu.codes))
+            themeMakerMenu.codes
+        );
+    }
+    else
+    {
+        success = themeSaveCustom(
+            themeMakerMenu.name,
+            themeMakerMenu.codes
+        );
+    }
+
+    if (!success)
     {
         editorSetStatusMessage(
-            "Could not save theme; check its name and uniqueness"
+            "Could not save theme; check its name, uniqueness, and file"
         );
 
         return 0;
     }
 
     themeMakerMenu.active = 0;
+    themeMakerMenu.editingIndex = -1;
     renderForceClear();
 
     editorSetStatusMessage("Custom theme saved and activated");
 
     return 1;
 }
+
 
 
 void drawThemeMaker(void)
@@ -2003,7 +2078,7 @@ void drawThemeManager(void)
     }
     else
     {
-        printf("Up/Down: select Enter: activate D: delete I: import E: export");
+        printf("Up/Down: select Enter: activate M: modify D: delete I: import E: export");
     }
 
     printf("\033[%d;%dH", startY + 13, startX);

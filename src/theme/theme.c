@@ -507,6 +507,131 @@ int themeSaveCustom(const char *name, const int codes[9])
     return 1;
 }
 
+int themeUpdateCustom(size_t index, const char *name, const int codes[9])
+{
+    if (index >= customThemeCount || !name || !*name || !codes ||
+        strlen(name) >= THEME_NAME_SIZE)
+        return 0;
+
+    /* Validate the name and prevent duplicate theme names. */
+    for (const char *p = name; *p; p++)
+    {
+        if (!((*p >= 'a' && *p <= 'z') ||
+              (*p >= 'A' && *p <= 'Z') ||
+              (*p >= '0' && *p <= '9') ||
+              *p == ' ' || *p == '-' || *p == '_'))
+            return 0;
+    }
+
+    /* Reject names reserved for built-in themes. */
+    if (strcmp(name, "default") == 0 ||
+        strcmp(name, "dracula") == 0 ||
+        strcmp(name, "nord") == 0 ||
+        strcmp(name, "gruvbox") == 0 ||
+        strcmp(name, "light") == 0 ||
+        strcmp(name, "catppuccin") == 0 ||
+        strcmp(name, "tokyo-night") == 0 ||
+        strcmp(name, "monokai") == 0 ||
+        strcmp(name, "solarized") == 0 ||
+        strcmp(name, "kanagawa") == 0)
+        return 0;
+
+    static const char *keys[9] = {
+        "keyword", "type", "string", "number", "comment",
+        "preprocessor", "operator", "match", "normal"
+    };
+
+    for (size_t i = 0; i < customThemeCount; i++)
+    {
+        if (i != index && strcmp(customThemes[i].name, name) == 0)
+            return 0;
+    }
+
+    char parsedColors[9][THEME_COLOR_SIZE];
+
+    for (size_t i = 0; i < 9; i++)
+    {
+        char numericCode[16];
+
+        if (codes[i] < 0 || codes[i] > 107)
+            return 0;
+
+        snprintf(numericCode, sizeof(numericCode), "%d", codes[i]);
+
+        if (!parseAnsiColor(numericCode, parsedColors[i],
+                            sizeof(parsedColors[i])))
+            return 0;
+    }
+
+    CustomTheme *target = &customThemes[index];
+
+    if (!target->path[0])
+        return 0;
+
+    /* Create a unique temporary file beside the existing theme file. */
+    char tempPath[PATH_MAX];
+    int written = snprintf(tempPath, sizeof(tempPath),
+                           "%s.tmpXXXXXX", target->path);
+
+    if (written < 0 || (size_t)written >= sizeof(tempPath))
+        return 0;
+
+    int fd = mkstemp(tempPath);
+    if (fd < 0)
+        return 0;
+
+    FILE *file = fdopen(fd, "w");
+
+    if (!file)
+    {
+        close(fd);
+        remove(tempPath);
+        return 0;
+    }
+
+    int ok = fprintf(file, "name=%s\n", name) >= 0;
+
+    for (size_t i = 0; ok && i < 9; i++)
+        ok = fprintf(file, "%s=%d\n", keys[i], codes[i]) >= 0;
+
+    if (fflush(file) != 0)
+        ok = 0;
+
+    if (fclose(file) != 0)
+        ok = 0;
+
+    if (!ok || rename(tempPath, target->path) != 0)
+    {
+        remove(tempPath);
+        return 0;
+    }
+
+    /* The file is saved. Now update the in-memory theme. */
+    snprintf(target->name, sizeof(target->name), "%s", name);
+
+    for (size_t i = 0; i < 9; i++)
+        snprintf(target->colors[i], sizeof(target->colors[i]),
+                 "%s", parsedColors[i]);
+
+    target->theme.keyword = target->colors[0];
+    target->theme.type = target->colors[1];
+    target->theme.string = target->colors[2];
+    target->theme.number = target->colors[3];
+    target->theme.comment = target->colors[4];
+    target->theme.preprocessor = target->colors[5];
+    target->theme.operator = target->colors[6];
+    target->theme.match = target->colors[7];
+    target->theme.normal = target->colors[8];
+
+    /* Finish the preview and activate the updated theme. */
+    themeBeforePreview = NULL;
+    previewActive = 0;
+    activeTheme = &target->theme;
+    currentThemeIndex = (int)(THEME_COUNT + index);
+
+    return 1;
+}
+
 static int loadCustomThemeFile(const char *path)
 {
     if (!path || customThemeCount >= MAX_CUSTOM_THEMES)
@@ -814,6 +939,35 @@ const char *themeCustomName(size_t index)
         return NULL;
 
     return customThemes[index].name;
+}
+
+
+int themeGetCustomColors(size_t index, int codes[9])
+{
+    if (index >= customThemeCount || !codes)
+        return 0;
+
+    for (size_t i = 0; i < 9; i++)
+    {
+        const char *color = customThemes[index].colors[i];
+        int code = -1;
+
+        if (!color || color[0] != '\033' || color[1] != '[')
+            return 0;
+
+        /* Read standard ANSI colour sequences such as ESC[31m. */
+        if (sscanf(color, "\033[%dm", &code) == 1 &&
+            code >= 0 && code <= 107)
+        {
+            codes[i] = code;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    return 1;
 }
 
 int themeActivateCustom(size_t index)

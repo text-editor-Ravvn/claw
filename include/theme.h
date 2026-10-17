@@ -54,6 +54,10 @@ size_t themeCustomCount(void);
 
 const char *themeCustomName(size_t index);
 
+int themeGetCustomColors(size_t index, int codes[9]);
+
+int themeUpdateCustom(size_t index, const char *name, const int codes[9]);
+
 int themeActivateCustom(size_t index);
 
 int themeDeleteCustom(size_t index);
