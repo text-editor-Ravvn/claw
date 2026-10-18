@@ -162,6 +162,9 @@ static int parseActionName(const char *name)
     if (strcmp(name, "layout_settings") == 0)
         return CMD_LAYOUT_SETTINGS;
 
+    if (strcmp(name, "project_build") == 0)
+        return CMD_PROJECT_BUILD;
+
     return CMD_NONE;
 }
 

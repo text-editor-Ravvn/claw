@@ -131,7 +131,7 @@ Current focus areas:
 
 - Project configuration discovery from `.claw/project.conf`
 - Project metadata and command model
-- Build command integration
+- Build command integration (`Ctrl+Shift+B` / `project_build`)
 - Task runner support
 - Build output and diagnostics
 
@@ -1293,6 +1293,25 @@ Ctrl + T       Git Restore Current File
 Ctrl + B       Open Git Blame View
 Esc            Exit Git View
 ```
+
+### Project Tooling
+
+Create `.claw/project.conf` in the workspace root:
+
+```ini
+name = claw
+type = c
+build = mingw32-make
+run = claw
+test = mingw32-make test
+```
+
+```text
+Ctrl + Shift + B  Run the configured project build command
+```
+
+The build command runs from the detected project root. CLAW reports whether
+the command succeeded or failed in the status bar.
 
 ### Plugin Platform
 

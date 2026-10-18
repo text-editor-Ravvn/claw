@@ -28,6 +28,9 @@ void projectInit(void);
 /* Discover and load .claw/project.conf from a workspace root. */
 int projectLoad(const char *workspaceRoot);
 
+/* Execute the configured build command from the project root. */
+int projectBuild(void);
+
 /* Getters for the active project configuration. */
 const char *projectGetName(void);
 const char *projectGetType(void);

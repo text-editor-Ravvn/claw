@@ -265,6 +265,11 @@ void keymapInit(void) {
   bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
 
+  bindings[bindingCount].action = CMD_PROJECT_BUILD;
+  bindings[bindingCount].key = 'b';
+  bindings[bindingCount].modifiers = MOD_CTRL | MOD_SHIFT;
+  bindingCount++;
+
 }
 
 int keymapLookup(

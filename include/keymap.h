@@ -113,6 +113,8 @@ enum EditorAction
 
     CMD_THEME_MANAGER,
 
+    CMD_PROJECT_BUILD,
+
 };
 
 #define KEYMAP_MAX_BINDINGS 128

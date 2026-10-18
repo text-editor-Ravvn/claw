@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "project.h"
@@ -116,6 +117,35 @@ int projectLoad(const char *workspaceRoot)
     loaded.active = 1;
     currentProject = loaded;
     return 1;
+}
+
+int projectBuild(void)
+{
+    char command[PROJECT_COMMAND_MAX + PROJECT_PATH_MAX + 32];
+    const char *buildCommand;
+    int length;
+
+    if (!currentProject.active)
+        return 0;
+
+    buildCommand = projectGetBuildCommand();
+    if (!buildCommand || buildCommand[0] == '\0')
+        return 0;
+
+#ifdef _WIN32
+    length = snprintf(command, sizeof(command),
+                      "cd /d \"%s\" && (%s)",
+                      currentProject.rootPath, buildCommand);
+#else
+    length = snprintf(command, sizeof(command),
+                      "cd \"%s\" && (%s)",
+                      currentProject.rootPath, buildCommand);
+#endif
+
+    if (length < 0 || (size_t)length >= sizeof(command))
+        return 0;
+
+    return system(command) == 0;
 }
 
 void projectInit(void)

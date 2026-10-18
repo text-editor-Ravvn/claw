@@ -13,6 +13,7 @@
 #include "indent.h"
 #include "cursor.h"
 #include "workspace.h"
+#include "project.h"
 #include "session.h"
 #include "bookmark.h"
 #include "explorer.h"
@@ -477,6 +478,26 @@ case CMD_PLUGIN_RELOAD:
             else
             {
                 editorSetStatusMessage("No saved session found");
+            }
+            break;
+
+        case CMD_PROJECT_BUILD:
+            if (!projectIsActive())
+            {
+                editorSetStatusMessage("No project configuration found");
+            }
+            else if (!projectGetBuildCommand() ||
+                     projectGetBuildCommand()[0] == '\0')
+            {
+                editorSetStatusMessage("No project build command configured");
+            }
+            else if (projectBuild())
+            {
+                editorSetStatusMessage("Project build succeeded");
+            }
+            else
+            {
+                editorSetStatusMessage("Project build failed");
             }
             break;
 
