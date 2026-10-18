@@ -506,6 +506,14 @@ void editorRun(void)
         continue;
     }
 
+    if (projectOutputIsActive())
+    {
+        if (key == 27)
+            projectOutputClose();
+
+        continue;
+    }
+
     /* ---------- Custom Theme Manager Menu ---------- */
     if (themeManagerMenu.active)
     {

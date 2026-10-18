@@ -6,6 +6,7 @@
 #include "workspace.h"
 
 ProjectConfig currentProject = {0};
+ProjectOutput projectOutput = {0};
 
 static char *trimWhitespace(char *text)
 {
@@ -97,28 +98,86 @@ static int parseProjectFile(FILE *file, ProjectConfig *project)
     return ferror(file) ? 0 : 1;
 }
 
+static void setProjectOutput(const char *text, size_t length, int exitCode)
+{
+    if (length >= sizeof(projectOutput.text))
+        length = sizeof(projectOutput.text) - 1;
+
+    memcpy(projectOutput.text, text, length);
+    projectOutput.text[length] = '\0';
+    projectOutput.length = length;
+    projectOutput.exitCode = exitCode;
+}
+
 static int runProjectCommand(const char *commandText)
 {
-    char command[PROJECT_COMMAND_MAX + PROJECT_PATH_MAX + 32];
+    char command[PROJECT_COMMAND_MAX + PROJECT_PATH_MAX + 64];
+    char outputPath[PROJECT_PATH_MAX + 32];
+    char output[PROJECT_OUTPUT_MAX];
+    FILE *outputFile;
+    size_t outputLength = 0;
     int length;
 
     if (!currentProject.active || !commandText || commandText[0] == '\0')
         return 0;
 
+    if (snprintf(outputPath, sizeof(outputPath),
+                 "%s/.claw/project-output.log",
+                 currentProject.rootPath) >= (int)sizeof(outputPath))
+    {
+        const char message[] = "Project output path is too long\n";
+        setProjectOutput(message, strlen(message), -1);
+        return 0;
+    }
+
 #ifdef _WIN32
     length = snprintf(command, sizeof(command),
-                      "cd /d \"%s\" && (%s)",
-                      currentProject.rootPath, commandText);
+                      "cd /d \"%s\" && (%s) > \"%s\" 2>&1",
+                      currentProject.rootPath, commandText, outputPath);
 #else
     length = snprintf(command, sizeof(command),
-                      "cd \"%s\" && (%s)",
-                      currentProject.rootPath, commandText);
+                      "cd \"%s\" && (%s) > \"%s\" 2>&1",
+                      currentProject.rootPath, commandText, outputPath);
 #endif
 
     if (length < 0 || (size_t)length >= sizeof(command))
+    {
+        const char message[] = "Project command is too long\n";
+        setProjectOutput(message, strlen(message), -1);
         return 0;
+    }
 
-    return system(command) == 0;
+    projectOutput.active = 0;
+    projectOutput.length = 0;
+    projectOutput.text[0] = '\0';
+    projectOutput.exitCode = system(command);
+
+    outputFile = fopen(outputPath, "rb");
+    if (!outputFile)
+    {
+        const char message[] = "Project command produced no output\n";
+        setProjectOutput(message, strlen(message), projectOutput.exitCode);
+        return projectOutput.exitCode == 0;
+    }
+
+    while (outputLength < sizeof(output) - 1 &&
+           fgets(output + outputLength,
+                 (int)(sizeof(output) - outputLength),
+                 outputFile))
+    {
+        outputLength = strlen(output);
+    }
+
+    fclose(outputFile);
+    if (outputLength == 0)
+    {
+        const char message[] = "Project command produced no output\n";
+        setProjectOutput(message, strlen(message), projectOutput.exitCode);
+        return projectOutput.exitCode == 0;
+    }
+
+    setProjectOutput(output, outputLength, projectOutput.exitCode);
+    return projectOutput.exitCode == 0;
 }
 
 int projectLoad(const char *workspaceRoot)
@@ -199,7 +258,29 @@ int projectRunTask(const char *name)
         }
     }
 
+    if (!command || command[0] == '\0')
+    {
+        const char message[] = "Project task is not configured\n";
+        setProjectOutput(message, strlen(message), -1);
+        return 0;
+    }
+
     return runProjectCommand(command);
+}
+
+void projectOutputOpen(void)
+{
+    projectOutput.active = 1;
+}
+
+void projectOutputClose(void)
+{
+    projectOutput.active = 0;
+}
+
+int projectOutputIsActive(void)
+{
+    return projectOutput.active;
 }
 
 size_t projectTaskCount(void)

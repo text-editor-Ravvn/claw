@@ -133,6 +133,7 @@ Current focus areas:
 - Project metadata and command model
 - Build command integration (`Ctrl+Shift+B` / `project_build`)
 - Named project tasks using `task.<name> = <command>`
+- Captured build and task output view
 - Task runner support
 - Build output and diagnostics
 
@@ -1311,11 +1312,14 @@ task.check = mingw32-make test
 ```text
 Ctrl + Shift + B  Run the configured project build command
 Ctrl + Shift + T  Run the configured project test task
+Ctrl + Shift + O  Open the latest project output
 ```
 
 The build command and named tasks run from the detected project root. CLAW
 reports whether the command succeeded or failed in the status bar. The
 `build`, `run`, and `test` fields are also available as built-in task names.
+Command output is captured in `.claw/project-output.log` and can be reviewed
+in the project output view. Press `Esc` to close the view.
 
 ### Plugin Platform
 

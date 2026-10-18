@@ -521,6 +521,13 @@ case CMD_PLUGIN_RELOAD:
             }
             break;
 
+        case CMD_PROJECT_OUTPUT:
+            if (projectOutput.length == 0)
+                editorSetStatusMessage("No project output captured");
+            else
+                projectOutputOpen();
+            break;
+
             case CMD_THEME_NEXT:
             {
                 themeNext();

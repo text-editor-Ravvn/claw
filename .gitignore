@@ -11,7 +11,7 @@ phase5_test
 bin/
 config/recent.txt
 config/session.claw
+.claw/project-output.log
 *.exe
 for fututre we have to prevent ctrl n and p without calling ctrl f
 for future terminal window rendering make it dynamically stable
-

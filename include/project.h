@@ -9,6 +9,7 @@
 #define PROJECT_PATH_MAX 1024
 #define PROJECT_TASK_NAME_MAX 64
 #define PROJECT_MAX_TASKS 32
+#define PROJECT_OUTPUT_MAX 16384
 
 typedef struct
 {
@@ -32,6 +33,16 @@ typedef struct
 
 extern ProjectConfig currentProject;
 
+typedef struct
+{
+    char text[PROJECT_OUTPUT_MAX];
+    size_t length;
+    int active;
+    int exitCode;
+} ProjectOutput;
+
+extern ProjectOutput projectOutput;
+
 /* Reset project state and discover the active workspace project configuration. */
 void projectInit(void);
 
@@ -43,6 +54,11 @@ int projectBuild(void);
 
 /* Execute a named task from the project root. */
 int projectRunTask(const char *name);
+
+/* Open and close the captured output view. */
+void projectOutputOpen(void);
+void projectOutputClose(void);
+int projectOutputIsActive(void);
 
 /* Inspect explicitly declared task entries. */
 size_t projectTaskCount(void);

@@ -275,6 +275,11 @@ void keymapInit(void) {
   bindings[bindingCount].modifiers = MOD_CTRL | MOD_SHIFT;
   bindingCount++;
 
+  bindings[bindingCount].action = CMD_PROJECT_OUTPUT;
+  bindings[bindingCount].key = 'o';
+  bindings[bindingCount].modifiers = MOD_CTRL | MOD_SHIFT;
+  bindingCount++;
+
 }
 
 int keymapLookup(

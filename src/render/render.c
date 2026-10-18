@@ -17,6 +17,7 @@
 #include "explorer.h"
 #include "file_switcher.h"
 #include "layout.h"
+#include "project.h"
 
 extern Buffer buffer;
 extern Cursor cursor;
@@ -52,10 +53,8 @@ static void drawWelcomeSplash(void)
         return;
     }
 
-    char *line = NULL;
-    size_t capacity = 0;
+    char line[512];
     int imageWidth = 100;
-    int imageRows = 0;
     int row = 1;
 
     if (row < 1)
@@ -63,17 +62,15 @@ static void drawWelcomeSplash(void)
 
     printf("\033[2J");
 
-    while (getline(&line, &capacity, image) != -1)
+    while (fgets(line, sizeof(line), image) != NULL)
     {
         int col = (viewport.screenCols - imageWidth) / 2 + 1;
         if (col < 1)
             col = 1;
 
         printf("\033[%d;%dH%s", row++, col, line);
-        imageRows++;
     }
 
-    free(line);
     fclose(image);
 
     if (row < viewport.screenRows)
@@ -96,6 +93,34 @@ void drawPluginManager(void);
 void drawPluginDetails(void);
 void drawFileExplorer(void);
 void drawFileSwitcher(void);
+
+static void drawProjectOutput(void)
+{
+    int row = 1;
+    const char *line = projectOutput.text;
+
+    printf("\033[2J\033[H");
+    printf("\033[1;96mPROJECT OUTPUT (Esc to close)\033[0m");
+
+    while (*line != '\0' && row < viewport.screenRows - 1)
+    {
+        const char *end = strchr(line, '\n');
+        size_t length = end ? (size_t)(end - line) : strlen(line);
+        size_t available = viewport.screenCols > 0
+            ? (size_t)viewport.screenCols
+            : 1;
+
+        if (length > available)
+            length = available;
+
+        printf("\033[%d;1H\033[K%.*s", row + 1, (int)length, line);
+        row++;
+        line = end ? end + 1 : line + strlen(line);
+    }
+
+    printf("\033[%d;1H\033[KExit code: %d",
+           viewport.screenRows, projectOutput.exitCode);
+}
 
 void renderForceClear(void)
 {
@@ -204,6 +229,14 @@ void refreshScreen(void)
     {
         drawWelcomeSplash();
         printf("\033[?25l");
+        fflush(stdout);
+        return;
+    }
+
+    if (projectOutputIsActive())
+    {
+        drawProjectOutput();
+        printf("\033[?25h");
         fflush(stdout);
         return;
     }

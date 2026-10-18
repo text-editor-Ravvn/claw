@@ -117,6 +117,8 @@ enum EditorAction
 
     CMD_PROJECT_TEST,
 
+    CMD_PROJECT_OUTPUT,
+
 };
 
 #define KEYMAP_MAX_BINDINGS 128

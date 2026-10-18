@@ -168,6 +168,9 @@ static int parseActionName(const char *name)
     if (strcmp(name, "project_test") == 0)
         return CMD_PROJECT_TEST;
 
+    if (strcmp(name, "project_output") == 0)
+        return CMD_PROJECT_OUTPUT;
+
     return CMD_NONE;
 }
 
