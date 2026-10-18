@@ -53,36 +53,46 @@ static void drawWelcomeSplash(void)
         return;
     }
 
-    char line[512];
-    int imageWidth = 100;
+    const int imageWidth = 100;
     int row = 1;
+    int col = (viewport.screenCols - imageWidth) / 2 + 1;
 
-    if (row < 1)
-        row = 1;
+    if (col < 1)
+        col = 1;
+
+    char *line = NULL;
+    size_t capacity = 0;
+    ssize_t length;
 
     printf("\033[2J");
 
-    while (fgets(line, sizeof(line), image) != NULL)
+    while ((length = getline(&line, &capacity, image)) != -1)
     {
-        int col = (viewport.screenCols - imageWidth) / 2 + 1;
-        if (col < 1)
-            col = 1;
+        if (row >= viewport.screenRows)
+            break;
 
-        printf("\033[%d;%dH%s", row++, col, line);
+        /* Keep each complete ANSI image row on one terminal row. */
+        if (length > 0 && line[length - 1] == '\n')
+            line[length - 1] = '\0';
+
+        printf("\033[%d;%dH%s\033[0m", row, col, line);
+        row++;
     }
 
+    free(line);
     fclose(image);
 
     if (row < viewport.screenRows)
     {
         const char *prompt = "PRESS SPACE TO CONTINUE";
-        int col = (viewport.screenCols - (int)strlen(prompt)) / 2 + 1;
+        int promptCol =
+            (viewport.screenCols - (int)strlen(prompt)) / 2 + 1;
 
-        if (col < 1)
-            col = 1;
+        if (promptCol < 1)
+            promptCol = 1;
 
         printf("\033[%d;%dH\033[1;96m%s\033[0m",
-               row, col, prompt);
+               row, promptCol, prompt);
     }
 }
 
