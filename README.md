@@ -18,15 +18,15 @@ Current development includes a complete editor foundation, productivity features
 
 |       Property     |                      Value                     |
 |--------------------|------------------------------------------------|
-| Current Version    | v1.8                                           |
-| Active Phase       | Phase 7 — Project Tooling                      |
+| Current Version    | v1.9                                           |
+| Active Phase       | Phase 8 — IDE Foundation                       |
 | Development Status | Active Development                             |
-| Completed Phases   | Phase 1, Phase 2, Phase 3, Phase 4, Phase 5, Phase 6 |
-| Current Focus      | Project configuration and tooling foundation    |
+| Completed Phases   | Phase 1, Phase 2, Phase 3, Phase 4, Phase 5, Phase 6, Phase 7 |
+| Current Focus      | IDE Foundation and multi-buffer editing        |
 
 ### Summary
 
-Claw has completed its Core Editor Foundation, Productivity Foundation, Developer Platform, Advanced Editing Layer, Workspace Environment, and Customization Platform phases. Development is now entering Phase 7 (Project Tooling), beginning with project configuration discovery.
+Claw has completed its Core Editor Foundation, Productivity Foundation, Developer Platform, Advanced Editing Layer, Workspace Environment, Customization Platform, and Project Tooling phases. Development is now entering Phase 8 (IDE Foundation).
 
 ### Completed Architecture Phases
 
@@ -40,28 +40,20 @@ Claw has completed its Core Editor Foundation, Productivity Foundation, Develope
 
 ✓ Phase 5 — Workspace Environment
 
-### Completed Phase 6
-
 ✓ Phase 6 — Customization Platform
 
-Current focus areas:
-
-- Theme engine and runtime theme switching
-- Built-in and user-defined themes
-- Theme import and export
-- Appearance and layout customization
-- Status bar customization
+✓ Phase 7 — Project Tooling
 
 ### Active Development
 
-◉ Phase 7 — Project Tooling
+◉ Phase 8 — IDE Foundation
 
 Current focus areas:
 
-- Project configuration discovery
-- Build command integration
-- Task runner support
-- Build output and diagnostics
+- Multiple file buffers
+- Split-screen editing
+- Integrated terminal
+- Workspace coordination
 
 ### Implemented Systems
 
@@ -87,14 +79,15 @@ Current focus areas:
 - Session Management & Persistence (Phase 5)
 - File Explorer & Quick Switcher (Phase 5)
 - Bookmark Navigation System (Phase 5)
+- Customization Platform & Theme Engine (Phase 6)
+- Project Configuration & Tooling Engine (Phase 7)
+- Task Runner & Output Capture System (Phase 7)
+- Compiler Diagnostics Engine & Code Navigation (Phase 7)
+- Project Dashboard (Phase 7)
 
 ### Upcoming Architecture Phases
 
-✓ Phase 6 — Customization Platform
-
-◉ Phase 7 — Project Tooling
-
-○ Phase 8 — IDE Foundation
+◉ Phase 8 — IDE Foundation
 
 ○ Phase 9 — Source Control Platform
 
@@ -127,23 +120,27 @@ Current focus areas:
 - Per-language style overrides and indentation definitions
 - Hot-reloading of configuration files upon modification
 
-### Phase 7 — Project Tooling
+### Completed Phase 7 — Project Tooling
 
-- Project configuration discovery from `.claw/project.conf`
+- Project configuration discovery from .claw/project.conf
 - Project metadata and command model
-- Build command integration (`Ctrl+Shift+B` / `project_build`)
-- Named project tasks using `task.<name> = <command>`
-- Captured build and task output view
-- Compiler diagnostics parsing for errors, warnings, and notes
-- Project dashboard with metadata, tasks, output, and diagnostics summary
-- Task runner support
-- Build output and diagnostics
+- Build command integration (Ctrl+Shift+B / project_build)
+- Named project tasks using task.<name> = <command>
+- Project test task runner (Ctrl+Shift+T / project_test)
+- Captured build and task output view (Ctrl+Shift+O / project_output)
+- Compiler diagnostics parsing for errors, warnings, notes, and fatal errors
+- Interactive diagnostics navigation & jump-to-location (Ctrl+Shift+D, Enter)
+- Project dashboard with metadata, tasks, output, and diagnostics summary (Ctrl+Shift+P)
 - Tooling state reset and failed-project-load protection
 
-#### Phase 7 Foundation Notes
-- Layout architecture for split panes and secondary views
-- Integration points for project tooling and build outputs
-- Modularity benchmarks for theme and customization performance
+### Active Phase 8 — IDE Foundation
+
+- Multiple file buffers and active buffer switching
+- Split-screen editing architecture (horizontal and vertical panes)
+- Integrated terminal environment and command runner
+- Workspace file explorer panel
+- Symbol navigation and code structure indexing
+- Workspace-aware editing coordination
 
 ## Completed Features
 
@@ -184,7 +181,7 @@ Current focus areas:
 - Multi-line document support
 - Row allocation and cleanup
 
-### Smart Editing Features (v1.6 In Progress)
+### Smart Editing Features
 - Automatic indentation inheritance
 - Smart indentation after opening braces
 - Indentation-aware new line creation
@@ -440,8 +437,6 @@ Current focus areas:
 - Editing productivity shortcuts
 - Advanced editing command framework
 
-## Completed Features
-
 ### Phase 5 — Workspace Environment
 
 - Workspace management system & dynamic root detection (.claw / .git)
@@ -453,8 +448,6 @@ Current focus areas:
 - Interactive Quick File Switcher modal (`Alt+Q`)
 - Built-in Workspace File Explorer dashboard (`Alt+E`)
 - Dynamic status bar workspace branding & bookmark statistics
-
-## In Progress
 
 ### Phase 6 — Customization Platform
 
@@ -471,16 +464,19 @@ Current focus areas:
 
 ### Phase 7 — Project Tooling
 
-- Project-wide search
-- Project-wide replace
-- Build command integration
-- Task runner support
-- Project configuration management
-- Workspace indexing
-- Project navigation tools
-- Build output integration
-- Development workflow automation
-- Project diagnostics foundation
+- Project configuration discovery from .claw/project.conf
+- Project metadata and command model
+- Build command integration (Ctrl+Shift+B / project_build)
+- Named project tasks using task.<name> = <command>
+- Project test task runner (Ctrl+Shift+T / project_test)
+- Captured build and task output panel (Ctrl+Shift+O / project_output)
+- Compiler diagnostics parsing for errors, warnings, notes, and fatal errors
+- Interactive diagnostics navigation & jump-to-location (Ctrl+Shift+D, Enter)
+- Quick status-bar diagnostic cycling (Ctrl+Down / Ctrl+Up)
+- Project dashboard overlay (Ctrl+Shift+P / project_dashboard)
+- Tooling state reset and failed-project-load protection
+
+## In Progress
 
 ### Phase 8 — IDE Foundation
 
@@ -701,138 +697,156 @@ Claw aims to evolve from a lightweight terminal text editor into a complete deve
 ```text
 claw/
 ├── include/
-│   ├── buffer/
-│   │   ├── buffer.h
-│   │   ├── cursor.h
-│   │   └── history.h
-│   │
-│   ├── command/
-│   │   └── command.h
-│   │
-│   ├── config/
-│   │   ├── config.h
-│   │   └── keymap.h
-│   │
-│   ├── editor/
-│   │   └── editor.h
-│   │
-│   ├── fileio/
-│   │   └── fileio.h
-│   │
-│   ├── git/
-│   │   └── git.h
-│   │
-│   ├── input/
-│   │   ├── input.h
-│   │   └── rawmode.h
-│   │
-│   ├── plugin/
-│   │   ├── plugin.h
-│   │   ├── plugin_api.h
-│   │   └── plugin_commands.h
-│   │
-│   ├── render/
-│   │   ├── highlight.h
-│   │   ├── render.h
-│   │   ├── statusbar.h
-│   │   └── viewport.h
-│   │
-│   ├── search/
-│   │   └── search.h
-│   │
-│   └── utils/
-│       └── utils.h
+│   ├── bookmark.h                  Gutter bookmarks and cyclic navigation
+│   ├── brackets.h                  Bracket matching, pairing, and auto-closing
+│   ├── buffer.h                    Dynamic line buffer operations
+│   ├── command.h                   Command dispatch registry and declarations
+│   ├── config.h                    Configuration loader and settings structures
+│   ├── cursor.h                    Cursor tracking and screen coordinates
+│   ├── editor.h                    Global editor state and main event loop
+│   ├── explorer.h                  Workspace file explorer definitions
+│   ├── file_switcher.h             Quick file switcher modal interfaces
+│   ├── fileio.h                    File reading, writing, and atomic save
+│   ├── git.h                       Git status, branch, staging, and blame
+│   ├── highlight.h                 Syntax highlighting and language tokens
+│   ├── history.h                   Undo and redo history stacks
+│   ├── indent.h                    Smart indentation and auto-indent engine
+│   ├── input.h                     Terminal keyboard input and key decoding
+│   ├── keymap.h                    Keymap binding profiles and lookup
+│   ├── layout.h                    Dynamic screen layout and geometry
+│   ├── plugin.h                    Plugin lifecycle, loader, and manager
+│   ├── plugin_api.h                Public API surface exposed to plugins
+│   ├── plugin_commands.h           Built-in plugin manager commands
+│   ├── project.h                   Project discovery, build runner, diagnostics, and dashboard
+│   ├── rawmode.h                   POSIX terminal raw mode setup and restore
+│   ├── recent.h                    Recent files MRU tracker and persistence
+│   ├── render.h                    Screen rendering pipeline and ANSI output
+│   ├── search.h                    Text search, match navigation, and replace
+│   ├── session.h                   Editor session serialization and recovery
+│   ├── statusbar.h                 Status bar rendering and notifications
+│   ├── theme.h                     Theme palettes and TrueColor/ANSI styling
+│   ├── utils.h                     Shared string and path utilities
+│   ├── viewport.h                  Scrolling and viewport bounds management
+│   └── workspace.h                 Workspace root detection and management
 │
 ├── src/
+│   ├── brackets.c                  Bracket matching, pairing, auto-close logic
+│   ├── indent.c                    Context-aware indentation and auto-indent
+│   ├── main.c                      Application entry point
+│   │
 │   ├── buffer/
-│   │   ├── buffer.c
-│   │   ├── cursor.c
-│   │   ├── row.c
-│   │   └── history.c
+│   │   ├── buffer.c                Text insertion, deletion, and row management
+│   │   ├── cursor.c                Cursor positioning and viewport synchronization
+│   │   └── row.c                   Row memory management, line split/merge
 │   │
 │   ├── command/
-│   │   └── command.c
+│   │   └── command.c               Command routing and centralized dispatch
 │   │
 │   ├── config/
-│   │   ├── config.c
-│   │   ├── keymap.c
-│   │   └── parser.c
+│   │   └── config.c                INI parser and multi-tier config loader
 │   │
 │   ├── editor/
-│   │   └── editor.c
+│   │   └── editor.c                Editor lifecycle, event loop, and view coordination
 │   │
 │   ├── fileio/
-│   │   └── fileio.c
+│   │   └── fileio.c                File reading, writing, and Save-As handling
 │   │
 │   ├── git/
-│   │   └── git.c
+│   │   └── git.c                   Git status detection, blame, and stage/unstage
+│   │
+│   ├── highlight/
+│   │   └── highlight.c             Syntax highlighting tokenizer and ANSI styling
+│   │
+│   ├── history/
+│   │   └── history.c               Multi-level undo/redo state restoration
 │   │
 │   ├── input/
-│   │   ├── input.c
-│   │   └── rawmode.c
+│   │   ├── input.c                 Key decoding, escape sequences, and shortcuts
+│   │   └── rawmode.c               POSIX termios raw mode initialization
+│   │
+│   ├── keymap/
+│   │   ├── keymap.c                Keymap table registry and lookup
+│   │   └── parser.c                Keymap configuration file parsing
+│   │
+│   ├── layout/
+│   │   └── layout.c                Screen layout geometry and view dimensions
 │   │
 │   ├── plugin/
-│   │   ├── plugin.c
-│   │   ├── plugin_loader.c
-│   │   ├── plugin_manager.c
-│   │   └── plugin_commands.c
+│   │   ├── plugin.c                Plugin runtime engine and event hooks
+│   │   ├── plugin_api.c            C API functions exposed to runtime plugins
+│   │   ├── plugin_commands.c       Interactive plugin manager action handlers
+│   │   ├── plugin_loader.c         Dynamic shared object discovery and loading
+│   │   └── plugin_manager.c        Plugin dashboard UI and health diagnostics
 │   │
 │   ├── render/
-│   │   ├── highlight.c
-│   │   ├── render.c
-│   │   ├── statusbar.c
-│   │   └── viewport.c
+│   │   └── render.c                Full terminal screen renderer and UI overlays
 │   │
 │   ├── search/
-│   │   └── search.c
+│   │   └── search.c                Search prompt, match highlighting, and replace
+│   │
+│   ├── theme/
+│   │   └── theme.c                 Color themes, palette parsing, and TrueColor
+│   │
+│   ├── ui/
+│   │   └── statusbar.c             Status bar formatting and notifications
 │   │
 │   ├── utils/
-│   │   └── string_utils.c
+│   │   └── string_utils.c          String manipulation, path normalization helpers
 │   │
-│   └── main.c
+│   ├── viewport/
+│   │   └── viewport.c              Scrolling bounds and resize adjustments
+│   │
+│   └── workspace/
+│       ├── bookmark.c              Line bookmark toggling and cyclic jump
+│       ├── explorer.c              Interactive workspace tree file explorer
+│       ├── file_switcher.c         Quick fuzzy/substring file switcher modal
+│       ├── project.c               Project tooling, task runner, diagnostics, and dashboard
+│       ├── recent.c                MRU recent files tracking and file persistence
+│       ├── session.c               Session state serialization and restoration
+│       └── workspace.c             Workspace root discovery and directory scanning
 │
 ├── plugins/
-│   ├── hello_plugin.c
-│   ├── stats_plugin.c
-│   └── format_plugin.c
+│   ├── hello_plugin.c              Sample greeting plugin
+│   ├── stats_plugin.c              Editor statistics and word count plugin
+│   └── format_plugin.c             Code indentation and formatting plugin
 │
 ├── config/
-│   ├── default.conf
-│   └── claw.conf
+│   ├── claw.conf                   User configuration file
+│   ├── default.conf                Built-in default settings
+│   ├── recent.txt                  Persisted recent files list
+│   └── workspace.default.conf      Default workspace template
 │
 ├── keymaps/
-│   ├── default.conf
-│   ├── linux.conf
-│   ├── mac.conf
-│   └── windows.conf
-│
-├── themes/                     # Phase 6
-│
-├── workspaces/                 # Phase 5
-│
-├── projects/                   # Phase 7
-│
-├── language/
-│   ├── c.lang
-│   ├── cpp.lang
-│   └── python.lang
+│   ├── default.conf                Default keymap bindings
+│   ├── linux.conf                  Linux-tailored key bindings
+│   ├── mac.conf                    macOS-tailored key bindings
+│   └── windows.conf                Windows terminal key bindings
 │
 ├── tests/
-│   ├── buffer_test.c
-│   ├── file_test.c
-│   ├── search_test.c
-│   └── plugin_test.c
+│   ├── bookmark_test.c             Bookmark engine unit tests
+│   ├── buffer_test.c               Buffer and row manipulation tests
+│   ├── file_test.c                 File I/O and persistence tests
+│   ├── git_test.c                  Git integration test harness
+│   ├── input_test.c                Input decoding and keymap tests
+│   ├── phase5_integration_test.c   Full workspace integration test suite
+│   ├── project_test.c              Phase 7 project tooling and diagnostics tests
+│   ├── session_test.c              Session serialization and recovery tests
+│   └── workspace_test.c            Workspace detection and root resolution tests
 │
 ├── docs/
-│   ├── README.md
-│   ├── ARCHITECTURE.md
-│   ├── ROADMAP.md
-│   ├── PHASES.md
-│   └── CONTRIBUTING.md
+│   ├── api.md                      Plugin API and extension reference
+│   ├── architecture.md             Subsystem architecture and design principles
+│   ├── keymaps.md                  Keymap customization guide
+│   └── roadmap.md                  Multi-phase development roadmap
 │
-├── Makefile
-├── LICENSE
-└── .gitignore
+├── .claw/
+│   ├── project.conf                Active project tooling configuration
+│   ├── project-output.log          Captured build and task execution output
+│   └── session.claw                Serialized workspace session state
+│
+├── Makefile                        POSIX build system with debug, asan, and test targets
+├── LICENSE                         MIT License
+└── .gitignore                      Git ignore patterns
 ```
 ---
 
@@ -840,67 +854,80 @@ claw/
 
 ```text
 src/
-├── main.c                          Entry point and application startup
-│
-├── editor/
-│   └── editor.c                    Core editor lifecycle, event loop, subsystem coordination, and command dispatch
-│
-├── input/
-│   ├── input.c                     Keyboard input processing, key decoding, and shortcut handling
-│   └── rawmode.c                   Terminal raw mode initialization and management
+├── main.c                          Application entry point and initialization
+├── brackets.c                      Bracket pairing, matching, and auto-closing logic
+├── indent.c                        Context-aware indentation engine and smart new-line
 │
 ├── buffer/
-│   ├── buffer.c                    Document management, text insertion, deletion, and buffer operations
-│   ├── row.c                       Row manipulation, line operations, indentation, and editing workflows
-│   └── cursor.c                    Cursor movement, navigation, positioning, and viewport interaction
-│
-├── config/
-│   └── config.c                    Configuration loading, parsing, validation, and settings management
+│   ├── buffer.c                    Document buffer management, insert, and delete
+│   ├── cursor.c                    Cursor movement, coordinate tracking, and viewport sync
+│   └── row.c                       Row allocation, line splitting, joining, and indentation
 │
 ├── command/
-│   └── command.c                   Command registration, execution, and editor action routing
+│   └── command.c                   Command registration, action routing, and dispatch
 │
-├── keymap/
-│   ├── keymap.c                    Key binding registration, lookup, and shortcut management
-│   └── parser.c                    Keymap parsing and configuration decoding
+├── config/
+│   └── config.c                    Multi-tier INI configuration loading and validation
 │
-├── render/
-│   └── render.c                    Screen rendering, editor views, UI drawing, and visual updates
-│
-├── highlight/
-│   └── highlight.c                 Syntax highlighting engine, token processing, and language definitions
+├── editor/
+│   └── editor.c                    Core editor lifecycle, event loop, and subsystem coordination
 │
 ├── fileio/
-│   └── fileio.c                    File loading, saving, persistence, and document management
-│
-├── viewport/
-│   └── viewport.c                  Scrolling, viewport tracking, visibility management, and terminal resizing
-│
-├── search/
-│   └── search.c                    Search engine, replace operations, match tracking, and navigation workflows
-│
-├── history/
-│   └── history.c                   Undo/Redo engine, edit history management, and state restoration
+│   └── fileio.c                    File reading, atomic writing, and Save-As workflows
 │
 ├── git/
-│   └── git.c                       Repository awareness, status tracking, blame integration, staging, and restore workflows
+│   └── git.c                       Repository root discovery, status, stage, unstage, and blame
+│
+├── highlight/
+│   └── highlight.c                 Syntax highlighting engine and keyword/token classification
+│
+├── history/
+│   └── history.c                   Undo/Redo history engine and document state restoration
+│
+├── input/
+│   ├── input.c                     Keyboard input processing, escape sequences, and shortcuts
+│   └── rawmode.c                   POSIX terminal raw mode initialization and recovery
+│
+├── keymap/
+│   ├── keymap.c                    Keymap profile binding registration and lookup
+│   └── parser.c                    Keymap file parsing and shortcut mapping
+│
+├── layout/
+│   └── layout.c                    Screen layout geometry, gutter calculation, and view bounds
 │
 ├── plugin/
-│   ├── plugin.c                    Plugin runtime, lifecycle management, and extension framework
-│   ├── plugin_loader.c             Dynamic plugin discovery, loading, unloading, and validation
-│   ├── plugin_manager.c            Plugin dashboard, health monitoring, and management workflows
-│   └── plugin_commands.c           Plugin-specific editor commands and actions
+│   ├── plugin.c                    Plugin runtime engine, lifecycle, and event hooks
+│   ├── plugin_api.c                Public C extension API implementation
+│   ├── plugin_commands.c           Interactive plugin management commands
+│   ├── plugin_loader.c             Dynamic shared object discovery, loading, and validation
+│   └── plugin_manager.c            Plugin dashboard overlay, health checks, and statistics
+│
+├── render/
+│   └── render.c                    Full-screen terminal rendering, overlays, and UI redraws
+│
+├── search/
+│   └── search.c                    Interactive search engine, match highlighting, and replace
+│
+├── theme/
+│   └── theme.c                     Color palettes, theme parser, and TrueColor/ANSI styling
 │
 ├── ui/
-│   └── statusbar.c                 Status bar rendering, notifications, and editor information display
+│   └── statusbar.c                 Status bar rendering, diagnostic badges, and notifications
 │
 ├── utils/
-│   └── string_utils.c              Shared utility functions, helper routines, and common abstractions
+│   └── string_utils.c              String manipulation, whitespace trimming, and path utilities
 │
-└── plugins/
-    ├── hello_plugin.c              Example plugin implementation
-    ├── stats_plugin.c              Statistics and analytics plugin
-    └── format_plugin.c             Formatting and code cleanup plugin
+├── viewport/
+│   └── viewport.c                  Scrolling bounds, cursor tracking, and terminal resizing
+│
+└── workspace/
+    ├── bookmark.c                  Line bookmark toggling, storage, and cyclic navigation
+    ├── explorer.c                  Interactive workspace directory tree file explorer
+    ├── file_switcher.c             Quick fuzzy/substring file switcher modal
+    ├── project.c                   Project tooling: config discovery, task runner, diagnostics, and dashboard
+    ├── recent.c                    MRU recent files tracking, history, and persistence
+    ├── session.c                   Session serialization, auto-save, and state restoration
+    └── workspace.c                 Workspace root detection, directory scanning, and status
 ```
 
 ---
@@ -1141,9 +1168,21 @@ make
 
 ### Run Tests
 
+Run the complete automated test suite across all subsystems:
+
 ```bash
 make test
 ```
+
+This compiles and executes all 8 standalone unit and integration suites:
+- `buffer_test` — Buffer memory allocation, row manipulation, and cursor boundaries
+- `file_test` — File I/O, atomic write, Save-As workflows, and persistence
+- `input_test` — Terminal keyboard decoding, escape sequences, and keymap actions
+- `workspace_test` — Workspace root detection (`.claw`, `.git`), directory scanner, and configuration
+- `session_test` — Session state serialization, autosave, and recovery
+- `bookmark_test` — Gutter bookmark creation, deletion, and cyclic navigation
+- `phase5_integration_test` — End-to-end workspace lifecycle, file switcher, and explorer
+- `project_test` — Phase 7 project discovery, task runner, and compiler diagnostics parser
 
 ### Install Globally
 
@@ -1211,7 +1250,7 @@ git --version
 ### Current Development Status
 
 ```text
-Current Phase: Phase 7 — Project Tooling
+Current Phase: Phase 8 — IDE Foundation
 
 Status: Active Development
 
@@ -1222,12 +1261,13 @@ Completed:
 ✓ Phase 4 — Advanced Editing Layer
 ✓ Phase 5 — Workspace Environment
 ✓ Phase 6 — Customization Platform
+✓ Phase 7 — Project Tooling
 
 In Progress:
-• Project configuration discovery
-• Build command integration
-• Task runner support
-• Build output and diagnostics
+• Multiple file buffers
+• Split-screen editing
+• Integrated terminal
+• Workspace coordination
 ```
 
 ---
@@ -1316,10 +1356,12 @@ task.check = mingw32-make test
 Ctrl + Shift + B  Run the configured project build command
 Ctrl + Shift + T  Run the configured project test task
 Ctrl + Shift + O  Open the latest project output
-Ctrl + Shift + D  Open project diagnostics
-Ctrl + Down       Select next diagnostic
-Ctrl + Up         Select previous diagnostic
+Ctrl + Shift + D  Open project diagnostics overlay
+Ctrl + Down       Select next diagnostic (status bar)
+Ctrl + Up         Select previous diagnostic (status bar)
 Ctrl + Shift + P  Open project dashboard
+Enter             Jump to diagnostic (in diagnostics view)
+Esc               Close active project overlay
 ```
 
 The build command and named tasks run from the detected project root. CLAW
@@ -1329,8 +1371,9 @@ Command output is captured in `.claw/project-output.log` and can be reviewed
 in the project output view. Press `Esc` to close the view.
 
 Compiler-style diagnostics in the captured output are parsed into structured
-file, line, column, severity, and message records for the diagnostics
-navigation features in Phase 7.6. Press `Esc` to close the diagnostics view.
+file, line, column, severity, and message records. Use Ctrl+Shift+D to open
+diagnostics, navigate with Up/Down, and press Enter to jump directly to the
+diagnostic location in the code. Press Esc to close the view.
 
 ### Plugin Platform
 
@@ -1497,15 +1540,16 @@ Backspace      Delete Character
 Esc            Cancel Jump
 ```
 
-### Upcoming Controls (Phase 6)
+### Upcoming Controls (Phase 8 — IDE Foundation)
 
 ```text
-Theme Switching
-Custom Color Schemes
-Status Bar Customization
-UI Layout Profiles
-Gutter Width & Appearance Overrides
-Runtime Profile Selection
+Ctrl + W       Close Active Buffer / Pane
+Ctrl + Tab     Cycle to Next Open Buffer
+Ctrl + Shift + Tab Cycle to Previous Buffer
+Ctrl + \       Split Viewport Vertically
+Ctrl + -       Split Viewport Horizontally
+Ctrl + `       Toggle Integrated Terminal
+Alt + [1-9]    Direct Jump to Buffer N
 ```
 
 ---
@@ -1536,11 +1580,11 @@ Runtime Profile Selection
           │                   │                   │
           ▼                   ▼                   ▼
 ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
-│ File System     │ │ Render Engine   │ │ Config System   │
+│ File System     │ │ Render Engine   │ │ Config & Theme  │
 │                 │ │                 │ │                 │
 │ File I/O        │ │ Viewport        │ │ Settings        │
-│ Persistence     │ │ Status Bar      │ │ Keymaps         │
-│ Document State  │ │ Syntax Engine   │ │ User Profiles   │
+│ Persistence     │ │ Status Bar      │ │ Themes & Layout │
+│ Document State  │ │ Syntax Engine   │ │ Profiles & Style│
 └────────┬────────┘ └────────┬────────┘ └────────┬────────┘
          │                   │                   │
          └──────────┬────────┴──────────┬────────┘
@@ -1559,9 +1603,9 @@ Runtime Profile Selection
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                    Workspace Environment                    │
+│             Workspace & Project Tooling Layer               │
 │                                                             │
-│ Projects • Sessions • Workspaces • Navigation              │
+│ Workspaces • Projects • Tasks • Diagnostics • Sessions      │
 └─────────────────────────────┬───────────────────────────────┘
                               │
                               ▼
@@ -1882,16 +1926,29 @@ Runtime Profile Selection
 
 ### Project Tooling
 
-#### Development Services
+#### Project Configuration & Discovery
+- Workspace-level .claw/project.conf discovery
+- Project metadata models (name, type, root path, config path)
+- Key-value configuration parsing with whitespace and comment trimming
+- Protected state transitions and fallback handling
 
-- Project management
-- Build workflow integration
-- Task execution framework
-- Project navigation
-- Project metadata management
-- Development automation
-- Toolchain integration
-- Workspace tooling
+#### Task Execution & Build Integration
+- Root-anchored command execution for build, run, and test
+- Named task execution model (task.<name> = <command>)
+- Output capture to .claw/project-output.log with stderr redirection
+- Exit code normalization and status bar notifications
+
+#### Compiler Diagnostics & Navigation
+- Compiler diagnostic line parsing (errors, warnings, notes, fatal errors)
+- Line and column offset extraction supporting Windows and POSIX paths
+- Interactive diagnostics navigation overlay with dynamic scrolling
+- Enter-to-jump direct file navigation and cursor positioning
+- Status bar diagnostic cycling (Ctrl+Down / Ctrl+Up)
+
+#### Project Dashboard & Monitoring
+- Centralized project status dashboard (Ctrl+Shift+P)
+- Project metadata, task inventory, and diagnostic counts
+- Full captured output inspection panel (Ctrl+Shift+O)
 
 ---
 
@@ -2091,23 +2148,24 @@ Runtime Profile Selection
 
 ### Phase 7 — Project Tooling
 
-**Status:** In Progress
+**Status:** Complete
 
-- Project configuration foundation
-- Project management
-- Workspace indexing
-- Project-wide search
-- Project-wide replace
-- Build integration
-- Task execution framework
-- Project configuration support
-- Development workflow tooling
+- Project configuration discovery from .claw/project.conf
+- Project metadata and configuration model
+- Build command execution (Ctrl+Shift+B)
+- Named project task runner (Ctrl+Shift+T)
+- Captured build and task output panel (Ctrl+Shift+O)
+- Compiler diagnostics parser (error, warning, note, fatal error)
+- Diagnostics navigation overlay and jump-to-location (Ctrl+Shift+D, Enter)
+- Quick status-bar diagnostic cycling (Ctrl+Down / Ctrl+Up)
+- Project dashboard overlay (Ctrl+Shift+P)
+- Tooling state management and reset protection
 
 ---
 
 ### Phase 8 — IDE Foundation
 
-**Status:** Planned
+**Status:** In Progress
 
 - Multiple buffers
 - Split views
@@ -2484,12 +2542,35 @@ Runtime Profile Selection
 
 ### Phase 6 — Customization Platform
 
-#### In Progress
+#### Completed
 
 - Theme engine and color scheme definitions
+- TrueColor 24-bit and 256-color terminal palette support
 - Custom user theme loading from `~/.config/claw/themes/`
 - Status bar layout and segment customization
 - User appearance profiles and runtime switching
+- Customizable line numbers, gutter dimensions, and cursor styles
+
+---
+
+### Phase 7 — Project Tooling
+
+#### Completed
+
+- Project configuration discovery (`.claw/project.conf`)
+- Project metadata models and safe state initialization
+- Build command integration (`Ctrl+Shift+B` / `project_build`)
+- Project test task runner (`Ctrl+Shift+T` / `project_test`)
+- Arbitrary named task execution (`task.<name> = <command>`)
+- Output capture and stderr redirection to `.claw/project-output.log`
+- Scrollable captured output view overlay (`Ctrl+Shift+O` / `project_output`)
+- Compiler diagnostics parser for `error`, `warning`, `note`, and `fatal error`
+- Line and column offset extraction with cross-platform path handling
+- Interactive diagnostics navigation overlay with dynamic viewport scrolling (`Ctrl+Shift+D`)
+- Direct code jump to diagnostic location on `Enter`
+- Quick status-bar diagnostic cycling (`Ctrl+Down` / `Ctrl+Up`)
+- Comprehensive project dashboard (`Ctrl+Shift+P`) with tasks, output, and diagnostic breakdown
+- Tooling state reset and automatic reload on workspace switch (`Alt+W`)
 
 ---
 
@@ -2503,8 +2584,8 @@ Runtime Profile Selection
 | Phase 4  | Advanced Editing Layer      | Complete    | Intelligent editing and automation capabilities            |
 | Phase 5  | Workspace Environment       | Complete    | Project workspaces, file explorer, session & navigation    |
 | Phase 6  | Customization Platform      | Complete    | Themes, profiles, and editor personalization               |
-| Phase 7  | Project Tooling             | In Progress | Development automation and project utilities               |
-| Phase 8  | IDE Foundation              | Planned     | Multi-buffer editing and IDE infrastructure                |
+| Phase 7  | Project Tooling             | Complete    | Development automation and project utilities               |
+| Phase 8  | IDE Foundation              | In Progress | Multi-buffer editing and IDE infrastructure                |
 | Phase 9  | Source Control Expansion    | Planned     | Advanced repository management capabilities                |
 | Phase 10 | Language Ecosystem          | Planned     | Multi-language support and tooling                         |
 | Phase 11 | Intelligent IDE Services    | Planned     | Code intelligence and developer assistance                 |
