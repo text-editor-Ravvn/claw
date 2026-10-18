@@ -75,6 +75,48 @@ int main(void)
     assert(projectOutput.length < PROJECT_OUTPUT_MAX);
     assert(projectRunTask("missing") == 0);
     assert(projectOutput.exitCode != 0);
+    assert(projectDiagnosticCount() == 0);
+
+    projectOutput.length = 0;
+    strcpy(projectOutput.text,
+           "src/main.c:12:4: error: expected ';'\n"
+           "include/value.h:8: warning: implicit declaration\n"
+           "build complete\n"
+           "src/main.c:14:2: note: declaration is here\n"
+           "malformed:line\n");
+    projectOutput.length = strlen(projectOutput.text);
+    projectParseDiagnostics();
+    assert(projectDiagnosticCount() == 3);
+    assert(strcmp(projectGetDiagnostic(0)->file, "src/main.c") == 0);
+    assert(projectGetDiagnostic(0)->line == 12);
+    assert(projectGetDiagnostic(0)->column == 4);
+    assert(projectGetDiagnostic(0)->severity == PROJECT_DIAGNOSTIC_ERROR);
+    assert(strcmp(projectGetDiagnostic(0)->message, "expected ';'") == 0);
+    assert(strcmp(projectGetDiagnostic(1)->file, "include/value.h") == 0);
+    assert(projectGetDiagnostic(1)->line == 8);
+    assert(projectGetDiagnostic(1)->column == 0);
+    assert(projectGetDiagnostic(1)->severity == PROJECT_DIAGNOSTIC_WARNING);
+    assert(projectGetDiagnostic(2)->severity == PROJECT_DIAGNOSTIC_NOTE);
+    assert(projectGetDiagnostic(3) == NULL);
+
+    projectDiagnosticsClear();
+    assert(projectDiagnosticCount() == 0);
+
+    projectOutput.length = 0;
+    projectOutput.text[0] = '\0';
+    for (int i = 0; i < PROJECT_MAX_DIAGNOSTICS + 2; i++)
+    {
+        size_t remaining = sizeof(projectOutput.text) -
+                           projectOutput.length;
+        int written = snprintf(projectOutput.text + projectOutput.length,
+                               remaining,
+                               "src/generated.c:%d: warning: generated\n",
+                               i + 1);
+        assert(written > 0 && (size_t)written < remaining);
+        projectOutput.length += (size_t)written;
+    }
+    projectParseDiagnostics();
+    assert(projectDiagnosticCount() == PROJECT_MAX_DIAGNOSTICS);
 
     remove("./.claw/project.conf");
     projectInit();

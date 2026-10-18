@@ -7,6 +7,8 @@
 
 ProjectConfig currentProject = {0};
 ProjectOutput projectOutput = {0};
+static ProjectDiagnostic diagnostics[PROJECT_MAX_DIAGNOSTICS];
+static size_t diagnosticCount = 0;
 
 static char *trimWhitespace(char *text)
 {
@@ -109,6 +111,130 @@ static void setProjectOutput(const char *text, size_t length, int exitCode)
     projectOutput.exitCode = exitCode;
 }
 
+static int parseNumber(const char **cursor, int *value)
+{
+    const char *start = *cursor;
+    int result = 0;
+
+    if (*start < '0' || *start > '9')
+        return 0;
+
+    while (**cursor >= '0' && **cursor <= '9')
+    {
+        result = result * 10 + (**cursor - '0');
+        if (result > 100000000)
+            return 0;
+        (*cursor)++;
+    }
+
+    *value = result;
+    return *cursor != start;
+}
+
+static int parseDiagnosticLine(const char *line, ProjectDiagnostic *diagnostic)
+{
+    const char *separator = line;
+    const char *cursor;
+    const char *severityStart;
+    const char *messageStart;
+    size_t pathLength;
+    size_t messageLength;
+
+    while ((separator = strchr(separator, ':')) != NULL)
+    {
+        int lineNumber;
+        int columnNumber = 0;
+
+        cursor = separator + 1;
+        if (!parseNumber(&cursor, &lineNumber) || *cursor != ':')
+        {
+            separator++;
+            continue;
+        }
+
+        cursor++;
+        if (*cursor >= '0' && *cursor <= '9')
+        {
+            if (!parseNumber(&cursor, &columnNumber) || *cursor != ':')
+            {
+                separator++;
+                continue;
+            }
+            cursor++;
+        }
+
+        severityStart = cursor;
+        while (*severityStart == ' ' || *severityStart == '\t')
+            severityStart++;
+
+        if (strncmp(severityStart, "error:", 6) == 0)
+            diagnostic->severity = PROJECT_DIAGNOSTIC_ERROR;
+        else if (strncmp(severityStart, "warning:", 8) == 0)
+            diagnostic->severity = PROJECT_DIAGNOSTIC_WARNING;
+        else if (strncmp(severityStart, "note:", 5) == 0)
+            diagnostic->severity = PROJECT_DIAGNOSTIC_NOTE;
+        else
+        {
+            separator++;
+            continue;
+        }
+
+        pathLength = (size_t)(separator - line);
+        if (pathLength == 0 || pathLength >= sizeof(diagnostic->file))
+            return 0;
+
+        memcpy(diagnostic->file, line, pathLength);
+        diagnostic->file[pathLength] = '\0';
+        diagnostic->line = lineNumber;
+        diagnostic->column = columnNumber;
+
+        messageStart = strchr(severityStart, ':') + 1;
+        while (*messageStart == ' ' || *messageStart == '\t')
+            messageStart++;
+
+        messageLength = strcspn(messageStart, "\r\n");
+        if (messageLength >= sizeof(diagnostic->message))
+            messageLength = sizeof(diagnostic->message) - 1;
+
+        memcpy(diagnostic->message, messageStart, messageLength);
+        diagnostic->message[messageLength] = '\0';
+        return 1;
+    }
+
+    return 0;
+}
+
+void projectParseDiagnostics(void)
+{
+    char line[PROJECT_OUTPUT_MAX];
+    const char *cursor = projectOutput.text;
+
+    projectDiagnosticsClear();
+
+    while (*cursor != '\0')
+    {
+        const char *end = strchr(cursor, '\n');
+        size_t length = end ? (size_t)(end - cursor) : strlen(cursor);
+        ProjectDiagnostic diagnostic;
+
+        if (length >= sizeof(line))
+            length = sizeof(line) - 1;
+
+        memcpy(line, cursor, length);
+        line[length] = '\0';
+
+        if (diagnosticCount < PROJECT_MAX_DIAGNOSTICS &&
+            parseDiagnosticLine(line, &diagnostic))
+        {
+            diagnostics[diagnosticCount++] = diagnostic;
+        }
+
+        if (!end)
+            break;
+        cursor = end + 1;
+    }
+}
+
 static int runProjectCommand(const char *commandText)
 {
     char command[PROJECT_COMMAND_MAX + PROJECT_PATH_MAX + 64];
@@ -151,6 +277,7 @@ static int runProjectCommand(const char *commandText)
     projectOutput.length = 0;
     projectOutput.text[0] = '\0';
     projectOutput.exitCode = system(command);
+    projectDiagnosticsClear();
 
     outputFile = fopen(outputPath, "rb");
     if (!outputFile)
@@ -177,6 +304,7 @@ static int runProjectCommand(const char *commandText)
     }
 
     setProjectOutput(output, outputLength, projectOutput.exitCode);
+    projectParseDiagnostics();
     return projectOutput.exitCode == 0;
 }
 
@@ -271,6 +399,25 @@ int projectRunTask(const char *name)
 void projectOutputOpen(void)
 {
     projectOutput.active = 1;
+}
+
+void projectDiagnosticsClear(void)
+{
+    memset(diagnostics, 0, sizeof(diagnostics));
+    diagnosticCount = 0;
+}
+
+size_t projectDiagnosticCount(void)
+{
+    return diagnosticCount;
+}
+
+const ProjectDiagnostic *projectGetDiagnostic(size_t index)
+{
+    if (index >= diagnosticCount)
+        return NULL;
+
+    return &diagnostics[index];
 }
 
 void projectOutputClose(void)

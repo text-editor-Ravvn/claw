@@ -134,6 +134,7 @@ Current focus areas:
 - Build command integration (`Ctrl+Shift+B` / `project_build`)
 - Named project tasks using `task.<name> = <command>`
 - Captured build and task output view
+- Compiler diagnostics parsing for errors, warnings, and notes
 - Task runner support
 - Build output and diagnostics
 
@@ -1320,6 +1321,10 @@ reports whether the command succeeded or failed in the status bar. The
 `build`, `run`, and `test` fields are also available as built-in task names.
 Command output is captured in `.claw/project-output.log` and can be reviewed
 in the project output view. Press `Esc` to close the view.
+
+Compiler-style diagnostics in the captured output are parsed into structured
+file, line, column, severity, and message records for the diagnostics
+navigation features planned in Phase 7.6.
 
 ### Plugin Platform
 

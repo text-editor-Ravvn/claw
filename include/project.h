@@ -10,6 +10,9 @@
 #define PROJECT_TASK_NAME_MAX 64
 #define PROJECT_MAX_TASKS 32
 #define PROJECT_OUTPUT_MAX 16384
+#define PROJECT_DIAGNOSTIC_PATH_MAX 512
+#define PROJECT_DIAGNOSTIC_MESSAGE_MAX 512
+#define PROJECT_MAX_DIAGNOSTICS 128
 
 typedef struct
 {
@@ -43,6 +46,22 @@ typedef struct
 
 extern ProjectOutput projectOutput;
 
+typedef enum
+{
+    PROJECT_DIAGNOSTIC_ERROR,
+    PROJECT_DIAGNOSTIC_WARNING,
+    PROJECT_DIAGNOSTIC_NOTE
+} ProjectDiagnosticSeverity;
+
+typedef struct
+{
+    char file[PROJECT_DIAGNOSTIC_PATH_MAX];
+    int line;
+    int column;
+    ProjectDiagnosticSeverity severity;
+    char message[PROJECT_DIAGNOSTIC_MESSAGE_MAX];
+} ProjectDiagnostic;
+
 /* Reset project state and discover the active workspace project configuration. */
 void projectInit(void);
 
@@ -59,6 +78,12 @@ int projectRunTask(const char *name);
 void projectOutputOpen(void);
 void projectOutputClose(void);
 int projectOutputIsActive(void);
+
+/* Parse compiler-style diagnostics from the latest captured output. */
+void projectDiagnosticsClear(void);
+void projectParseDiagnostics(void);
+size_t projectDiagnosticCount(void);
+const ProjectDiagnostic *projectGetDiagnostic(size_t index);
 
 /* Inspect explicitly declared task entries. */
 size_t projectTaskCount(void);
