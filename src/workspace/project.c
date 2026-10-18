@@ -8,6 +8,7 @@
 ProjectConfig currentProject = {0};
 ProjectOutput projectOutput = {0};
 ProjectDiagnosticsView projectDiagnosticsView = {0};
+ProjectDashboardView projectDashboardView = {0};
 static ProjectDiagnostic diagnostics[PROJECT_MAX_DIAGNOSTICS];
 static size_t diagnosticCount = 0;
 
@@ -465,6 +466,21 @@ int projectDiagnosticsIsActive(void)
     return projectDiagnosticsView.active;
 }
 
+void projectDashboardOpen(void)
+{
+    projectDashboardView.active = 1;
+}
+
+void projectDashboardClose(void)
+{
+    projectDashboardView.active = 0;
+}
+
+int projectDashboardIsActive(void)
+{
+    return projectDashboardView.active;
+}
+
 void projectOutputClose(void)
 {
     projectOutput.active = 0;
@@ -491,6 +507,10 @@ const ProjectTask *projectGetTask(size_t index)
 void projectInit(void)
 {
     memset(&currentProject, 0, sizeof(currentProject));
+    projectOutputClose();
+    projectDiagnosticsClose();
+    projectDashboardClose();
+    projectDiagnosticsClear();
 
     if (workspaceIsActive())
         projectLoad(workspaceGetRoot());

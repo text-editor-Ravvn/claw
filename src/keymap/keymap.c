@@ -295,6 +295,11 @@ void keymapInit(void) {
   bindings[bindingCount].modifiers = MOD_CTRL;
   bindingCount++;
 
+  bindings[bindingCount].action = CMD_PROJECT_DASHBOARD;
+  bindings[bindingCount].key = 'p';
+  bindings[bindingCount].modifiers = MOD_CTRL | MOD_SHIFT;
+  bindingCount++;
+
 }
 
 int keymapLookup(

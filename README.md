@@ -135,6 +135,7 @@ Current focus areas:
 - Named project tasks using `task.<name> = <command>`
 - Captured build and task output view
 - Compiler diagnostics parsing for errors, warnings, and notes
+- Project dashboard with metadata, tasks, output, and diagnostics summary
 - Task runner support
 - Build output and diagnostics
 
@@ -1317,6 +1318,7 @@ Ctrl + Shift + O  Open the latest project output
 Ctrl + Shift + D  Open project diagnostics
 Ctrl + Down       Select next diagnostic
 Ctrl + Up         Select previous diagnostic
+Ctrl + Shift + P  Open project dashboard
 ```
 
 The build command and named tasks run from the detected project root. CLAW

@@ -180,6 +180,9 @@ static int parseActionName(const char *name)
     if (strcmp(name, "project_diagnostics_previous") == 0)
         return CMD_PROJECT_DIAGNOSTICS_PREVIOUS;
 
+    if (strcmp(name, "project_dashboard") == 0)
+        return CMD_PROJECT_DASHBOARD;
+
     return CMD_NONE;
 }
 

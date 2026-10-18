@@ -161,6 +161,36 @@ static void drawProjectDiagnostics(void)
            viewport.screenRows, (int)count);
 }
 
+static void drawProjectDashboard(void)
+{
+    int row = 1;
+    const char *name = projectGetName();
+    const char *type = projectGetType();
+    const char *root = projectGetRoot();
+    const char *build = projectGetBuildCommand();
+    const char *run = projectGetRunCommand();
+    const char *test = projectGetTestCommand();
+
+    printf("\033[2J\033[H");
+    printf("\033[1;96mPROJECT DASHBOARD (Esc to close)\033[0m");
+    printf("\033[%d;1H\033[KProject: %s", ++row,
+           name && *name ? name : "No project configuration");
+    printf("\033[%d;1H\033[KType: %s", ++row, type && *type ? type : "Unknown");
+    printf("\033[%d;1H\033[KRoot: %s", ++row, root && *root ? root : "None");
+    printf("\033[%d;1H\033[KBuild: %s", ++row,
+           build && *build ? build : "Not configured");
+    printf("\033[%d;1H\033[KRun: %s", ++row,
+           run && *run ? run : "Not configured");
+    printf("\033[%d;1H\033[KTest: %s", ++row,
+           test && *test ? test : "Not configured");
+    printf("\033[%d;1H\033[KNamed tasks: %d", ++row,
+           (int)projectTaskCount());
+    printf("\033[%d;1H\033[KDiagnostics: %d", ++row,
+           (int)projectDiagnosticCount());
+    printf("\033[%d;1H\033[KOutput: %s", ++row,
+           projectOutput.length > 0 ? "Available" : "None");
+}
+
 void renderForceClear(void)
 {
     lastRows = 0;
@@ -283,6 +313,14 @@ void refreshScreen(void)
     if (projectDiagnosticsIsActive())
     {
         drawProjectDiagnostics();
+        printf("\033[?25h");
+        fflush(stdout);
+        return;
+    }
+
+    if (projectDashboardIsActive())
+    {
+        drawProjectDashboard();
         printf("\033[?25h");
         fflush(stdout);
         return;

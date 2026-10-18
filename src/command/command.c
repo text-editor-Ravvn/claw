@@ -569,6 +569,10 @@ case CMD_PLUGIN_RELOAD:
             }
             break;
 
+        case CMD_PROJECT_DASHBOARD:
+            projectDashboardOpen();
+            break;
+
             case CMD_THEME_NEXT:
             {
                 themeNext();

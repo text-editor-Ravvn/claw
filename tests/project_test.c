@@ -141,10 +141,23 @@ int main(void)
     projectDiagnosticsClose();
     assert(projectDiagnosticsIsActive() == 0);
 
+    projectDashboardClose();
+    assert(projectDashboardIsActive() == 0);
+    projectDashboardOpen();
+    assert(projectDashboardIsActive() == 1);
+    projectDashboardClose();
+    assert(projectDashboardIsActive() == 0);
+
     remove("./.claw/project.conf");
+    projectDashboardOpen();
+    projectDiagnosticsOpen();
+    projectOutputOpen();
     projectInit();
     assert(projectIsActive() == 0);
     assert(projectBuild() == 0);
+    assert(projectDashboardIsActive() == 0);
+    assert(projectDiagnosticsIsActive() == 0);
+    assert(projectOutputIsActive() == 0);
 
     printf("project_test passed!\n");
     return 0;
