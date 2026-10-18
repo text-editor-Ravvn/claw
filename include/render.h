@@ -5,4 +5,7 @@
 void refreshScreen(void);
 void renderForceClear(void);
 
+int welcomeSplashIsActive(void);
+void dismissWelcomeSplash(void);
+
 #endif

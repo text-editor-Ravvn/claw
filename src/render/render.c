@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <stdio.h>
 
 #include "render.h"
@@ -20,6 +21,74 @@
 extern Buffer buffer;
 extern Cursor cursor;
 extern char *currentFile;
+
+static int welcomeSplashDismissed = 0;
+
+int welcomeSplashIsActive(void)
+{
+    return getenv("CLAW_GRAPHICAL_SPLASH_SHOWN") == NULL &&
+           !welcomeSplashDismissed &&
+           layoutState.showWelcome &&
+           currentFile == NULL &&
+           buffer.numRows == 1 &&
+           buffer.rows[0].size == 0;
+}
+
+void dismissWelcomeSplash(void)
+{
+    welcomeSplashDismissed = 1;
+    renderForceClear();
+}
+
+static void drawWelcomeSplash(void)
+{
+    FILE *image = fopen("assets/claw-splash.ansi", "r");
+
+    if (image == NULL)
+    {
+        printf("\033[2J\033[H");
+        printf("Unable to load assets/claw-splash.ansi\n");
+        printf("Press Space to continue.\n");
+        return;
+    }
+
+    char *line = NULL;
+    size_t capacity = 0;
+    int imageWidth = 100;
+    int imageRows = 0;
+    int row = 1;
+
+    if (row < 1)
+        row = 1;
+
+    printf("\033[2J");
+
+    while (getline(&line, &capacity, image) != -1)
+    {
+        int col = (viewport.screenCols - imageWidth) / 2 + 1;
+        if (col < 1)
+            col = 1;
+
+        printf("\033[%d;%dH%s", row++, col, line);
+        imageRows++;
+    }
+
+    free(line);
+    fclose(image);
+
+    if (row < viewport.screenRows)
+    {
+        const char *prompt = "PRESS SPACE TO CONTINUE";
+        int col = (viewport.screenCols - (int)strlen(prompt)) / 2 + 1;
+
+        if (col < 1)
+            col = 1;
+
+        printf("\033[%d;%dH\033[1;96m%s\033[0m",
+               row, col, prompt);
+    }
+}
+
 static int lastRows = 0;
 static int lastCols = 0;
 extern PluginManagerState pluginManager;
@@ -34,10 +103,110 @@ void renderForceClear(void)
     lastCols = 0;
 }
 
+static void drawWelcomeShortcuts(void)
+{
+    static const char *columns[3][12] = {
+        {
+            "EDITOR",
+            "Ctrl+S  Save",
+            "Ctrl+F  Search",
+            "Ctrl+R  Replace",
+            "Ctrl+A  Replace All",
+            "Ctrl+Z  Undo",
+            "Ctrl+Y  Redo",
+            "Ctrl+N  Next Match",
+            "Ctrl+P  Previous Match",
+            "Ctrl+X  Quit",
+            "",
+            ""
+        },
+        {
+            "GIT & NAVIGATION",
+            "Ctrl+G  Git Add",
+            "Ctrl+T  Git Restore",
+            "Ctrl+U  Git Unstage",
+            "Ctrl+B  Git Blame",
+            "Alt+E   File Explorer",
+            "Alt+Q   Quick Switch",
+            "Alt+G   Go to Line",
+            "Alt+B   Toggle Bookmark",
+            "Alt+S   Save Session",
+            "Alt+R   Restore Session",
+            "Alt+T   Next Theme"
+        },
+        {
+            "MENUS & PLUGINS",
+            "Alt+1   Status Bar Settings",
+            "Alt+2   Layout Settings",
+            "Alt+3   Theme Maker",
+            "Alt+4   Theme Manager",
+            "Ctrl+L  Plugin List",
+            "Ctrl+K  Reload Plugins",
+            "Alt+M   Plugin Manager",
+            "Alt+I   Plugin Info",
+            "Ctrl+E  Plugin Log",
+            "Ctrl+W  Plugin Help",
+            ""
+        }
+    };
+
+    const int columnWidth = 36;
+    const int totalWidth = columnWidth * 3;
+
+    int startCol = (viewport.screenCols - totalWidth) / 2 + 1;
+    int startRow = (viewport.screenRows - 12) / 2;
+
+    if (startCol < 1)
+        startCol = 1;
+
+    if (startRow < 1)
+        startRow = 1;
+
+    /* Avoid drawing the welcome content over the status area. */
+    int maxRow = viewport.screenRows - 2;
+
+    if (maxRow < 1)
+        return;
+
+    for (int r = 0; r < 12; r++)
+    {
+        int screenRow = startRow + r;
+
+        if (screenRow > maxRow)
+            break;
+
+        for (int c = 0; c < 3; c++)
+        {
+            const char *line = columns[c][r];
+
+            if (line[0] == '\0')
+                continue;
+
+            int screenCol = startCol + c * columnWidth;
+
+            /* Clear this column's line before redrawing it. */
+            printf("\033[%d;%dH\033[K", screenRow, screenCol);
+
+            /* Keep headings highlighted and all text left-aligned. */
+            if (r == 0)
+                printf("\033[1;96m%s\033[0m", line);
+            else
+                printf("%s", line);
+        }
+    }
+}
+
 void refreshScreen(void)
 {
     printf("\033[?25l");
 
+        if (welcomeSplashIsActive())
+    {
+        drawWelcomeSplash();
+        printf("\033[?25l");
+        fflush(stdout);
+        return;
+    }
 
     if (themeManagerMenu.active)
     {
@@ -133,6 +302,26 @@ else
          buffer.numRows == 1 &&
          buffer.rows[0].size == 0);
 
+    if (showWelcome)
+    {
+        printf("\033[2J\033[H");
+
+        drawWelcomeShortcuts();
+
+        if (layoutState.showStatusBar)
+        {
+            printf("\033[%d;1H", viewport.screenRows - 1);
+            drawStatusBar();
+        }
+
+        printf("\033[%d;1H\033[K", viewport.screenRows);
+        printf("%s", editorStatusMessage());
+
+        printf("\033[?25h");
+        fflush(stdout);
+        return;
+    }
+
     int gutter = layoutState.showLineNumbers ? viewport.gutterWidth : 0;
     int textCols = viewport.screenCols - gutter;
     int leftPadding = 0;
@@ -161,122 +350,6 @@ else
         int fileRow = viewport.rowOffset + i;
 
         printf("\033[K");
-
-      if (showWelcome)
-{
-    const char *welcomeLines[] =
-    {
-        "Claw Text Editor",
-        "",
-        ("Version " CLAW_VERSION),
-        "Plugin System Active",
-        "",
-
-        "EDITOR",
-        "Ctrl+S  Save File",
-        "Ctrl+F  Search",
-        "Ctrl+R  Replace",
-        "Ctrl+A  Replace All",
-        "Ctrl+Z  Undo",
-        "Ctrl+Y  Redo",
-        "Ctrl+N  Next Match",
-        "Ctrl+P  Previous Match",
-        "",
-
-        "GIT",
-        "Ctrl+G  Git Add",
-        "Ctrl+T  Git Restore",
-        "Ctrl+U  Git Unstage",
-        "Ctrl+B  Git Blame",
-        "",
-
-        "PLUGINS",
-        "Alt+M   Plugin Manager",
-        "Ctrl+L  Plugin List",
-        "Ctrl+K  Reload Plugins",
-        "Alt+I   Plugin Info",
-        "Ctrl+E  Plugin Log",
-        "Alt+O   Hello Plugin",
-        "Alt+J   Statistics Plugin",
-        "Ctrl+O  Format Plugin",
-        "Ctrl+D  Clear Plugin Logs",
-        "Ctrl+V  Toggle Plugin",
-        "Alt+H   Plugin Health",
-        "Ctrl+W  Plugin Help",
-        "",
-
-        "WORKSPACE & NAVIGATION",
-        "Alt+E   File Explorer",
-        "Alt+Q   Quick File Switcher",
-        "Alt+G   Go to Line",
-        "Alt+B   Toggle Bookmark",
-        "Alt+Down/Up  Next/Prev Bookmark",
-        "Alt+W   Workspace Refresh",
-        "Alt+S   Save Session",
-        "Alt+R   Restore Session",
-        "",
-
-        "Esc     Exit Views",
-        "Ctrl+X  Quit Editor"
-    };
-
-    int lineCount =
-        sizeof(welcomeLines) /
-        sizeof(welcomeLines[0]);
-
-    int startRow =
-        (viewport.screenRows - 2 - lineCount) / 2;
-
-    if (i >= startRow &&
-        i < startRow + lineCount)
-    {
-        int index = i - startRow;
-
-        const char *line =
-            welcomeLines[index];
-
-        if (index == 0 ||
-            index == 2 ||
-            index == 3)
-        {
-            int len = (int)strlen(line);
-
-            int padding =
-                (viewport.screenCols - len) / 2;
-
-            if (padding < 0)
-                padding = 0;
-
-            for (int j = 0; j < padding; j++)
-                putchar(' ');
-
-            printf("%s", line);
-        }
-        else
-        {
-            int blockWidth = 34;
-
-            int padding =
-                (viewport.screenCols - blockWidth) / 2;
-
-            if (padding < 0)
-                padding = 0;
-
-            for (int j = 0; j < padding; j++)
-                putchar(' ');
-
-            printf("%s", line);
-        }
-    }
-    else
-    {
-        putchar(' ');
-    }
-
-    printf("\r\n");
-    continue;
-}
-
 
     if(!showWelcome && leftPadding > 0)
       printf("%*s", leftPadding, "");

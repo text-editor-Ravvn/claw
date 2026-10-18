@@ -496,6 +496,14 @@ void editorRun(void)
     int key =
         event.key;
 
+    if (welcomeSplashIsActive())
+    {
+        if (event.key == ' ' && event.modifiers == 0)
+            dismissWelcomeSplash();
+
+        continue;
+    }
+
     /* ---------- Custom Theme Manager Menu ---------- */
     if (themeManagerMenu.active)
     {

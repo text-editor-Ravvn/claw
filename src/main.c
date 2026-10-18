@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdlib.h>
 #include "editor.h"
 #include "fileio.h"
 #include "highlight.h"
@@ -6,6 +7,17 @@
 
 int main(int argc, char *argv[])
 {
+    /* Show the sharp Windows PNG splash before entering terminal raw mode. */
+    if (argc == 1 && getenv("WSL_DISTRO_NAME") != NULL)
+    {
+        int splashResult = system("./tools/launch_splash.sh");
+
+        if (splashResult == 0)
+        {
+            setenv("CLAW_GRAPHICAL_SPLASH_SHOWN", "1", 1);
+        }
+    }
+
     /* Initialize the terminal and begin with an empty editable buffer. */
     editorInit();
 
