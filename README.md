@@ -138,6 +138,7 @@ Current focus areas:
 - Project dashboard with metadata, tasks, output, and diagnostics summary
 - Task runner support
 - Build output and diagnostics
+- Tooling state reset and failed-project-load protection
 
 #### Phase 7 Foundation Notes
 - Layout architecture for split panes and secondary views

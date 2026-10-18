@@ -59,6 +59,9 @@ int main(void)
     assert(strcmp(projectGetTask(0)->command, "echo task-check-test") == 0);
     assert(strcmp(projectGetRoot(), root) == 0);
     assert(strcmp(projectGetConfigPath(), "./.claw/project.conf") == 0);
+    assert(projectLoad("./missing-project-root") == 0);
+    assert(projectIsActive() == 1);
+    assert(strcmp(projectGetName(), "claw-test") == 0);
     assert(projectBuild() == 1);
     assert(projectOutput.exitCode == 0);
     assert(strstr(projectOutput.text, "project-build-test") != NULL);
@@ -101,6 +104,7 @@ int main(void)
 
     projectDiagnosticsClear();
     assert(projectDiagnosticCount() == 0);
+    assert(projectDiagnosticsIsActive() == 0);
 
     projectOutput.length = 0;
     projectOutput.text[0] = '\0';

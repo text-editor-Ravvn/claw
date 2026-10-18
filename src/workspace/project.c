@@ -316,8 +316,6 @@ int projectLoad(const char *workspaceRoot)
     FILE *file;
     ProjectConfig loaded = {0};
 
-    memset(&currentProject, 0, sizeof(currentProject));
-
     if (!workspaceRoot || !*workspaceRoot)
         return 0;
 
@@ -346,6 +344,13 @@ int projectLoad(const char *workspaceRoot)
     }
     loaded.active = 1;
     currentProject = loaded;
+    projectOutputClose();
+    projectDiagnosticsClose();
+    projectDashboardClose();
+    projectOutput.length = 0;
+    projectOutput.text[0] = '\0';
+    projectOutput.exitCode = 0;
+    projectDiagnosticsClear();
     return 1;
 }
 
@@ -407,6 +412,8 @@ void projectDiagnosticsClear(void)
 {
     memset(diagnostics, 0, sizeof(diagnostics));
     diagnosticCount = 0;
+    projectDiagnosticsView.selected = 0;
+    projectDiagnosticsView.active = 0;
 }
 
 size_t projectDiagnosticCount(void)
