@@ -122,6 +122,45 @@ static void drawProjectOutput(void)
            viewport.screenRows, projectOutput.exitCode);
 }
 
+static const char *diagnosticSeverityName(ProjectDiagnosticSeverity severity)
+{
+    if (severity == PROJECT_DIAGNOSTIC_ERROR)
+        return "error";
+    if (severity == PROJECT_DIAGNOSTIC_WARNING)
+        return "warning";
+    return "note";
+}
+
+static void drawProjectDiagnostics(void)
+{
+    size_t count = projectDiagnosticCount();
+    int row = 1;
+
+    printf("\033[2J\033[H");
+    printf("\033[1;96mPROJECT DIAGNOSTICS (Esc to close, Up/Down to navigate)\033[0m");
+
+    for (size_t i = 0; i < count && row < viewport.screenRows - 1; i++)
+    {
+        const ProjectDiagnostic *diagnostic = projectGetDiagnostic(i);
+
+        printf("\033[%d;1H\033[K", row + 1);
+        if (i == projectDiagnosticsView.selected)
+            printf("\033[7m");
+
+        printf("%c %s:%d", i == projectDiagnosticsView.selected ? '>' : ' ',
+               diagnostic->file, diagnostic->line);
+        if (diagnostic->column > 0)
+            printf(":%d", diagnostic->column);
+        printf(": %s: %s\033[0m",
+               diagnosticSeverityName(diagnostic->severity),
+               diagnostic->message);
+        row++;
+    }
+
+    printf("\033[%d;1H\033[K%d diagnostic(s)",
+           viewport.screenRows, (int)count);
+}
+
 void renderForceClear(void)
 {
     lastRows = 0;
@@ -236,6 +275,14 @@ void refreshScreen(void)
     if (projectOutputIsActive())
     {
         drawProjectOutput();
+        printf("\033[?25h");
+        fflush(stdout);
+        return;
+    }
+
+    if (projectDiagnosticsIsActive())
+    {
+        drawProjectDiagnostics();
         printf("\033[?25h");
         fflush(stdout);
         return;

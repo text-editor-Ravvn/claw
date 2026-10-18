@@ -280,6 +280,21 @@ void keymapInit(void) {
   bindings[bindingCount].modifiers = MOD_CTRL | MOD_SHIFT;
   bindingCount++;
 
+  bindings[bindingCount].action = CMD_PROJECT_DIAGNOSTICS;
+  bindings[bindingCount].key = 'd';
+  bindings[bindingCount].modifiers = MOD_CTRL | MOD_SHIFT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_PROJECT_DIAGNOSTICS_NEXT;
+  bindings[bindingCount].key = ARROW_DOWN;
+  bindings[bindingCount].modifiers = MOD_CTRL;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_PROJECT_DIAGNOSTICS_PREVIOUS;
+  bindings[bindingCount].key = ARROW_UP;
+  bindings[bindingCount].modifiers = MOD_CTRL;
+  bindingCount++;
+
 }
 
 int keymapLookup(

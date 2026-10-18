@@ -514,6 +514,24 @@ void editorRun(void)
         continue;
     }
 
+    if (projectDiagnosticsIsActive())
+    {
+        if (key == 27)
+        {
+            projectDiagnosticsClose();
+        }
+        else if (key == ARROW_DOWN || key == 'j')
+        {
+            projectDiagnosticsNext();
+        }
+        else if (key == ARROW_UP || key == 'k')
+        {
+            projectDiagnosticsPrevious();
+        }
+
+        continue;
+    }
+
     /* ---------- Custom Theme Manager Menu ---------- */
     if (themeManagerMenu.active)
     {

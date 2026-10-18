@@ -46,6 +46,14 @@ typedef struct
 
 extern ProjectOutput projectOutput;
 
+typedef struct
+{
+    int active;
+    size_t selected;
+} ProjectDiagnosticsView;
+
+extern ProjectDiagnosticsView projectDiagnosticsView;
+
 typedef enum
 {
     PROJECT_DIAGNOSTIC_ERROR,
@@ -84,6 +92,12 @@ void projectDiagnosticsClear(void);
 void projectParseDiagnostics(void);
 size_t projectDiagnosticCount(void);
 const ProjectDiagnostic *projectGetDiagnostic(size_t index);
+const ProjectDiagnostic *projectGetSelectedDiagnostic(void);
+int projectDiagnosticsNext(void);
+int projectDiagnosticsPrevious(void);
+void projectDiagnosticsOpen(void);
+void projectDiagnosticsClose(void);
+int projectDiagnosticsIsActive(void);
 
 /* Inspect explicitly declared task entries. */
 size_t projectTaskCount(void);

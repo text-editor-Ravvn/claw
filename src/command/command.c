@@ -528,6 +528,47 @@ case CMD_PLUGIN_RELOAD:
                 projectOutputOpen();
             break;
 
+        case CMD_PROJECT_DIAGNOSTICS:
+            if (projectDiagnosticCount() == 0)
+            {
+                editorSetStatusMessage("No project diagnostics");
+            }
+            else
+            {
+                projectDiagnosticsOpen();
+            }
+            break;
+
+        case CMD_PROJECT_DIAGNOSTICS_NEXT:
+            if (!projectDiagnosticsNext())
+                editorSetStatusMessage("No project diagnostics");
+            else
+            {
+                const ProjectDiagnostic *diagnostic =
+                    projectGetSelectedDiagnostic();
+                char message[256];
+                snprintf(message, sizeof(message), "%.100s:%d: %.120s",
+                         diagnostic->file, diagnostic->line,
+                         diagnostic->message);
+                editorSetStatusMessage(message);
+            }
+            break;
+
+        case CMD_PROJECT_DIAGNOSTICS_PREVIOUS:
+            if (!projectDiagnosticsPrevious())
+                editorSetStatusMessage("No project diagnostics");
+            else
+            {
+                const ProjectDiagnostic *diagnostic =
+                    projectGetSelectedDiagnostic();
+                char message[256];
+                snprintf(message, sizeof(message), "%.100s:%d: %.120s",
+                         diagnostic->file, diagnostic->line,
+                         diagnostic->message);
+                editorSetStatusMessage(message);
+            }
+            break;
+
             case CMD_THEME_NEXT:
             {
                 themeNext();

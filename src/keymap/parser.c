@@ -171,6 +171,15 @@ static int parseActionName(const char *name)
     if (strcmp(name, "project_output") == 0)
         return CMD_PROJECT_OUTPUT;
 
+    if (strcmp(name, "project_diagnostics") == 0)
+        return CMD_PROJECT_DIAGNOSTICS;
+
+    if (strcmp(name, "project_diagnostics_next") == 0)
+        return CMD_PROJECT_DIAGNOSTICS_NEXT;
+
+    if (strcmp(name, "project_diagnostics_previous") == 0)
+        return CMD_PROJECT_DIAGNOSTICS_PREVIOUS;
+
     return CMD_NONE;
 }
 

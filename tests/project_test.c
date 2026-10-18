@@ -117,6 +117,29 @@ int main(void)
     }
     projectParseDiagnostics();
     assert(projectDiagnosticCount() == PROJECT_MAX_DIAGNOSTICS);
+    projectDiagnosticsClear();
+    projectDiagnosticsOpen();
+    assert(projectDiagnosticsIsActive() == 0);
+
+    strcpy(projectOutput.text,
+           "src/a.c:1: error: first\n"
+           "src/b.c:2: error: second\n"
+           "src/c.c:3: warning: third\n");
+    projectOutput.length = strlen(projectOutput.text);
+    projectParseDiagnostics();
+    projectDiagnosticsOpen();
+    assert(projectDiagnosticsIsActive() == 1);
+    assert(projectGetSelectedDiagnostic()->line == 1);
+    assert(projectDiagnosticsNext() == 1);
+    assert(projectGetSelectedDiagnostic()->line == 2);
+    assert(projectDiagnosticsNext() == 1);
+    assert(projectGetSelectedDiagnostic()->line == 3);
+    assert(projectDiagnosticsNext() == 1);
+    assert(projectGetSelectedDiagnostic()->line == 1);
+    assert(projectDiagnosticsPrevious() == 1);
+    assert(projectGetSelectedDiagnostic()->line == 3);
+    projectDiagnosticsClose();
+    assert(projectDiagnosticsIsActive() == 0);
 
     remove("./.claw/project.conf");
     projectInit();

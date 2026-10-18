@@ -7,6 +7,7 @@
 
 ProjectConfig currentProject = {0};
 ProjectOutput projectOutput = {0};
+ProjectDiagnosticsView projectDiagnosticsView = {0};
 static ProjectDiagnostic diagnostics[PROJECT_MAX_DIAGNOSTICS];
 static size_t diagnosticCount = 0;
 
@@ -418,6 +419,50 @@ const ProjectDiagnostic *projectGetDiagnostic(size_t index)
         return NULL;
 
     return &diagnostics[index];
+}
+
+const ProjectDiagnostic *projectGetSelectedDiagnostic(void)
+{
+    return projectGetDiagnostic(projectDiagnosticsView.selected);
+}
+
+int projectDiagnosticsNext(void)
+{
+    if (diagnosticCount == 0)
+        return 0;
+
+    projectDiagnosticsView.selected =
+        (projectDiagnosticsView.selected + 1) % diagnosticCount;
+    return 1;
+}
+
+int projectDiagnosticsPrevious(void)
+{
+    if (diagnosticCount == 0)
+        return 0;
+
+    if (projectDiagnosticsView.selected == 0)
+        projectDiagnosticsView.selected = diagnosticCount - 1;
+    else
+        projectDiagnosticsView.selected--;
+
+    return 1;
+}
+
+void projectDiagnosticsOpen(void)
+{
+    projectDiagnosticsView.selected = 0;
+    projectDiagnosticsView.active = diagnosticCount > 0;
+}
+
+void projectDiagnosticsClose(void)
+{
+    projectDiagnosticsView.active = 0;
+}
+
+int projectDiagnosticsIsActive(void)
+{
+    return projectDiagnosticsView.active;
 }
 
 void projectOutputClose(void)

@@ -1314,6 +1314,9 @@ task.check = mingw32-make test
 Ctrl + Shift + B  Run the configured project build command
 Ctrl + Shift + T  Run the configured project test task
 Ctrl + Shift + O  Open the latest project output
+Ctrl + Shift + D  Open project diagnostics
+Ctrl + Down       Select next diagnostic
+Ctrl + Up         Select previous diagnostic
 ```
 
 The build command and named tasks run from the detected project root. CLAW
@@ -1324,7 +1327,7 @@ in the project output view. Press `Esc` to close the view.
 
 Compiler-style diagnostics in the captured output are parsed into structured
 file, line, column, severity, and message records for the diagnostics
-navigation features planned in Phase 7.6.
+navigation features in Phase 7.6. Press `Esc` to close the diagnostics view.
 
 ### Plugin Platform
 
