@@ -19,14 +19,14 @@ Current development includes a complete editor foundation, productivity features
 |       Property     |                      Value                     |
 |--------------------|------------------------------------------------|
 | Current Version    | v1.8                                           |
-| Active Phase       | Phase 6 — Customization Platform               |
+| Active Phase       | Phase 7 — Project Tooling                      |
 | Development Status | Active Development                             |
-| Completed Phases   | Phase 1, Phase 2, Phase 3, Phase 4, Phase 5     |
-| Current Focus      | Theme Engine & Customization Platform           |
+| Completed Phases   | Phase 1, Phase 2, Phase 3, Phase 4, Phase 5, Phase 6 |
+| Current Focus      | Project configuration and tooling foundation    |
 
 ### Summary
 
-Claw has completed its Core Editor Foundation, Productivity Foundation, Developer Platform, Advanced Editing Layer, and Workspace Environment phases. Development is currently transitioning to Phase 6 (Customization Platform), focusing on theme engine, appearance profiles, and customizable UI layouts.
+Claw has completed its Core Editor Foundation, Productivity Foundation, Developer Platform, Advanced Editing Layer, Workspace Environment, and Customization Platform phases. Development is now entering Phase 7 (Project Tooling), beginning with project configuration discovery.
 
 ### Completed Architecture Phases
 
@@ -40,17 +40,28 @@ Claw has completed its Core Editor Foundation, Productivity Foundation, Develope
 
 ✓ Phase 5 — Workspace Environment
 
-### Active Development
+### Completed Phase 6
 
-◉ Phase 6 — Customization Platform
+✓ Phase 6 — Customization Platform
 
 Current focus areas:
 
-- Theme engine
-- Color schemes
-- User-defined themes
-- Appearance profiles
+- Theme engine and runtime theme switching
+- Built-in and user-defined themes
+- Theme import and export
+- Appearance and layout customization
 - Status bar customization
+
+### Active Development
+
+◉ Phase 7 — Project Tooling
+
+Current focus areas:
+
+- Project configuration discovery
+- Build command integration
+- Task runner support
+- Build output and diagnostics
 
 ### Implemented Systems
 
@@ -79,9 +90,9 @@ Current focus areas:
 
 ### Upcoming Architecture Phases
 
-○ Phase 6 — Customization Platform
+✓ Phase 6 — Customization Platform
 
-○ Phase 7 — Project Tooling
+◉ Phase 7 — Project Tooling
 
 ○ Phase 8 — IDE Foundation
 
@@ -97,7 +108,7 @@ Current focus areas:
 
 ## Current Objectives
 
-### Phase 6 — Customization Platform
+### Completed Phase 6 — Customization Platform
 
 #### Theme Engine
 - Implement modular color theme loader and runtime palette manager
@@ -116,7 +127,15 @@ Current focus areas:
 - Per-language style overrides and indentation definitions
 - Hot-reloading of configuration files upon modification
 
-#### Preparation for Phase 7
+### Phase 7 — Project Tooling
+
+- Project configuration discovery from `.claw/project.conf`
+- Project metadata and command model
+- Build command integration
+- Task runner support
+- Build output and diagnostics
+
+#### Phase 7 Foundation Notes
 - Layout architecture for split panes and secondary views
 - Integration points for project tooling and build outputs
 - Modularity benchmarks for theme and customization performance
@@ -1187,7 +1206,7 @@ git --version
 ### Current Development Status
 
 ```text
-Current Phase: Phase 6 — Customization Platform
+Current Phase: Phase 7 — Project Tooling
 
 Status: Active Development
 
@@ -1197,12 +1216,13 @@ Completed:
 ✓ Phase 3 — Developer Platform
 ✓ Phase 4 — Advanced Editing Layer
 ✓ Phase 5 — Workspace Environment
+✓ Phase 6 — Customization Platform
 
 In Progress:
-• Theme Engine & Palettes
-• Appearance Profiles
-• Status Bar Customization
-• UI Layouts & Syntax Colorschemes
+• Project configuration discovery
+• Build command integration
+• Task runner support
+• Build output and diagnostics
 ```
 
 ---
@@ -2018,7 +2038,7 @@ Runtime Profile Selection
 
 ### Phase 6 — Customization Platform
 
-**Status:** In Progress
+**Status:** Complete
 
 - Theme engine
 - Color schemes
@@ -2033,8 +2053,9 @@ Runtime Profile Selection
 
 ### Phase 7 — Project Tooling
 
-**Status:** Planned
+**Status:** In Progress
 
+- Project configuration foundation
 - Project management
 - Workspace indexing
 - Project-wide search
@@ -2443,8 +2464,8 @@ Runtime Profile Selection
 | Phase 3  | Developer Platform          | Complete    | Git integration, plugins, and developer tooling            |
 | Phase 4  | Advanced Editing Layer      | Complete    | Intelligent editing and automation capabilities            |
 | Phase 5  | Workspace Environment       | Complete    | Project workspaces, file explorer, session & navigation    |
-| Phase 6  | Customization Platform      | In Progress | Themes, profiles, and editor personalization               |
-| Phase 7  | Project Tooling             | Planned     | Development automation and project utilities               |
+| Phase 6  | Customization Platform      | Complete    | Themes, profiles, and editor personalization               |
+| Phase 7  | Project Tooling             | In Progress | Development automation and project utilities               |
 | Phase 8  | IDE Foundation              | Planned     | Multi-buffer editing and IDE infrastructure                |
 | Phase 9  | Source Control Expansion    | Planned     | Advanced repository management capabilities                |
 | Phase 10 | Language Ecosystem          | Planned     | Multi-language support and tooling                         |

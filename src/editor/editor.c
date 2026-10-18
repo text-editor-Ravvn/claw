@@ -30,6 +30,7 @@
 #include "file_switcher.h"
 #include "theme.h"
 #include "layout.h"
+#include "project.h"
 
 char *currentFile = NULL;
 static char statusMessage[128] = "";
@@ -203,6 +204,7 @@ void editorInit(void)
 
     workspaceInit();
     workspaceLoadConfig();
+    projectInit();
     recentInit();
     bookmarkInit();
     sessionInit();

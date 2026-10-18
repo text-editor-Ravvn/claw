@@ -35,6 +35,7 @@ SRC = src/main.c \
 	  src/workspace/bookmark.c \
 	  src/workspace/explorer.c \
 	  src/workspace/file_switcher.c \
+	  src/workspace/project.c \
 	  src/theme/theme.c \
 
 OBJ = $(SRC:.c=.o)
@@ -73,9 +74,11 @@ test:
 	./bookmark_test
 	$(CC) $(CFLAGS) tests/phase5_integration_test.c src/workspace/workspace.c src/workspace/recent.c src/workspace/session.c src/workspace/bookmark.c src/workspace/file_switcher.c src/workspace/explorer.c src/config/config.c src/utils/string_utils.c -o phase5_test
 	./phase5_test
-	rm -f buffer_test file_test input_test workspace_test session_test bookmark_test phase5_test
+	$(CC) $(CFLAGS) tests/project_test.c src/workspace/project.c -o project_test
+	./project_test
+	rm -f buffer_test file_test input_test workspace_test session_test bookmark_test phase5_test project_test
 
 clean:
-	rm -f $(OBJ) $(TARGET) buffer_test file_test input_test workspace_test session_test bookmark_test phase5_test
+	rm -f $(OBJ) $(TARGET) buffer_test file_test input_test workspace_test session_test bookmark_test phase5_test project_test
 
 rebuild: clean all
