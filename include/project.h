@@ -7,6 +7,14 @@
 #define PROJECT_TYPE_MAX 64
 #define PROJECT_COMMAND_MAX 512
 #define PROJECT_PATH_MAX 1024
+#define PROJECT_TASK_NAME_MAX 64
+#define PROJECT_MAX_TASKS 32
+
+typedef struct
+{
+    char name[PROJECT_TASK_NAME_MAX];
+    char command[PROJECT_COMMAND_MAX];
+} ProjectTask;
 
 typedef struct
 {
@@ -17,6 +25,8 @@ typedef struct
     char testCommand[PROJECT_COMMAND_MAX];
     char rootPath[PROJECT_PATH_MAX];
     char configPath[PROJECT_PATH_MAX];
+    ProjectTask tasks[PROJECT_MAX_TASKS];
+    size_t taskCount;
     int active;
 } ProjectConfig;
 
@@ -30,6 +40,13 @@ int projectLoad(const char *workspaceRoot);
 
 /* Execute the configured build command from the project root. */
 int projectBuild(void);
+
+/* Execute a named task from the project root. */
+int projectRunTask(const char *name);
+
+/* Inspect explicitly declared task entries. */
+size_t projectTaskCount(void);
+const ProjectTask *projectGetTask(size_t index);
 
 /* Getters for the active project configuration. */
 const char *projectGetName(void);

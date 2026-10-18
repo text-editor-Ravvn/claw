@@ -270,6 +270,11 @@ void keymapInit(void) {
   bindings[bindingCount].modifiers = MOD_CTRL | MOD_SHIFT;
   bindingCount++;
 
+  bindings[bindingCount].action = CMD_PROJECT_TEST;
+  bindings[bindingCount].key = 't';
+  bindings[bindingCount].modifiers = MOD_CTRL | MOD_SHIFT;
+  bindingCount++;
+
 }
 
 int keymapLookup(

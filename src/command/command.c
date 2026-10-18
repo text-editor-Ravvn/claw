@@ -501,6 +501,26 @@ case CMD_PLUGIN_RELOAD:
             }
             break;
 
+        case CMD_PROJECT_TEST:
+            if (!projectIsActive())
+            {
+                editorSetStatusMessage("No project configuration found");
+            }
+            else if (!projectGetTestCommand() ||
+                     projectGetTestCommand()[0] == '\0')
+            {
+                editorSetStatusMessage("No project test task configured");
+            }
+            else if (projectRunTask("test"))
+            {
+                editorSetStatusMessage("Project test task succeeded");
+            }
+            else
+            {
+                editorSetStatusMessage("Project test task failed");
+            }
+            break;
+
             case CMD_THEME_NEXT:
             {
                 themeNext();

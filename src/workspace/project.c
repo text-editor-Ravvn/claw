@@ -37,7 +37,7 @@ static int copyValue(char *destination, size_t destinationSize,
 
 static int parseProjectFile(FILE *file, ProjectConfig *project)
 {
-    char line[PROJECT_COMMAND_MAX + 64];
+    char line[PROJECT_COMMAND_MAX + PROJECT_TASK_NAME_MAX + 64];
 
     while (fgets(line, sizeof(line), file))
     {
@@ -57,7 +57,24 @@ static int parseProjectFile(FILE *file, ProjectConfig *project)
         key = trimWhitespace(entry);
         value = trimWhitespace(equals + 1);
 
-        if (strcmp(key, "name") == 0 &&
+        if (strncmp(key, "task.", 5) == 0)
+        {
+            const char *taskName = key + 5;
+            ProjectTask *task;
+
+            if (*taskName == '\0' || project->taskCount >= PROJECT_MAX_TASKS)
+                return 0;
+
+            task = &project->tasks[project->taskCount];
+            if (!copyValue(task->name, sizeof(task->name), taskName) ||
+                !copyValue(task->command, sizeof(task->command), value))
+            {
+                return 0;
+            }
+
+            project->taskCount++;
+        }
+        else if (strcmp(key, "name") == 0 &&
             !copyValue(project->name, sizeof(project->name), value))
             return 0;
         else if (strcmp(key, "type") == 0 &&
@@ -78,6 +95,30 @@ static int parseProjectFile(FILE *file, ProjectConfig *project)
     }
 
     return ferror(file) ? 0 : 1;
+}
+
+static int runProjectCommand(const char *commandText)
+{
+    char command[PROJECT_COMMAND_MAX + PROJECT_PATH_MAX + 32];
+    int length;
+
+    if (!currentProject.active || !commandText || commandText[0] == '\0')
+        return 0;
+
+#ifdef _WIN32
+    length = snprintf(command, sizeof(command),
+                      "cd /d \"%s\" && (%s)",
+                      currentProject.rootPath, commandText);
+#else
+    length = snprintf(command, sizeof(command),
+                      "cd \"%s\" && (%s)",
+                      currentProject.rootPath, commandText);
+#endif
+
+    if (length < 0 || (size_t)length >= sizeof(command))
+        return 0;
+
+    return system(command) == 0;
 }
 
 int projectLoad(const char *workspaceRoot)
@@ -121,9 +162,7 @@ int projectLoad(const char *workspaceRoot)
 
 int projectBuild(void)
 {
-    char command[PROJECT_COMMAND_MAX + PROJECT_PATH_MAX + 32];
     const char *buildCommand;
-    int length;
 
     if (!currentProject.active)
         return 0;
@@ -132,20 +171,48 @@ int projectBuild(void)
     if (!buildCommand || buildCommand[0] == '\0')
         return 0;
 
-#ifdef _WIN32
-    length = snprintf(command, sizeof(command),
-                      "cd /d \"%s\" && (%s)",
-                      currentProject.rootPath, buildCommand);
-#else
-    length = snprintf(command, sizeof(command),
-                      "cd \"%s\" && (%s)",
-                      currentProject.rootPath, buildCommand);
-#endif
+    return runProjectCommand(buildCommand);
+}
 
-    if (length < 0 || (size_t)length >= sizeof(command))
+int projectRunTask(const char *name)
+{
+    const char *command = NULL;
+
+    if (!name || !*name || !currentProject.active)
         return 0;
 
-    return system(command) == 0;
+    if (strcmp(name, "build") == 0)
+        command = currentProject.buildCommand;
+    else if (strcmp(name, "run") == 0)
+        command = currentProject.runCommand;
+    else if (strcmp(name, "test") == 0)
+        command = currentProject.testCommand;
+    else
+    {
+        for (size_t i = 0; i < currentProject.taskCount; i++)
+        {
+            if (strcmp(currentProject.tasks[i].name, name) == 0)
+            {
+                command = currentProject.tasks[i].command;
+                break;
+            }
+        }
+    }
+
+    return runProjectCommand(command);
+}
+
+size_t projectTaskCount(void)
+{
+    return currentProject.active ? currentProject.taskCount : 0;
+}
+
+const ProjectTask *projectGetTask(size_t index)
+{
+    if (!currentProject.active || index >= currentProject.taskCount)
+        return NULL;
+
+    return &currentProject.tasks[index];
 }
 
 void projectInit(void)
