@@ -83,24 +83,30 @@ int main(void)
     projectOutput.length = 0;
     strcpy(projectOutput.text,
            "src/main.c:12:4: error: expected ';'\n"
+           "src/input.c:2:10: fatal error: sys/select.h: No such file or directory\n"
            "include/value.h:8: warning: implicit declaration\n"
            "build complete\n"
            "src/main.c:14:2: note: declaration is here\n"
            "malformed:line\n");
     projectOutput.length = strlen(projectOutput.text);
     projectParseDiagnostics();
-    assert(projectDiagnosticCount() == 3);
+    assert(projectDiagnosticCount() == 4);
     assert(strcmp(projectGetDiagnostic(0)->file, "src/main.c") == 0);
     assert(projectGetDiagnostic(0)->line == 12);
     assert(projectGetDiagnostic(0)->column == 4);
     assert(projectGetDiagnostic(0)->severity == PROJECT_DIAGNOSTIC_ERROR);
     assert(strcmp(projectGetDiagnostic(0)->message, "expected ';'") == 0);
-    assert(strcmp(projectGetDiagnostic(1)->file, "include/value.h") == 0);
-    assert(projectGetDiagnostic(1)->line == 8);
-    assert(projectGetDiagnostic(1)->column == 0);
-    assert(projectGetDiagnostic(1)->severity == PROJECT_DIAGNOSTIC_WARNING);
-    assert(projectGetDiagnostic(2)->severity == PROJECT_DIAGNOSTIC_NOTE);
-    assert(projectGetDiagnostic(3) == NULL);
+    assert(strcmp(projectGetDiagnostic(1)->file, "src/input.c") == 0);
+    assert(projectGetDiagnostic(1)->line == 2);
+    assert(projectGetDiagnostic(1)->column == 10);
+    assert(projectGetDiagnostic(1)->severity == PROJECT_DIAGNOSTIC_ERROR);
+    assert(strcmp(projectGetDiagnostic(1)->message, "sys/select.h: No such file or directory") == 0);
+    assert(strcmp(projectGetDiagnostic(2)->file, "include/value.h") == 0);
+    assert(projectGetDiagnostic(2)->line == 8);
+    assert(projectGetDiagnostic(2)->column == 0);
+    assert(projectGetDiagnostic(2)->severity == PROJECT_DIAGNOSTIC_WARNING);
+    assert(projectGetDiagnostic(3)->severity == PROJECT_DIAGNOSTIC_NOTE);
+    assert(projectGetDiagnostic(4) == NULL);
 
     projectDiagnosticsClear();
     assert(projectDiagnosticCount() == 0);

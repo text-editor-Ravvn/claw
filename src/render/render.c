@@ -110,6 +110,9 @@ static void drawProjectOutput(void)
             ? (size_t)viewport.screenCols
             : 1;
 
+        if (length > 0 && line[length - 1] == '\r')
+            length--;
+
         if (length > available)
             length = available;
 
@@ -134,12 +137,27 @@ static const char *diagnosticSeverityName(ProjectDiagnosticSeverity severity)
 static void drawProjectDiagnostics(void)
 {
     size_t count = projectDiagnosticCount();
+    int maxDisplay = viewport.screenRows - 2;
+    if (maxDisplay < 1)
+        maxDisplay = 1;
+
+    size_t start = 0;
+    if (count > (size_t)maxDisplay)
+    {
+        if (projectDiagnosticsView.selected >= (size_t)maxDisplay)
+            start = projectDiagnosticsView.selected - (size_t)maxDisplay + 1;
+    }
+
+    size_t end = start + (size_t)maxDisplay;
+    if (end > count)
+        end = count;
+
     int row = 1;
 
     printf("\033[2J\033[H");
-    printf("\033[1;96mPROJECT DIAGNOSTICS (Esc to close, Up/Down to navigate)\033[0m");
+    printf("\033[1;96mPROJECT DIAGNOSTICS (Esc to close, Enter to jump, Up/Down to navigate)\033[0m");
 
-    for (size_t i = 0; i < count && row < viewport.screenRows - 1; i++)
+    for (size_t i = start; i < end && row < viewport.screenRows - 1; i++)
     {
         const ProjectDiagnostic *diagnostic = projectGetDiagnostic(i);
 
@@ -157,8 +175,8 @@ static void drawProjectDiagnostics(void)
         row++;
     }
 
-    printf("\033[%d;1H\033[K%d diagnostic(s)",
-           viewport.screenRows, (int)count);
+    printf("\033[%d;1H\033[KDiagnostic %d of %d",
+           viewport.screenRows, count > 0 ? (int)(projectDiagnosticsView.selected + 1) : 0, (int)count);
 }
 
 static void drawProjectDashboard(void)

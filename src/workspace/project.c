@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef _WIN32
+#include <sys/wait.h>
+#endif
 
 #include "project.h"
 #include "workspace.h"
@@ -171,6 +174,8 @@ static int parseDiagnosticLine(const char *line, ProjectDiagnostic *diagnostic)
 
         if (strncmp(severityStart, "error:", 6) == 0)
             diagnostic->severity = PROJECT_DIAGNOSTIC_ERROR;
+        else if (strncmp(severityStart, "fatal error:", 12) == 0)
+            diagnostic->severity = PROJECT_DIAGNOSTIC_ERROR;
         else if (strncmp(severityStart, "warning:", 8) == 0)
             diagnostic->severity = PROJECT_DIAGNOSTIC_WARNING;
         else if (strncmp(severityStart, "note:", 5) == 0)
@@ -275,10 +280,19 @@ static int runProjectCommand(const char *commandText)
         return 0;
     }
 
+    remove(outputPath);
     projectOutput.active = 0;
     projectOutput.length = 0;
     projectOutput.text[0] = '\0';
-    projectOutput.exitCode = system(command);
+    int status = system(command);
+#if !defined(_WIN32) && defined(WIFEXITED)
+    if (WIFEXITED(status))
+        projectOutput.exitCode = WEXITSTATUS(status);
+    else
+        projectOutput.exitCode = status;
+#else
+    projectOutput.exitCode = status;
+#endif
     projectDiagnosticsClear();
 
     outputFile = fopen(outputPath, "rb");
@@ -289,15 +303,10 @@ static int runProjectCommand(const char *commandText)
         return projectOutput.exitCode == 0;
     }
 
-    while (outputLength < sizeof(output) - 1 &&
-           fgets(output + outputLength,
-                 (int)(sizeof(output) - outputLength),
-                 outputFile))
-    {
-        outputLength = strlen(output);
-    }
-
+    outputLength = fread(output, 1, sizeof(output) - 1, outputFile);
+    output[outputLength] = '\0';
     fclose(outputFile);
+
     if (outputLength == 0)
     {
         const char message[] = "Project command produced no output\n";

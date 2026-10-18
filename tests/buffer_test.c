@@ -4,6 +4,10 @@
 #include "buffer.h"
 #include "cursor.h"
 
+void refreshSearchMatches(void)
+{
+}
+
 static void resetBuffer(void)
 {
 	bufferFree();

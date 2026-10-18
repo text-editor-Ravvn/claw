@@ -528,6 +528,58 @@ void editorRun(void)
         {
             projectDiagnosticsPrevious();
         }
+        else if (key == '\r' || key == '\n')
+        {
+            const ProjectDiagnostic *diag = projectGetSelectedDiagnostic();
+            if (diag && diag->file[0])
+            {
+                char targetPath[PROJECT_DIAGNOSTIC_PATH_MAX + PROJECT_PATH_MAX + 2];
+                int isAbsolute = (diag->file[0] == '/' || diag->file[0] == '\\' ||
+                                 (diag->file[0] != '\0' && diag->file[1] == ':'));
+                if (isAbsolute || !projectGetRoot())
+                {
+                    snprintf(targetPath, sizeof(targetPath), "%s", diag->file);
+                }
+                else
+                {
+                    snprintf(targetPath, sizeof(targetPath), "%s/%s", projectGetRoot(), diag->file);
+                }
+
+                const char *pathChoice = targetPath;
+                if (!openFile(targetPath))
+                {
+                    if (openFile(diag->file))
+                        pathChoice = diag->file;
+                    else
+                        pathChoice = NULL;
+                }
+
+                if (pathChoice)
+                {
+                    if (currentFile)
+                        free(currentFile);
+                    currentFile = strdup(pathChoice);
+                    recentAddFile(pathChoice);
+                    bookmarkClearAll();
+                    if (diag->line > 0 && diag->line <= buffer.numRows)
+                    {
+                        cursor.y = diag->line - 1;
+                        int rowLen = buffer.rows[cursor.y].size;
+                        cursor.x = diag->column > 0 ? diag->column - 1 : 0;
+                        if (cursor.x > rowLen)
+                            cursor.x = rowLen;
+                        viewport.rowOffset = cursor.y - (viewport.screenRows / 2);
+                        if (viewport.rowOffset < 0)
+                            viewport.rowOffset = 0;
+                    }
+                    scrollEditor();
+                    highlightInit();
+                    gitRefreshStatus(currentFile);
+                    renderForceClear();
+                }
+            }
+            projectDiagnosticsClose();
+        }
 
         continue;
     }

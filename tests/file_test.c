@@ -5,6 +5,10 @@
 #include "buffer.h"
 #include "fileio.h"
 
+void refreshSearchMatches(void)
+{
+}
+
 int main(void)
 {
 	const char *filename = "file_test_input.tmp";

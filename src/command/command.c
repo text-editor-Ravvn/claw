@@ -445,6 +445,7 @@ case CMD_PLUGIN_RELOAD:
         case CMD_WORKSPACE_OPEN:
             workspaceInit();
             workspaceLoadConfig();
+            projectInit();
             if (workspaceIsActive())
             {
                 recentAddWorkspace(workspaceGetRoot());
