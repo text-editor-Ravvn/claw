@@ -1,0 +1,59 @@
+name: Build CLAW terminal splash
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'src/**'
+      - 'include/**'
+      - 'Makefile'
+      - 'build.bat'
+      - '.github/workflows/build-splash.yml'
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and smoke-test
+        run: |
+          make clean
+          make CC=cc
+          ./claw-splash --once --cols 100 --rows 45 --color none > /dev/null
+      - uses: actions/upload-artifact@v4
+        with:
+          name: claw-splash-linux-x86_64
+          path: claw-splash
+          if-no-files-found: error
+
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and smoke-test
+        run: |
+          make clean
+          make CC=clang
+          ./claw-splash --once --cols 100 --rows 45 --color none > /dev/null
+      - uses: actions/upload-artifact@v4
+        with:
+          name: claw-splash-macos-native
+          path: claw-splash
+          if-no-files-found: error
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Build
+        shell: cmd
+        run: build.bat
+      - name: Smoke-test
+        shell: pwsh
+        run: .\claw-splash.exe --once --cols 100 --rows 45 --color none > $null
+      - uses: actions/upload-artifact@v4
+        with:
+          name: claw-splash-windows-x64
+          path: claw-splash.exe
+          if-no-files-found: error
