@@ -500,7 +500,8 @@ void editorRun(void)
 
     if (welcomeSplashIsActive())
     {
-        if (event.key == ' ' && event.modifiers == 0)
+        if ((event.key == ' ' || event.key == '\r' || event.key == '\n' || event.key == 27 || event.key == 'q') &&
+            event.modifiers == 0)
             dismissWelcomeSplash();
 
         continue;

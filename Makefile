@@ -42,7 +42,7 @@ OBJ = $(SRC:.c=.o)
 
 .PHONY: all run debug asan test clean rebuild splash
 
-all: splash $(TARGET)
+all: $(TARGET)
 
 splash:
 	$(MAKE) -C tools/native_splash

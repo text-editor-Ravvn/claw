@@ -44,6 +44,8 @@ void dismissWelcomeSplash(void)
 static void drawWelcomeSplash(void)
 {
     FILE *image = fopen("assets/claw-splash.ansi", "r");
+    if (image == NULL)
+        image = fopen("../assets/claw-splash.ansi", "r");
 
     if (image == NULL)
     {
@@ -53,47 +55,58 @@ static void drawWelcomeSplash(void)
         return;
     }
 
-    const int imageWidth = 120;
-    int row = 1;
+    const int imageWidth = 100;
+    const int totalSplashRows = 40;
 
-char *line = NULL;
-size_t capacity = 0;
-ssize_t length;
+    int startRow = 1;
+    if (viewport.screenRows > totalSplashRows + 2)
+        startRow = (viewport.screenRows - (totalSplashRows + 2)) / 2 + 1;
 
-printf("\033[2J");
+    int row = startRow;
+    char *line = NULL;
+    size_t capacity = 0;
+    ssize_t length;
 
-while ((length = getline(&line, &capacity, image)) != -1) {
-    if (row >= viewport.screenRows)
-        break;
+    /* Disable auto-wrap during splash render to prevent distortion on narrow terminals */
+    printf("\033[?7l\033[2J");
 
-    while (length > 0 &&
-           (line[length - 1] == '\n' ||
-            line[length - 1] == '\r')) {
-        line[--length] = '\0';
+    /* Leave at least one row at the bottom for the continue prompt */
+    int maxImageRows = viewport.screenRows > 2 ? viewport.screenRows - 2 : 1;
+
+    while ((length = getline(&line, &capacity, image)) != -1) {
+        if (row >= maxImageRows)
+            break;
+
+        while (length > 0 &&
+               (line[length - 1] == '\n' ||
+                line[length - 1] == '\r')) {
+            line[--length] = '\0';
+        }
+
+        int col = (viewport.screenCols - imageWidth) / 2 + 1;
+        if (col < 1)
+            col = 1;
+
+        printf("\033[%d;%dH%s\033[0m", row++, col, line);
     }
 
-    int col = (viewport.screenCols - imageWidth) / 2 + 1;
-    if (col < 1)
-        col = 1;
+    /* Restore terminal auto-wrap mode */
+    printf("\033[?7h");
 
-    printf("\033[%d;%dH%s\033[0m", row++, col, line);
-}
+    free(line);
+    fclose(image);
 
-free(line);
-fclose(image);
+    const char *prompt = "PRESS SPACE OR ENTER TO CONTINUE";
+    int promptRow = row + 1;
+    if (promptRow >= viewport.screenRows)
+        promptRow = viewport.screenRows;
+    int promptCol = (viewport.screenCols - (int)strlen(prompt)) / 2 + 1;
 
-    if (row < viewport.screenRows)
-    {
-        const char *prompt = "PRESS SPACE TO CONTINUE";
-        int promptCol =
-            (viewport.screenCols - (int)strlen(prompt)) / 2 + 1;
+    if (promptCol < 1)
+        promptCol = 1;
 
-        if (promptCol < 1)
-            promptCol = 1;
-
-        printf("\033[%d;%dH\033[1;96m%s\033[0m",
-               row, promptCol, prompt);
-    }
+    printf("\033[%d;%dH\033[1;96m%s\033[0m",
+           promptRow, promptCol, prompt);
 }
 
 static int lastRows = 0;

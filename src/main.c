@@ -7,14 +7,6 @@
 
 int main(int argc, char *argv[])
 {
-    /* Show the splash before entering terminal raw mode when opening a new file. */
-    if (argc == 1) {
-        int splashResult = system("./tools/launch_splash.sh");
-
-        if (splashResult == 0) {
-            setenv("CLAW_GRAPHICAL_SPLASH_SHOWN", "1", 1);
-        }
-    }
 
 
     /* Initialize the terminal and begin with an empty editable buffer. */
