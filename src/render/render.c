@@ -53,34 +53,34 @@ static void drawWelcomeSplash(void)
         return;
     }
 
-    const int imageWidth = 100;
+    const int imageWidth = 120;
     int row = 1;
-    int col = (viewport.screenCols - imageWidth) / 2 + 1;
 
+char *line = NULL;
+size_t capacity = 0;
+ssize_t length;
+
+printf("\033[2J");
+
+while ((length = getline(&line, &capacity, image)) != -1) {
+    if (row >= viewport.screenRows)
+        break;
+
+    while (length > 0 &&
+           (line[length - 1] == '\n' ||
+            line[length - 1] == '\r')) {
+        line[--length] = '\0';
+    }
+
+    int col = (viewport.screenCols - imageWidth) / 2 + 1;
     if (col < 1)
         col = 1;
 
-    char *line = NULL;
-    size_t capacity = 0;
-    ssize_t length;
+    printf("\033[%d;%dH%s\033[0m", row++, col, line);
+}
 
-    printf("\033[2J");
-
-    while ((length = getline(&line, &capacity, image)) != -1)
-    {
-        if (row >= viewport.screenRows)
-            break;
-
-        /* Keep each complete ANSI image row on one terminal row. */
-        if (length > 0 && line[length - 1] == '\n')
-            line[length - 1] = '\0';
-
-        printf("\033[%d;%dH%s\033[0m", row, col, line);
-        row++;
-    }
-
-    free(line);
-    fclose(image);
+free(line);
+fclose(image);
 
     if (row < viewport.screenRows)
     {

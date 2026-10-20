@@ -2,7 +2,7 @@ from PIL import Image, ImageEnhance, ImageFilter
 
 SOURCE = "assets/claw-splash.png"
 OUTPUT = "assets/claw-splash.ansi"
-WIDTH = 100
+WIDTH = 120
 
 im = Image.open(SOURCE).convert("RGBA")
 

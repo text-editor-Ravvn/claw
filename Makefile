@@ -40,9 +40,12 @@ SRC = src/main.c \
 
 OBJ = $(SRC:.c=.o)
 
-.PHONY: all run debug asan test clean rebuild
+.PHONY: all run debug asan test clean rebuild splash
 
-all: $(TARGET)
+all: splash $(TARGET)
+
+splash:
+	$(MAKE) -C tools/native_splash
 
 $(TARGET): $(OBJ)
 	$(CC) $(OBJ) -o $(TARGET)
