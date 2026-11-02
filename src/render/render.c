@@ -18,6 +18,17 @@
 #include "file_switcher.h"
 #include "layout.h"
 #include "project.h"
+#include "buffer_manager.h"
+#include "split.h"
+#include "terminal.h"
+#include "symbols.h"
+#include "git.h"
+#include "utils.h"
+#include "lsp.h"
+#include "dap.h"
+#include "remote.h"
+#include "templates.h"
+#include "marketplace.h"
 
 extern Buffer buffer;
 extern Cursor cursor;
@@ -116,6 +127,74 @@ void drawPluginManager(void);
 void drawPluginDetails(void);
 void drawFileExplorer(void);
 void drawFileSwitcher(void);
+
+void drawSymbolNavigator(void)
+{
+    printf("\033[2J\033[H");
+    int rows = viewport.screenRows;
+
+    printf("\033[1;36m=== Symbol Navigator (Claw IDE) ===\033[0m\r\n");
+    printf("\033[1;33mQuery: %s_\033[0m\r\n", symbolState.query);
+    printf("\033[90m------------------------------------------------------------\033[0m\r\n");
+
+    int maxDisplay = rows - 6;
+    if (maxDisplay < 1) maxDisplay = 1;
+
+    int start = 0;
+    if (symbolState.selectedIndex >= maxDisplay)
+        start = symbolState.selectedIndex - maxDisplay + 1;
+
+    for (int i = 0; i < maxDisplay; i++)
+    {
+        int idx = start + i;
+        if (idx >= symbolState.filteredCount)
+        {
+            printf("\033[K\r\n");
+            continue;
+        }
+
+        const Symbol *sym = &symbolState.symbols[symbolState.filteredIndices[idx]];
+        int isSelected = (idx == symbolState.selectedIndex);
+
+        if (isSelected)
+            printf("\033[7m");
+
+        printf(" [%-6s] %-24.24s %s:%d\033[0m\r\n",
+               symbolKindToString(sym->kind),
+               sym->name,
+               sym->file,
+               sym->line);
+    }
+
+    printf("\033[%d;1H\033[90m[Enter] Jump  [Up/Down] Select  [Esc] Cancel  (%d matches)\033[0m",
+           rows, symbolState.filteredCount);
+}
+
+void drawTerminalPanel(int startRow, int numRows)
+{
+    printf("\033[%d;1H\033[1;34m─── Terminal: %s (Ctrl+` or Esc to close) ───\033[0m\033[K\r\n",
+           startRow, integratedTerminal.workingDir);
+
+    int textRows = numRows - 2;
+    if (textRows < 1) textRows = 1;
+
+    int startLine = integratedTerminal.lineCount - textRows - integratedTerminal.scrollOffset;
+    if (startLine < 0) startLine = 0;
+
+    for (int i = 0; i < textRows; i++)
+    {
+        int lIdx = startLine + i;
+        printf("\033[%d;1H\033[K", startRow + 1 + i);
+        if (lIdx >= 0 && lIdx < integratedTerminal.lineCount)
+        {
+            printf("%s", integratedTerminal.lines[lIdx]);
+        }
+    }
+
+    int promptRow = startRow + numRows - 1;
+    printf("\033[%d;1H\033[K\033[1;32mclaw:~$ \033[0m%s",
+           promptRow, integratedTerminal.currentCommand);
+}
 
 static void drawProjectOutput(void)
 {
@@ -331,6 +410,137 @@ static void drawWelcomeShortcuts(void)
     }
 }
 
+static Buffer *getPaneBuffer(int paneIdx)
+{
+    if (paneIdx == splitLayout.activePane)
+    {
+        return &buffer;
+    }
+    int bIdx = splitLayout.panes[paneIdx].bufferIndex;
+    if (bIdx == bufferManagerActiveIndex())
+    {
+        return &buffer;
+    }
+    FileBuffer *fb = bufferManagerGet(bIdx);
+    if (fb)
+        return &fb->doc;
+    return &buffer;
+}
+
+static int getPaneRowOffset(int paneIdx)
+{
+    if (paneIdx == splitLayout.activePane)
+        return viewport.rowOffset;
+    return splitLayout.panes[paneIdx].rowOffset;
+}
+
+static int getPaneColOffset(int paneIdx)
+{
+    if (paneIdx == splitLayout.activePane)
+        return viewport.colOffset;
+    return splitLayout.panes[paneIdx].colOffset;
+}
+
+static void renderPaneTextRow(Buffer *doc, int fileRow, int colOffset, int textCols, int isActivePane, int padEnd)
+{
+    if (textCols <= 0)
+        return;
+
+    if (!doc || fileRow >= doc->numRows)
+    {
+        putchar('~');
+        if (padEnd)
+        {
+            for (int s = 1; s < textCols; s++)
+                putchar(' ');
+        }
+        return;
+    }
+
+    Row *row = &doc->rows[fileRow];
+    if (!row->hl)
+        highlightRow(row, fileRow);
+
+    int len = row->size - colOffset;
+    if (len < 0)
+        len = 0;
+    if (len > textCols)
+        len = textCols;
+
+    int prevColor = -1;
+    for (int j = 0; j < len; j++)
+    {
+        int fileCol = colOffset + j;
+        int highlight = 0;
+
+        if (isActivePane && searchState.matchCount > 0)
+        {
+            int matchRow = searchState.matchRows[searchState.currentMatch];
+            int matchCol = searchState.matchCols[searchState.currentMatch];
+            if (fileRow == matchRow && matchRow >= 0 && matchRow < doc->numRows &&
+                matchCol >= 0 && searchState.length > 0 &&
+                matchCol + searchState.length <= doc->rows[matchRow].size &&
+                fileCol >= matchCol && fileCol < matchCol + searchState.length &&
+                strncmp(doc->rows[matchRow].chars + matchCol, searchState.query, (size_t)searchState.length) == 0)
+            {
+                highlight = 1;
+            }
+        }
+
+        if (highlight)
+        {
+            if (prevColor != HL_MATCH)
+            {
+                printf("%s", highlightColor(HL_MATCH));
+                prevColor = HL_MATCH;
+            }
+        }
+        else if (prevColor == HL_MATCH)
+        {
+            printf("\033[m");
+            prevColor = -1;
+        }
+        else if (isActivePane && bracketMatchY >= 0 &&
+                 ((fileRow == bracketMatchY && fileCol == bracketMatchX) ||
+                  (fileRow == cursor.y && fileCol == cursor.x)))
+        {
+            if (prevColor != HL_BRACKET_MATCH)
+            {
+                printf("%s", highlightColor(HL_BRACKET_MATCH));
+                prevColor = HL_BRACKET_MATCH;
+            }
+        }
+        else if (row->hl && fileCol < row->size)
+        {
+            int hlType = row->hl[fileCol];
+            if (hlType != prevColor)
+            {
+                printf("%s", highlightColor(hlType));
+                prevColor = hlType;
+            }
+        }
+        else
+        {
+            if (prevColor != HL_NORMAL)
+            {
+                printf("\033[m");
+                prevColor = HL_NORMAL;
+            }
+        }
+
+        putchar(row->chars[fileCol]);
+    }
+
+    if (prevColor != HL_NORMAL && prevColor != -1)
+        printf("\033[m");
+
+    if (padEnd)
+    {
+        for (int s = len; s < textCols; s++)
+            putchar(' ');
+    }
+}
+
 void refreshScreen(void)
 {
     printf("\033[?25l");
@@ -339,6 +549,98 @@ void refreshScreen(void)
     {
         drawWelcomeSplash();
         printf("\033[?25l");
+        fflush(stdout);
+        return;
+    }
+
+    /* Phase 9 — Source Control Interactive Views */
+    if (gitDashboardIsActive())
+    {
+        gitDashboardDraw();
+        printf("\033[?25l");
+        fflush(stdout);
+        return;
+    }
+
+    if (gitDiffViewerIsActive())
+    {
+        gitDiffViewerDraw();
+        printf("\033[?25l");
+        fflush(stdout);
+        return;
+    }
+
+    if (gitLogViewerIsActive())
+    {
+        gitLogViewerDraw();
+        printf("\033[?25l");
+        fflush(stdout);
+        return;
+    }
+
+    if (gitCommitDialogIsActive())
+    {
+        gitCommitDialogDraw();
+        printf("\033[?25h");
+        fflush(stdout);
+        return;
+    }
+
+    if (gitBranchModalIsActive())
+    {
+        gitBranchModalDraw();
+        printf("\033[?25l");
+        fflush(stdout);
+        return;
+    }
+
+    if (gitStashModalIsActive())
+    {
+        gitStashModalDraw();
+        printf("\033[?25l");
+        fflush(stdout);
+        return;
+    }
+
+    /* Phase 13 — Claw Ecosystem Modal */
+    if (marketplaceIsActive())
+    {
+        marketplaceDraw();
+        printf("\033[?25l");
+        fflush(stdout);
+        return;
+    }
+
+    /* Phase 12 — Advanced Platform Services Modals */
+    if (dapDashboardIsActive())
+    {
+        dapDashboardDraw();
+        printf("\033[?25l");
+        fflush(stdout);
+        return;
+    }
+
+    if (templateWizardIsActive())
+    {
+        templateWizardDraw();
+        printf("\033[?25h");
+        fflush(stdout);
+        return;
+    }
+
+    if (remotePromptIsActive())
+    {
+        remotePromptDraw();
+        printf("\033[?25h");
+        fflush(stdout);
+        return;
+    }
+
+    /* Phase 11 — Intelligent IDE Services Modal */
+    if (lspReferencesIsActive())
+    {
+        lspReferencesDraw();
+        printf("\033[?25h");
         fflush(stdout);
         return;
     }
@@ -440,6 +742,14 @@ void refreshScreen(void)
     return;
 }
 
+    if (symbolsIsActive())
+    {
+        drawSymbolNavigator();
+        printf("\033[?25h");
+        fflush(stdout);
+        return;
+    }
+
 /* Clear only when terminal size changes */
 if (lastRows != viewport.screenRows ||
     lastCols != viewport.screenCols)
@@ -504,31 +814,180 @@ else
     if (textCols < 1)
         textCols = 1;
 
-    for (int i = 0; i < viewport.screenRows - 2; i++)
+    int termRows = terminalIsActive() ? integratedTerminal.height : 0;
+    int editRows = viewport.screenRows - 2 - termRows;
+    if (editRows < 1)
+        editRows = 1;
+
+    if (splitIsActive())
+        splitUpdateDimensions(viewport.screenRows, viewport.screenCols);
+
+    for (int i = 0; i < editRows; i++)
     {
-        int fileRow = viewport.rowOffset + i;
-
-        printf("\033[K");
-
-    if(!showWelcome && leftPadding > 0)
-      printf("%*s", leftPadding, "");
-
-        /* Draw line number gutter. */
-        if (gutter > 0)
+        if (splitIsActive() && splitGetMode() == SPLIT_VERTICAL)
         {
-            if (fileRow < buffer.numRows)
+            int w0 = splitLayout.panes[0].width;
+            int g0 = (layoutState.showLineNumbers && w0 >= 15) ? viewport.gutterWidth : 0;
+            int textCols0 = w0 - g0;
+            int fileRow0 = getPaneRowOffset(0) + i;
+            Buffer *doc0 = getPaneBuffer(0);
+
+            int w1 = splitLayout.panes[1].width;
+            int g1 = (layoutState.showLineNumbers && w1 >= 15) ? viewport.gutterWidth : 0;
+            int textCols1 = w1 - g1;
+            int fileRow1 = getPaneRowOffset(1) + i;
+            Buffer *doc1 = getPaneBuffer(1);
+
+            printf("\033[K");
+
+            /* Pane 0 Gutter */
+            if (g0 > 0)
             {
-                if (bookmarkIsBookmarked(fileRow))
+                if (fileRow0 < doc0->numRows)
                 {
-                    printf("\033[1;33m%*d*\033[m",
-                           gutter - 1,
-                           fileRow + 1);
+                    FileBuffer *fb0 = bufferManagerGet(splitLayout.panes[0].bufferIndex);
+                    int showGit0 = (fb0 && fb0->filename[0] != '\0' && currentFile && strcmp(fb0->filename, currentFile) == 0);
+                    int gitHl = showGit0 ? gitGutterGetLineStatus(fileRow0 + 1) : GIT_GUTTER_NONE;
+                    if (bookmarkIsBookmarked(fileRow0))
+                        printf("\033[1;33m%*d*\033[m", g0 - 1, fileRow0 + 1);
+                    else if (gitHl == GIT_GUTTER_ADDED)
+                        printf("\033[1;32m%*d+\033[m", g0 - 1, fileRow0 + 1);
+                    else if (gitHl == GIT_GUTTER_MODIFIED)
+                        printf("\033[1;33m%*d~\033[m", g0 - 1, fileRow0 + 1);
+                    else if (gitHl == GIT_GUTTER_DELETED)
+                        printf("\033[1;31m%*d_\033[m", g0 - 1, fileRow0 + 1);
+                    else
+                        printf("\033[90m%*d \033[m", g0 - 1, fileRow0 + 1);
                 }
                 else
                 {
-                    printf("\033[90m%*d \033[m",
-                           gutter - 1,
-                           fileRow + 1);
+                    printf("%*s", g0, "");
+                }
+            }
+
+            /* Pane 0 Text (padded to textCols0) */
+            renderPaneTextRow(doc0, fileRow0, getPaneColOffset(0), textCols0, (splitLayout.activePane == 0), 1);
+
+            /* Vertical Divider */
+            printf("\033[90m│\033[0m");
+
+            /* Pane 1 Gutter */
+            if (g1 > 0)
+            {
+                if (fileRow1 < doc1->numRows)
+                {
+                    FileBuffer *fb1 = bufferManagerGet(splitLayout.panes[1].bufferIndex);
+                    int showGit1 = (fb1 && fb1->filename[0] != '\0' && currentFile && strcmp(fb1->filename, currentFile) == 0);
+                    int gitHl = showGit1 ? gitGutterGetLineStatus(fileRow1 + 1) : GIT_GUTTER_NONE;
+                    if (bookmarkIsBookmarked(fileRow1))
+                        printf("\033[1;33m%*d*\033[m", g1 - 1, fileRow1 + 1);
+                    else if (gitHl == GIT_GUTTER_ADDED)
+                        printf("\033[1;32m%*d+\033[m", g1 - 1, fileRow1 + 1);
+                    else if (gitHl == GIT_GUTTER_MODIFIED)
+                        printf("\033[1;33m%*d~\033[m", g1 - 1, fileRow1 + 1);
+                    else if (gitHl == GIT_GUTTER_DELETED)
+                        printf("\033[1;31m%*d_\033[m", g1 - 1, fileRow1 + 1);
+                    else
+                        printf("\033[90m%*d \033[m", g1 - 1, fileRow1 + 1);
+                }
+                else
+                {
+                    printf("%*s", g1, "");
+                }
+            }
+
+            /* Pane 1 Text */
+            renderPaneTextRow(doc1, fileRow1, getPaneColOffset(1), textCols1, (splitLayout.activePane == 1), 0);
+            printf("\r\n");
+            continue;
+        }
+
+        if (splitIsActive() && splitGetMode() == SPLIT_HORIZONTAL)
+        {
+            if (i == splitLayout.panes[0].height)
+            {
+                FileBuffer *fb0 = bufferManagerGet(splitLayout.panes[0].bufferIndex);
+                FileBuffer *fb1 = bufferManagerGet(splitLayout.panes[1].bufferIndex);
+                printf("\033[K\033[7m─── Pane 1: %s %s─── Pane 2: %s %s───\033[0m\r\n",
+                       fb0 ? fb0->displayName : "[Untitled]",
+                       splitLayout.activePane == 0 ? "(Active) " : "",
+                       fb1 ? fb1->displayName : "[Untitled]",
+                       splitLayout.activePane == 1 ? "(Active) " : "");
+                continue;
+            }
+        }
+
+        int paneIdx = 0;
+        int fileRow = viewport.rowOffset + i;
+        if (splitIsActive() && splitGetMode() == SPLIT_HORIZONTAL)
+        {
+            if (i < splitLayout.panes[0].height)
+            {
+                paneIdx = 0;
+                fileRow = getPaneRowOffset(0) + i;
+            }
+            else
+            {
+                paneIdx = 1;
+                fileRow = getPaneRowOffset(1) + (i - splitLayout.panes[0].height - 1);
+            }
+        }
+
+        Buffer *curDoc = splitIsActive() ? getPaneBuffer(paneIdx) : &buffer;
+        int colOff = splitIsActive() ? getPaneColOffset(paneIdx) : viewport.colOffset;
+        int isActive = splitIsActive() ? (splitLayout.activePane == paneIdx) : 1;
+
+        printf("\033[K");
+
+        if (!showWelcome && leftPadding > 0)
+            printf("%*s", leftPadding, "");
+
+        /* Draw line number gutter */
+        if (gutter > 0)
+        {
+            if (fileRow < curDoc->numRows)
+            {
+                FileBuffer *fbCur = splitIsActive() ? bufferManagerGet(splitLayout.panes[paneIdx].bufferIndex) : NULL;
+                int showGit = !splitIsActive() || (fbCur && fbCur->filename[0] != '\0' && currentFile && strcmp(fbCur->filename, currentFile) == 0);
+                int gitHl = showGit ? gitGutterGetLineStatus(fileRow + 1) : GIT_GUTTER_NONE;
+                int dapHl = dapGutterStatus(currentFile, fileRow + 1);
+                int lspHl = lspGutterStatus(currentFile, fileRow + 1);
+
+                if (dapHl == DAP_GUTTER_EXEC_POINT || dapHl == DAP_GUTTER_BREAK_AND_EXEC)
+                {
+                    printf("\033[1;33m%*d>\033[m", gutter - 1, fileRow + 1);
+                }
+                else if (dapHl == DAP_GUTTER_BREAKPOINT)
+                {
+                    printf("\033[1;31m%*dB\033[m", gutter - 1, fileRow + 1);
+                }
+                else if (lspHl == LSP_SEVERITY_ERROR)
+                {
+                    printf("\033[1;31m%*dE\033[m", gutter - 1, fileRow + 1);
+                }
+                else if (lspHl == LSP_SEVERITY_WARNING)
+                {
+                    printf("\033[1;33m%*dW\033[m", gutter - 1, fileRow + 1);
+                }
+                else if (bookmarkIsBookmarked(fileRow))
+                {
+                    printf("\033[1;33m%*d*\033[m", gutter - 1, fileRow + 1);
+                }
+                else if (gitHl == GIT_GUTTER_ADDED)
+                {
+                    printf("\033[1;32m%*d+\033[m", gutter - 1, fileRow + 1);
+                }
+                else if (gitHl == GIT_GUTTER_MODIFIED)
+                {
+                    printf("\033[1;33m%*d~\033[m", gutter - 1, fileRow + 1);
+                }
+                else if (gitHl == GIT_GUTTER_DELETED)
+                {
+                    printf("\033[1;31m%*d_\033[m", gutter - 1, fileRow + 1);
+                }
+                else
+                {
+                    printf("\033[90m%*d \033[m", gutter - 1, fileRow + 1);
                 }
             }
             else
@@ -537,140 +996,23 @@ else
             }
         }
 
-        if (fileRow < buffer.numRows)
-        {
-            int len =
-                buffer.rows[fileRow].size -
-                viewport.colOffset;
-
-            if (len < 0)
-                len = 0;
-
-            if (len > textCols)
-                len = textCols;
-
-            if (len > 0)
-{
-    /* Lazily compute highlighting for this row if needed. */
-    Row *row = &buffer.rows[fileRow];
-
-    if (!row->hl)
-        highlightRow(row, fileRow);
-
-    int prevColor = -1;
-
-    for (int j = 0; j < len; j++)
-    {
-        int fileCol =
-            viewport.colOffset + j;
-
-        int highlight = 0;
-
-        if (searchState.matchCount > 0)
-        {
-            int matchRow =
-                searchState.matchRows[
-                    searchState.currentMatch
-                ];
-
-            int matchCol =
-                searchState.matchCols[
-                    searchState.currentMatch
-                ];
-
-            if (fileRow == matchRow &&
-                matchRow >= 0 &&
-                matchRow < buffer.numRows &&
-                matchCol >= 0 &&
-                searchState.length > 0 &&
-                matchCol + searchState.length <=
-                    buffer.rows[matchRow].size &&
-                fileCol >= matchCol &&
-                fileCol < matchCol +
-                          searchState.length &&
-                strncmp(
-                    buffer.rows[matchRow].chars + matchCol,
-                    searchState.query,
-                    (size_t)searchState.length
-                ) == 0)
-            {
-                highlight = 1;
-            }
-        }
-
-        if (highlight)
-        {
-            if (prevColor != HL_MATCH)
-            {
-                printf("%s", highlightColor(HL_MATCH));
-                prevColor = HL_MATCH;
-            }
-        }
-        else if (prevColor == HL_MATCH)
-        {
-            printf("\033[m");
-            prevColor = -1;
-        }
-        else if (
-            bracketMatchY >= 0 &&
-            ((fileRow == bracketMatchY && fileCol == bracketMatchX) ||
-             (fileRow == cursor.y && fileCol == cursor.x))
-        )
-        {
-            if (prevColor != HL_BRACKET_MATCH)
-            {
-                printf("%s", highlightColor(HL_BRACKET_MATCH));
-                prevColor = HL_BRACKET_MATCH;
-            }
-        }
-        else if (row->hl && fileCol < row->size)
-        {
-            int hlType = row->hl[fileCol];
-
-            if (hlType != prevColor)
-            {
-                printf("%s", highlightColor(hlType));
-                prevColor = hlType;
-            }
-        }
-        else
-        {
-            if (prevColor != HL_NORMAL)
-            {
-                printf("\033[m");
-                prevColor = HL_NORMAL;
-            }
-        }
-
-        putchar(
-            buffer.rows[fileRow].chars[
-                fileCol
-            ]
-        );
-    }
-
-    /* Reset color at end of row. */
-    if (prevColor != HL_NORMAL && prevColor != -1)
-        printf("\033[m");
-    }
-        }
-        else
-        {
-            printf("~");
-        }
-
+        renderPaneTextRow(curDoc, fileRow, colOff, textCols, isActive, 0);
         printf("\r\n");
     }
 
-    printf("\033[K");
+    if (terminalIsActive())
+    {
+        drawTerminalPanel(editRows + 1, termRows);
+    }
+
+    printf("\033[%d;1H\033[K", viewport.screenRows - 1);
 
     if (layoutState.showStatusBar)
         drawStatusBar();
     else
         printf("\033[K");
 
-    printf("\r\n");
-    printf("\033[K");
+    printf("\033[%d;1H\033[K", viewport.screenRows);
 
     if (savePrompt.active)
     {
@@ -711,7 +1053,16 @@ else
         );
     }
 
-    if (gotoPrompt.active)
+    if (terminalIsActive())
+    {
+        int promptRow = editRows + termRows;
+        printf(
+            "\033[%d;%dH",
+            promptRow,
+            (int)strlen("claw:~$ ") + integratedTerminal.cursorCol + 1
+        );
+    }
+    else if (gotoPrompt.active)
     {
         printf(
             "\033[%d;%dH",
@@ -721,17 +1072,60 @@ else
     }
     else
     {
-        int screenRow =
-            cursor.y - viewport.rowOffset + 1;
+        int screenRow = cursor.y - viewport.rowOffset + 1;
+        int screenCol = cursor.x - viewport.colOffset + gutter + leftPadding + 1;
 
-        int screenCol =
-            cursor.x - viewport.colOffset + gutter + leftPadding + 1;
+        if (splitIsActive())
+        {
+            if (splitGetMode() == SPLIT_HORIZONTAL)
+            {
+                if (splitLayout.activePane == 0)
+                {
+                    screenRow = cursor.y - viewport.rowOffset + 1;
+                    if (screenRow > splitLayout.panes[0].height)
+                        screenRow = splitLayout.panes[0].height;
+                }
+                else
+                {
+                    screenRow = cursor.y - viewport.rowOffset + splitLayout.panes[0].height + 2;
+                    if (screenRow > editRows)
+                        screenRow = editRows;
+                    if (screenRow < splitLayout.panes[0].height + 2)
+                        screenRow = splitLayout.panes[0].height + 2;
+                }
+            }
+            else if (splitGetMode() == SPLIT_VERTICAL)
+            {
+                int g0 = (layoutState.showLineNumbers && splitLayout.panes[0].width >= 15) ? viewport.gutterWidth : 0;
+                int g1 = (layoutState.showLineNumbers && splitLayout.panes[1].width >= 15) ? viewport.gutterWidth : 0;
+                if (splitLayout.activePane == 0)
+                {
+                    screenRow = cursor.y - viewport.rowOffset + 1;
+                    screenCol = cursor.x - viewport.colOffset + g0 + 1;
+                    if (screenCol > splitLayout.panes[0].width)
+                        screenCol = splitLayout.panes[0].width;
+                }
+                else
+                {
+                    screenRow = cursor.y - viewport.rowOffset + 1;
+                    screenCol = splitLayout.panes[0].width + 1 + g1 + (cursor.x - viewport.colOffset) + 1;
+                    if (screenCol > viewport.screenCols)
+                        screenCol = viewport.screenCols;
+                    if (screenCol < splitLayout.panes[0].width + 2)
+                        screenCol = splitLayout.panes[0].width + 2;
+                }
+            }
+        }
 
         if (screenRow < 1)
             screenRow = 1;
+        if (screenRow > viewport.screenRows)
+            screenRow = viewport.screenRows;
 
         if (screenCol < 1)
             screenCol = 1;
+        if (screenCol > viewport.screenCols)
+            screenCol = viewport.screenCols;
 
         printf(
             "\033[%d;%dH",
@@ -739,6 +1133,13 @@ else
             screenCol
         );
     }
+
+    if (lspHoverIsActive())
+        lspHoverDraw();
+    if (lspCodeActionsIsActive())
+        lspCodeActionsDraw();
+    if (lspCompletionIsActive())
+        lspCompletionDraw();
 
     printf("\033[?25h");
     fflush(stdout);

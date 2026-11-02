@@ -1,6 +1,6 @@
 # Claw Editor Session
 workspace=/mnt/c/Users/Pranav/Desktop/claw
-file=
+file=src/editor/editor.c
 cursor_x=0
 cursor_y=0
 row_offset=0

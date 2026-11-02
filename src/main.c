@@ -4,6 +4,7 @@
 #include "fileio.h"
 #include "highlight.h"
 #include "recent.h"
+#include "buffer_manager.h"
 
 int main(int argc, char *argv[])
 {
@@ -14,17 +15,19 @@ int main(int argc, char *argv[])
 
     if (argc > 1)
     {
-        /* Loading is optional; without an argument Claw starts a new file. */
-        currentFile = strdup(argv[1]);
-        if (!openFile(argv[1]))
+        for (int i = 1; i < argc; i++)
         {
-            editorSetStatusMessage("Could not open the requested file");
+            if (bufferManagerOpen(argv[i]) < 0)
+            {
+                editorSetStatusMessage("Could not open the requested file");
+            }
+            else
+            {
+                recentAddFile(argv[i]);
+            }
         }
-        else
-        {
-            recentAddFile(argv[1]);
-            highlightInit();
-        }
+        bufferManagerSwitchTo(0);
+        highlightInit();
     }
 
     /* The editor owns terminal input until the command loop returns. */

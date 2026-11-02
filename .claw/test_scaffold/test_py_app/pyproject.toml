@@ -1,0 +1,7 @@
+[project]
+name = "my_py_package"
+version = "0.1.0"
+description = "my_py_package package"
+authors = [{ name = "Python Dev" }]
+readme = "README.md"
+requires-python = ">=3.9"

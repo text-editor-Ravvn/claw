@@ -51,7 +51,7 @@ void keymapInit(void) {
   bindingCount++;
 
   bindings[bindingCount].action = CMD_PLUGIN_HELLO;
-  bindings[bindingCount].key = 'o';
+  bindings[bindingCount].key = 'u';
   bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
 
@@ -90,9 +90,14 @@ void keymapInit(void) {
   bindings[bindingCount].modifiers = MOD_ALT;
   bindingCount++;
 
-  bindings[bindingCount].action = CMD_PLUGIN_HELP;
+  bindings[bindingCount].action = CMD_BUFFER_CLOSE;
   bindings[bindingCount].key = 'w';
   bindings[bindingCount].modifiers = MOD_CTRL;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_PLUGIN_HELP;
+  bindings[bindingCount].key = 'h';
+  bindings[bindingCount].modifiers = MOD_CTRL | MOD_SHIFT;
   bindingCount++;
 
   bindings[bindingCount].action = CMD_QUIT;
@@ -300,6 +305,256 @@ void keymapInit(void) {
   bindings[bindingCount].modifiers = MOD_CTRL | MOD_SHIFT;
   bindingCount++;
 
+  /* Phase 8 — IDE Foundation bindings */
+  bindings[bindingCount].action = CMD_BUFFER_NEXT;
+  bindings[bindingCount].key = '\t';
+  bindings[bindingCount].modifiers = MOD_CTRL;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_BUFFER_PREV;
+  bindings[bindingCount].key = '\t';
+  bindings[bindingCount].modifiers = MOD_CTRL | MOD_SHIFT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_SPLIT_VERTICAL;
+  bindings[bindingCount].key = '\\';
+  bindings[bindingCount].modifiers = MOD_CTRL;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_SPLIT_HORIZONTAL;
+  bindings[bindingCount].key = '-';
+  bindings[bindingCount].modifiers = MOD_CTRL;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_PANE_SWITCH;
+  bindings[bindingCount].key = 'o';
+  bindings[bindingCount].modifiers = MOD_ALT;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_TERMINAL_TOGGLE;
+  bindings[bindingCount].key = '`';
+  bindings[bindingCount].modifiers = MOD_CTRL;
+  bindingCount++;
+
+  bindings[bindingCount].action = CMD_SYMBOL_SEARCH;
+  bindings[bindingCount].key = 's';
+  bindings[bindingCount].modifiers = MOD_CTRL | MOD_SHIFT;
+  bindingCount++;
+
+  for (int i = 0; i < 9; i++)
+  {
+      if (bindingCount < KEYMAP_MAX_BINDINGS)
+      {
+          bindings[bindingCount].action = CMD_BUFFER_1 + i;
+          bindings[bindingCount].key = '1' + i;
+          bindings[bindingCount].modifiers = MOD_CTRL;
+          bindingCount++;
+      }
+  }
+
+  /* Phase 9 — Source Control Platform bindings */
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_GIT_DASHBOARD;
+      bindings[bindingCount].key = 'g';
+      bindings[bindingCount].modifiers = MOD_CTRL | MOD_SHIFT;
+      bindingCount++;
+  }
+
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_GIT_DASHBOARD;
+      bindings[bindingCount].key = '5';
+      bindings[bindingCount].modifiers = MOD_ALT;
+      bindingCount++;
+  }
+
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_GIT_DIFF;
+      bindings[bindingCount].key = 'k';
+      bindings[bindingCount].modifiers = MOD_CTRL | MOD_SHIFT;
+      bindingCount++;
+  }
+
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_GIT_LOG;
+      bindings[bindingCount].key = 'l';
+      bindings[bindingCount].modifiers = MOD_CTRL | MOD_SHIFT;
+      bindingCount++;
+  }
+
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_GIT_COMMIT;
+      bindings[bindingCount].key = 'c';
+      bindings[bindingCount].modifiers = MOD_CTRL | MOD_SHIFT;
+      bindingCount++;
+  }
+
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_GIT_BRANCH;
+      bindings[bindingCount].key = 'r';
+      bindings[bindingCount].modifiers = MOD_CTRL | MOD_SHIFT;
+      bindingCount++;
+  }
+
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_GIT_STASH;
+      bindings[bindingCount].key = 'z';
+      bindings[bindingCount].modifiers = MOD_CTRL | MOD_SHIFT;
+      bindingCount++;
+  }
+
+  /* Phase 11 — Intelligent IDE Services Default Bindings */
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_LSP_COMPLETION;
+      bindings[bindingCount].key = ' ';
+      bindings[bindingCount].modifiers = MOD_CTRL;
+      bindingCount++;
+  }
+
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_LSP_DEFINITION;
+      bindings[bindingCount].key = ']';
+      bindings[bindingCount].modifiers = MOD_CTRL;
+      bindingCount++;
+  }
+
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_LSP_HOVER;
+      bindings[bindingCount].key = 'k';
+      bindings[bindingCount].modifiers = MOD_ALT;
+      bindingCount++;
+  }
+
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_LSP_REFERENCES;
+      bindings[bindingCount].key = 'f';
+      bindings[bindingCount].modifiers = MOD_ALT | MOD_SHIFT;
+      bindingCount++;
+  }
+
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_LSP_CODE_ACTION;
+      bindings[bindingCount].key = '\r';
+      bindings[bindingCount].modifiers = MOD_ALT;
+      bindingCount++;
+  }
+
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_LSP_DIAGNOSTICS;
+      bindings[bindingCount].key = '0';
+      bindings[bindingCount].modifiers = MOD_ALT;
+      bindingCount++;
+  }
+
+  /* Phase 12 — Advanced Platform Services Default Bindings */
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_DAP_START_CONTINUE;
+      bindings[bindingCount].key = KEY_F5;
+      bindings[bindingCount].modifiers = 0;
+      bindingCount++;
+  }
+
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_DAP_STOP;
+      bindings[bindingCount].key = KEY_F5;
+      bindings[bindingCount].modifiers = MOD_SHIFT;
+      bindingCount++;
+  }
+
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_DAP_PAUSE;
+      bindings[bindingCount].key = KEY_F6;
+      bindings[bindingCount].modifiers = 0;
+      bindingCount++;
+  }
+
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_DAP_BREAKPOINT_TOGGLE;
+      bindings[bindingCount].key = KEY_F9;
+      bindings[bindingCount].modifiers = 0;
+      bindingCount++;
+  }
+
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_DAP_STEP_OVER;
+      bindings[bindingCount].key = KEY_F10;
+      bindings[bindingCount].modifiers = 0;
+      bindingCount++;
+  }
+
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_DAP_STEP_INTO;
+      bindings[bindingCount].key = KEY_F11;
+      bindings[bindingCount].modifiers = 0;
+      bindingCount++;
+  }
+
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_DAP_STEP_OUT;
+      bindings[bindingCount].key = KEY_F11;
+      bindings[bindingCount].modifiers = MOD_SHIFT;
+      bindingCount++;
+  }
+
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_DAP_DASHBOARD;
+      bindings[bindingCount].key = 'v';
+      bindings[bindingCount].modifiers = MOD_ALT;
+      bindingCount++;
+  }
+
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_REMOTE_OPEN;
+      bindings[bindingCount].key = 'u';
+      bindings[bindingCount].modifiers = MOD_CTRL | MOD_SHIFT;
+      bindingCount++;
+  }
+
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_PROJECT_NEW;
+      bindings[bindingCount].key = 'n';
+      bindings[bindingCount].modifiers = MOD_ALT;
+      bindingCount++;
+  }
+
+  /* Phase 13 — Claw Ecosystem Default Bindings */
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_MARKETPLACE;
+      bindings[bindingCount].key = 'm';
+      bindings[bindingCount].modifiers = MOD_CTRL | MOD_SHIFT;
+      bindingCount++;
+  }
+
+  if (bindingCount < KEYMAP_MAX_BINDINGS)
+  {
+      bindings[bindingCount].action = CMD_PACKAGE_MANAGER;
+      bindings[bindingCount].key = 'm';
+      bindings[bindingCount].modifiers = MOD_ALT | MOD_SHIFT;
+      bindingCount++;
+  }
 }
 
 int keymapLookup(

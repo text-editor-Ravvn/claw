@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -8,6 +9,59 @@
 #include "search.h"
 
 extern Buffer buffer;
+
+/* Language-aware smart editing hooks (Phase 10) */
+static const char *defaultCommentPrefix(void) { return "//"; }
+static const char *defaultCommentSuffix(void) { return NULL; }
+static char defaultIndentTrigger(void) { return '{'; }
+
+const char *(*clawCommentPrefixHook)(void) = defaultCommentPrefix;
+const char *(*clawCommentSuffixHook)(void) = defaultCommentSuffix;
+char (*clawIndentTriggerHook)(void) = defaultIndentTrigger;
+
+static char getLastNonWhitespaceChar(const char *chars, int len, const char *singleLineComment)
+{
+    if (!chars || len <= 0)
+        return '\0';
+
+    if (singleLineComment && *singleLineComment)
+    {
+        /* Trim trailing spaces from comment token, e.g. "#" from "# " */
+        char cTok[16];
+        size_t cLen = 0;
+        while (singleLineComment[cLen] && !isspace((unsigned char)singleLineComment[cLen]) &&
+               cLen < sizeof(cTok) - 1)
+        {
+            cTok[cLen] = singleLineComment[cLen];
+            cLen++;
+        }
+        cTok[cLen] = '\0';
+
+        if (cLen > 0)
+        {
+            int inQuote = 0;
+            for (int i = 0; i + (int)cLen <= len; i++)
+            {
+                if ((chars[i] == '"' || chars[i] == '\'') && (i == 0 || chars[i - 1] != '\\'))
+                {
+                    if (!inQuote)
+                        inQuote = chars[i];
+                    else if (inQuote == chars[i])
+                        inQuote = 0;
+                }
+                if (!inQuote && memcmp(&chars[i], cTok, cLen) == 0)
+                {
+                    len = i;
+                    break;
+                }
+            }
+        }
+    }
+
+    while (len > 0 && isspace((unsigned char)chars[len - 1]))
+        len--;
+    return (len > 0) ? chars[len - 1] : '\0';
+}
 
 /* ===== Phase 4: Smart Delimiter Support ===== */
 
@@ -432,14 +486,6 @@ void insertNewLine(void)
    int leftSize = cursor.x;
 int rightSize = current->size - cursor.x;
 
-/* Save last character before realloc */
-char lastChar = '\0';
-
-if (leftSize > 0)
-{
-    lastChar = current->chars[leftSize - 1];
-}
-
     char *rightPart = malloc((size_t)rightSize + 1);
 
     if (!rightPart)
@@ -484,21 +530,38 @@ if (leftSize > 0)
     buffer.rows[cursor.y + 1].chars = rightPart;
     buffer.rows[cursor.y + 1].hl = NULL;
     buffer.rows[cursor.y + 1].hlSize = 0;
+    buffer.rows[cursor.y + 1].hlOpenState = 0;
 
     buffer.numRows++;
 
     cursor.y++;
 
-/* Auto indentation */
-int indent =
-    getIndentation(buffer.rows[cursor.y - 1].chars);
+    /* Auto indentation */
+    int indent = getIndentation(buffer.rows[cursor.y - 1].chars);
 
-/* Smart indentation after opening brace */
-if (lastChar == '{')
-{
-    int tw = configTabWidth();
-    indent += (tw > 0) ? tw : 4;
-}
+    /* Smart indentation based on language trigger */
+    char trig = clawIndentTriggerHook ? clawIndentTriggerHook() : 0;
+    const char *cmtPrefix = clawCommentPrefixHook ? clawCommentPrefixHook() : NULL;
+    char lastNonSpace = getLastNonWhitespaceChar(buffer.rows[cursor.y - 1].chars, leftSize, cmtPrefix);
+
+    if (trig == ':')
+    {
+        /* Python / YAML: indent after colon or opening bracket */
+        if (lastNonSpace == ':' || lastNonSpace == '{' || lastNonSpace == '(' || lastNonSpace == '[')
+        {
+            int tw = configTabWidth();
+            indent += (tw > 0) ? tw : 4;
+        }
+    }
+    else if (trig == '{')
+    {
+        /* C / JS / Rust / Go / Java: indent after opening brace or bracket */
+        if (lastNonSpace == '{' || lastNonSpace == '(' || lastNonSpace == '[')
+        {
+            int tw = configTabWidth();
+            indent += (tw > 0) ? tw : 4;
+        }
+    }
 
 if (indent > 0)
 {
@@ -579,6 +642,7 @@ void duplicateLine(void)
 
     copy->hl = NULL;
     copy->hlSize = 0;
+    copy->hlOpenState = 0;
 
     buffer.numRows++;
 
@@ -644,81 +708,134 @@ void moveLineDown(void)
 }
 void toggleCommentLine(void)
 {
-    if (cursor.y < 0 ||
-        cursor.y >= buffer.numRows)
-    {
+    if (cursor.y < 0 || cursor.y >= buffer.numRows)
         return;
-    }
 
     Row *row = &buffer.rows[cursor.y];
-
     int indent = 0;
 
-    while (
-        indent < row->size &&
-        (row->chars[indent] == ' ' ||
-         row->chars[indent] == '\t')
-    )
-    {
+    while (indent < row->size && (row->chars[indent] == ' ' || row->chars[indent] == '\t'))
         indent++;
-    }
 
-    /* Uncomment */
+    const char *pfx = clawCommentPrefixHook ? clawCommentPrefixHook() : "//";
+    const char *sfx = clawCommentSuffixHook ? clawCommentSuffixHook() : NULL;
+    if (!pfx || !*pfx)
+        pfx = "//";
 
-    if (
-        indent + 1 < row->size &&
-        row->chars[indent] == '/' &&
-        row->chars[indent + 1] == '/'
-    )
+    /* Extract base token without trailing spaces, e.g. "//" from "// " or "#" from "# " */
+    char token[16];
+    size_t tokenLen = 0;
+    while (pfx[tokenLen] && !isspace((unsigned char)pfx[tokenLen]) && tokenLen < sizeof(token) - 1)
     {
-        memmove(
-            &row->chars[indent],
-            &row->chars[indent + 2],
-            (size_t)(
-                row->size -
-                indent -
-                1
-            )
-        );
-
-        row->size -= 2;
-        row->chars[row->size] = '\0';
+        token[tokenLen] = pfx[tokenLen];
+        tokenLen++;
     }
+    token[tokenLen] = '\0';
 
-    /* Comment */
+    if (sfx && *sfx)
+    {
+        /* Block comment toggle, e.g. HTML / Markdown <!-- ... --> */
+        char sfxToken[16];
+        size_t sfxTokenLen = 0;
+        const char *sp = sfx;
+        while (*sp && isspace((unsigned char)*sp))
+            sp++;
+        while (*sp && !isspace((unsigned char)*sp) && sfxTokenLen < sizeof(sfxToken) - 1)
+        {
+            sfxToken[sfxTokenLen++] = *sp++;
+        }
+        sfxToken[sfxTokenLen] = '\0';
 
+        if (indent + (int)tokenLen <= row->size &&
+            memcmp(&row->chars[indent], token, tokenLen) == 0)
+        {
+            /* Uncomment block comment */
+            int removeStart = (int)tokenLen;
+            if (indent + removeStart < row->size && row->chars[indent + removeStart] == ' ')
+                removeStart++;
+
+            memmove(&row->chars[indent], &row->chars[indent + removeStart],
+                    (size_t)(row->size - indent - removeStart + 1));
+            row->size -= removeStart;
+
+            /* Strip suffix at end if present */
+            int trailing = row->size;
+            while (trailing > indent && isspace((unsigned char)row->chars[trailing - 1]))
+                trailing--;
+            if (trailing - indent >= (int)sfxTokenLen &&
+                memcmp(&row->chars[trailing - sfxTokenLen], sfxToken, sfxTokenLen) == 0)
+            {
+                int endStart = trailing - (int)sfxTokenLen;
+                if (endStart > indent && row->chars[endStart - 1] == ' ')
+                    endStart--;
+                row->chars[endStart] = '\0';
+                row->size = endStart;
+            }
+        }
+        else
+        {
+            /* Comment with block comment */
+            char addPrefix[32];
+            char addSuffix[32];
+            snprintf(addPrefix, sizeof(addPrefix), "%s ", token);
+            snprintf(addSuffix, sizeof(addSuffix), " %s", sfxToken);
+            size_t addPreLen = strlen(addPrefix);
+            size_t addSufLen = strlen(addSuffix);
+
+            char *newChars = realloc(row->chars, (size_t)row->size + addPreLen + addSufLen + 1);
+            if (!newChars)
+                return;
+            row->chars = newChars;
+
+            memmove(&row->chars[indent + addPreLen], &row->chars[indent],
+                    (size_t)(row->size - indent + 1));
+            memcpy(&row->chars[indent], addPrefix, addPreLen);
+            row->size += (int)addPreLen;
+
+            memcpy(&row->chars[row->size], addSuffix, addSufLen);
+            row->size += (int)addSufLen;
+            row->chars[row->size] = '\0';
+        }
+    }
     else
     {
-        char *newChars =
-            realloc(
-                row->chars,
-                (size_t)row->size + 3
-            );
+        /* Single-line comment toggle, e.g. // or # */
+        if (indent + (int)tokenLen <= row->size &&
+            memcmp(&row->chars[indent], token, tokenLen) == 0)
+        {
+            /* Uncomment */
+            int removeCount = (int)tokenLen;
+            if (indent + removeCount < row->size && row->chars[indent + removeCount] == ' ')
+                removeCount++;
 
-        if (!newChars)
-            return;
+            memmove(&row->chars[indent], &row->chars[indent + removeCount],
+                    (size_t)(row->size - indent - removeCount + 1));
+            row->size -= removeCount;
+            row->chars[row->size] = '\0';
+        }
+        else
+        {
+            /* Comment */
+            char addPrefix[32];
+            snprintf(addPrefix, sizeof(addPrefix), "%s ", token);
+            size_t addLen = strlen(addPrefix);
 
-        row->chars = newChars;
+            char *newChars = realloc(row->chars, (size_t)row->size + addLen + 1);
+            if (!newChars)
+                return;
+            row->chars = newChars;
 
-        memmove(
-            &row->chars[indent + 2],
-            &row->chars[indent],
-            (size_t)(
-                row->size -
-                indent +
-                1
-            )
-        );
-
-        row->chars[indent] = '/';
-        row->chars[indent + 1] = '/';
-
-        row->size += 2;
+            memmove(&row->chars[indent + addLen], &row->chars[indent],
+                    (size_t)(row->size - indent + 1));
+            memcpy(&row->chars[indent], addPrefix, addLen);
+            row->size += (int)addLen;
+        }
     }
 
     free(row->hl);
     row->hl = NULL;
     row->hlSize = 0;
+    row->hlOpenState = 0;
 
     buffer.modified = 1;
 }

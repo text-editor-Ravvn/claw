@@ -24,6 +24,16 @@
 #include "render.h"
 #include "theme.h"
 #include "layout.h"
+#include "buffer_manager.h"
+#include "split.h"
+#include "terminal.h"
+#include "symbols.h"
+#include "lsp.h"
+#include "dap.h"
+#include "remote.h"
+#include "templates.h"
+#include "marketplace.h"
+#include "package.h"
 
 extern char *currentFile;
 extern Buffer buffer;
@@ -44,6 +54,7 @@ void commandExecute(int action)
 
             if (saveFile(currentFile))
 {
+    bufferManagerSyncFromGlobal();
     gitRefreshStatus(currentFile);
 
     snprintf(
@@ -596,6 +607,203 @@ case CMD_PLUGIN_RELOAD:
 
             case CMD_THEME_MANAGER:
                 openThemeManager();
+                break;
+
+            /* Phase 8 — IDE Foundation commands */
+            case CMD_BUFFER_CLOSE:
+                if (splitIsActive())
+                {
+                    splitClose();
+                }
+                else
+                {
+                    bufferManagerCloseActive();
+                }
+                break;
+
+            case CMD_BUFFER_NEXT:
+                if (bufferManagerNext())
+                {
+                    if (splitIsActive())
+                    {
+                        splitLayout.panes[splitLayout.activePane].bufferIndex = bufferManagerActiveIndex();
+                    }
+                    char buf[128];
+                    snprintf(buf, sizeof(buf), "Buffer [%d/%d]: %s",
+                             bufferManagerActiveIndex() + 1, bufferManagerCount(),
+                             bufferManagerGetDisplayName(bufferManagerActiveIndex()));
+                    editorSetStatusMessage(buf);
+                }
+                break;
+
+            case CMD_BUFFER_PREV:
+                if (bufferManagerPrev())
+                {
+                    if (splitIsActive())
+                    {
+                        splitLayout.panes[splitLayout.activePane].bufferIndex = bufferManagerActiveIndex();
+                    }
+                    char buf[128];
+                    snprintf(buf, sizeof(buf), "Buffer [%d/%d]: %s",
+                             bufferManagerActiveIndex() + 1, bufferManagerCount(),
+                             bufferManagerGetDisplayName(bufferManagerActiveIndex()));
+                    editorSetStatusMessage(buf);
+                }
+                break;
+
+            case CMD_SPLIT_VERTICAL:
+                splitVertical();
+                break;
+
+            case CMD_SPLIT_HORIZONTAL:
+                splitHorizontal();
+                break;
+
+            case CMD_PANE_SWITCH:
+                splitSwitchPane();
+                break;
+
+            case CMD_TERMINAL_TOGGLE:
+                terminalToggle();
+                break;
+
+            case CMD_SYMBOL_SEARCH:
+                symbolsOpen();
+                break;
+
+            case CMD_BUFFER_1:
+            case CMD_BUFFER_2:
+            case CMD_BUFFER_3:
+            case CMD_BUFFER_4:
+            case CMD_BUFFER_5:
+            case CMD_BUFFER_6:
+            case CMD_BUFFER_7:
+            case CMD_BUFFER_8:
+            case CMD_BUFFER_9:
+            {
+                int target = action - CMD_BUFFER_1;
+                if (target < bufferManagerCount())
+                {
+                    bufferManagerSwitchTo(target);
+                    if (splitIsActive())
+                    {
+                        splitLayout.panes[splitLayout.activePane].bufferIndex = target;
+                    }
+                    char buf[128];
+                    snprintf(buf, sizeof(buf), "Buffer [%d/%d]: %s",
+                             target + 1, bufferManagerCount(),
+                             bufferManagerGetDisplayName(target));
+                    editorSetStatusMessage(buf);
+                }
+                break;
+            }
+
+            /* Phase 9 — Source Control Expansion commands */
+            case CMD_GIT_DASHBOARD:
+                gitDashboardOpen();
+                break;
+
+            case CMD_GIT_DIFF:
+                gitDiffViewerOpen(currentFile, 0);
+                break;
+
+            case CMD_GIT_LOG:
+                gitLogViewerOpen();
+                break;
+
+            case CMD_GIT_COMMIT:
+                gitCommitDialogOpen();
+                break;
+
+            case CMD_GIT_BRANCH:
+                gitBranchModalOpen();
+                break;
+
+            case CMD_GIT_STASH:
+                gitStashModalOpen();
+                break;
+
+            /* Phase 11 — Intelligent IDE Services Commands */
+            case CMD_LSP_COMPLETION:
+                lspCompletionOpen();
+                break;
+
+            case CMD_LSP_DEFINITION:
+                lspGotoDefinition();
+                break;
+
+            case CMD_LSP_HOVER:
+                lspHoverOpen();
+                break;
+
+            case CMD_LSP_REFERENCES:
+                lspReferencesOpen();
+                break;
+
+            case CMD_LSP_CODE_ACTION:
+                lspCodeActionsOpen();
+                break;
+
+            case CMD_LSP_DIAGNOSTICS:
+            {
+                int count = lspTotalDiagnosticsCount(currentFile);
+                char dmsg[128];
+                snprintf(dmsg, sizeof(dmsg), "Document diagnostics: %d issues recorded", count);
+                editorSetStatusMessage(dmsg);
+                break;
+            }
+
+            /* Phase 12 — Advanced Platform Services Commands */
+            case CMD_DAP_START_CONTINUE:
+                if (dapGetState() == DAP_STATE_STOPPED)
+                    dapStartSession(currentFile, NULL);
+                else
+                    dapContinue();
+                break;
+
+            case CMD_DAP_STOP:
+                dapStopSession();
+                break;
+
+            case CMD_DAP_PAUSE:
+                dapPause();
+                break;
+
+            case CMD_DAP_BREAKPOINT_TOGGLE:
+                if (currentFile && cursor.y >= 0)
+                    dapToggleBreakpoint(currentFile, cursor.y + 1);
+                else
+                    editorSetStatusMessage("No active file for breakpoint");
+                break;
+
+            case CMD_DAP_STEP_OVER:
+                dapStepOver();
+                break;
+
+            case CMD_DAP_STEP_INTO:
+                dapStepInto();
+                break;
+
+            case CMD_DAP_STEP_OUT:
+                dapStepOut();
+                break;
+
+            case CMD_DAP_DASHBOARD:
+                dapDashboardOpen();
+                break;
+
+            case CMD_REMOTE_OPEN:
+                remoteOpenPrompt();
+                break;
+
+            case CMD_PROJECT_NEW:
+                templateWizardOpen();
+                break;
+
+            /* Phase 13 — Claw Ecosystem Commands */
+            case CMD_MARKETPLACE:
+            case CMD_PACKAGE_MANAGER:
+                marketplaceOpen();
                 break;
 
         default:

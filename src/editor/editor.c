@@ -31,6 +31,16 @@
 #include "theme.h"
 #include "layout.h"
 #include "project.h"
+#include "buffer_manager.h"
+#include "split.h"
+#include "terminal.h"
+#include "symbols.h"
+#include "lsp.h"
+#include "dap.h"
+#include "remote.h"
+#include "templates.h"
+#include "marketplace.h"
+#include "package.h"
 
 char *currentFile = NULL;
 static char statusMessage[128] = "";
@@ -198,6 +208,7 @@ void editorInit(void)
     }
 
     bufferInit();
+    bufferManagerInit();
     historyInit();
     highlightInit();
     viewportInit();
@@ -208,6 +219,14 @@ void editorInit(void)
     recentInit();
     bookmarkInit();
     sessionInit();
+    splitInit();
+    terminalInit();
+    symbolsInit();
+    lspInit();
+    dapInit();
+    remoteInit();
+    templatesInit();
+    marketplaceInit();
 
     if (workspaceIsActive())
     {
@@ -217,6 +236,7 @@ void editorInit(void)
     if (currentFile)
     {
         recentAddFile(currentFile);
+        bufferManagerOpen(currentFile);
     }
 
     gitRefreshStatus(currentFile);
@@ -507,6 +527,158 @@ void editorRun(void)
         continue;
     }
 
+    /* Phase 9 — Source Control Interactive Modals */
+    if (gitDashboardIsActive())
+    {
+        gitDashboardHandleKey(event.key, event.modifiers);
+        renderForceClear();
+        continue;
+    }
+
+    if (gitDiffViewerIsActive())
+    {
+        gitDiffViewerHandleKey(event.key, event.modifiers);
+        renderForceClear();
+        continue;
+    }
+
+    if (gitLogViewerIsActive())
+    {
+        gitLogViewerHandleKey(event.key, event.modifiers);
+        renderForceClear();
+        continue;
+    }
+
+    if (gitCommitDialogIsActive())
+    {
+        gitCommitDialogHandleKey(event.key, event.modifiers);
+        renderForceClear();
+        continue;
+    }
+
+    if (gitBranchModalIsActive())
+    {
+        gitBranchModalHandleKey(event.key, event.modifiers);
+        renderForceClear();
+        continue;
+    }
+
+    if (gitStashModalIsActive())
+    {
+        gitStashModalHandleKey(event.key, event.modifiers);
+        renderForceClear();
+        continue;
+    }
+
+    /* Phase 11 — Intelligent IDE Services Modals */
+    if (lspCompletionIsActive())
+    {
+        lspCompletionHandleKey(event.key, event.modifiers);
+        renderForceClear();
+        continue;
+    }
+
+    if (lspHoverIsActive())
+    {
+        lspHoverHandleKey(event.key, event.modifiers);
+        renderForceClear();
+        continue;
+    }
+
+    if (lspReferencesIsActive())
+    {
+        lspReferencesHandleKey(event.key, event.modifiers);
+        renderForceClear();
+        continue;
+    }
+
+    if (lspCodeActionsIsActive())
+    {
+        lspCodeActionsHandleKey(event.key, event.modifiers);
+        renderForceClear();
+        continue;
+    }
+
+    /* Phase 12 — Advanced Platform Services Modals */
+    if (dapDashboardIsActive())
+    {
+        dapDashboardHandleKey(event.key, event.modifiers);
+        renderForceClear();
+        continue;
+    }
+
+    if (remotePromptIsActive())
+    {
+        remotePromptHandleKey(event.key, event.modifiers);
+        renderForceClear();
+        continue;
+    }
+
+    if (templateWizardIsActive())
+    {
+        templateWizardHandleKey(event.key, event.modifiers);
+        renderForceClear();
+        continue;
+    }
+
+    /* Phase 13 — Claw Ecosystem Modals */
+    if (marketplaceIsActive())
+    {
+        marketplaceHandleKey(event.key, event.modifiers);
+        renderForceClear();
+        continue;
+    }
+
+    if (symbolsIsActive())
+    {
+        if (key == 27)
+        {
+            symbolsClose();
+            renderForceClear();
+            continue;
+        }
+
+        if (key == ARROW_UP)
+        {
+            symbolsSelectPrev();
+            continue;
+        }
+
+        if (key == ARROW_DOWN)
+        {
+            symbolsSelectNext();
+            continue;
+        }
+
+        if (key == 127 || key == 8)
+        {
+            symbolsBackspace();
+            continue;
+        }
+
+        if (key == '\r' || key == '\n')
+        {
+            symbolsJumpToSelected();
+            renderForceClear();
+            continue;
+        }
+
+        if (key >= 32 && key <= 126)
+        {
+            symbolsAddChar((char)key);
+            continue;
+        }
+
+        continue;
+    }
+
+    if (terminalIsActive())
+    {
+        terminalHandleKey(event);
+        renderForceClear();
+        continue;
+    }
+
     if (projectOutputIsActive())
     {
         if (key == 27)
@@ -546,21 +718,15 @@ void editorRun(void)
                     snprintf(targetPath, sizeof(targetPath), "%s/%s", projectGetRoot(), diag->file);
                 }
 
-                const char *pathChoice = targetPath;
-                if (!openFile(targetPath))
+                int openedIdx = bufferManagerOpen(targetPath);
+                if (openedIdx < 0)
                 {
-                    if (openFile(diag->file))
-                        pathChoice = diag->file;
-                    else
-                        pathChoice = NULL;
+                    openedIdx = bufferManagerOpen(diag->file);
                 }
 
-                if (pathChoice)
+                if (openedIdx >= 0)
                 {
-                    if (currentFile)
-                        free(currentFile);
-                    currentFile = strdup(pathChoice);
-                    recentAddFile(pathChoice);
+                    recentAddFile(currentFile);
                     bookmarkClearAll();
                     if (diag->line > 0 && diag->line <= buffer.numRows)
                     {
@@ -1323,14 +1489,29 @@ if (pluginManager.active)
 
         if (key == '\r' || key == '\n')
         {
-            if (explorerEnter())
+            if (explorerIsSelectedDir())
             {
-                bookmarkClearAll();
-                viewport.rowOffset = 0;
-                viewport.colOffset = 0;
-                highlightInit();
-                gitRefreshStatus(currentFile);
-                renderForceClear();
+                explorerEnter();
+            }
+            else
+            {
+                const char *path = explorerGetSelectedPath();
+                if (path)
+                {
+                    char chosen[512];
+                    snprintf(chosen, sizeof(chosen), "%s", path);
+                    explorerClose();
+                    if (bufferManagerOpen(chosen) >= 0)
+                    {
+                        recentAddFile(chosen);
+                        bookmarkClearAll();
+                        viewport.rowOffset = 0;
+                        viewport.colOffset = 0;
+                        highlightInit();
+                        gitRefreshStatus(currentFile);
+                        renderForceClear();
+                    }
+                }
             }
             continue;
         }
@@ -1373,11 +1554,8 @@ if (pluginManager.active)
             {
                 char chosen[512];
                 snprintf(chosen, sizeof(chosen), "%s", sel);
-                if (openFile(chosen))
+                if (bufferManagerOpen(chosen) >= 0)
                 {
-                    if (currentFile)
-                        free(currentFile);
-                    currentFile = strdup(chosen);
                     recentAddFile(chosen);
                     bookmarkClearAll();
                     viewport.rowOffset = 0;
@@ -1461,8 +1639,12 @@ if (pluginManager.active)
 
            if (saveFile(savePrompt.filename))
 {
+    if (currentFile)
+        free(currentFile);
     currentFile =
         strdup(savePrompt.filename);
+
+    bufferManagerSyncFromGlobal();
 
     highlightInit();
 
@@ -1755,7 +1937,20 @@ void editorShutdown(void)
     printf("\033[H");      // move to top-left
     fflush(stdout);
 
+    bufferManagerFreeAll();
     bufferFree();
+
+    gitDiffViewerClose();
+    gitDashboardClose();
+    gitLogViewerClose();
+    gitCommitDialogClose();
+    gitBranchModalClose();
+    gitStashModalClose();
+
+    lspShutdown();
+    dapShutdown();
+    remoteShutdown();
+    marketplaceShutdown();
 
     if (currentFile)
     {

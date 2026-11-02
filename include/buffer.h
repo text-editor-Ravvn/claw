@@ -8,6 +8,7 @@ typedef struct
     char *chars;
     unsigned char *hl;    /* Per-character highlight type (HighlightType). */
     int hlSize;           /* Allocated size of the hl array. */
+    int hlOpenState;      /* Multi-line continuation state at row end (HL_STATE_*). */
 } Row;
 
 typedef struct

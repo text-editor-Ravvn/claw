@@ -154,7 +154,11 @@ int configSaveStatusBarSettings(const int values[], int count)
             char saved = *p;
             *p = '\0';
 
+#ifdef _WIN32
+            if (mkdir(directory) != 0 && errno != EEXIST)
+#else
             if (mkdir(directory, 0700) != 0 && errno != EEXIST)
+#endif
                 return 0;
 
             *p = saved;

@@ -24,6 +24,7 @@ SRC = src/main.c \
 	  src/command/command.c \
 	  src/highlight/highlight.c \
 	  src/git/git.c \
+	  src/git/git_views.c \
 	  src/plugin/plugin.c \
 	  src/plugin/plugin_commands.c \
 	  src/plugin/plugin_api.c \
@@ -36,7 +37,20 @@ SRC = src/main.c \
 	  src/workspace/explorer.c \
 	  src/workspace/file_switcher.c \
 	  src/workspace/project.c \
+	  src/buffer/buffer_manager.c \
+	  src/layout/split.c \
+	  src/terminal/terminal.c \
+	  src/workspace/symbols.c \
 	  src/theme/theme.c \
+	  src/lsp/lsp.c \
+	  src/lsp/lsp_views.c \
+	  src/dap/dap.c \
+	  src/dap/dap_views.c \
+	  src/remote/remote.c \
+	  src/templates/templates.c \
+	  src/marketplace/marketplace.c \
+	  src/marketplace/marketplace_views.c \
+	  src/marketplace/package.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -79,9 +93,22 @@ test:
 	./phase5_test
 	$(CC) $(CFLAGS) tests/project_test.c src/workspace/project.c -o project_test
 	./project_test
-	rm -f buffer_test file_test input_test workspace_test session_test bookmark_test phase5_test project_test
+	$(CC) $(CFLAGS) tests/phase8_test.c src/buffer/buffer_manager.c src/buffer/buffer.c src/buffer/cursor.c src/layout/split.c src/terminal/terminal.c src/workspace/symbols.c src/input/input.c src/keymap/keymap.c src/keymap/parser.c src/workspace/workspace.c src/workspace/project.c src/workspace/recent.c src/config/config.c src/utils/string_utils.c -o phase8_test
+	./phase8_test
+	$(CC) $(CFLAGS) tests/git_test.c src/git/git.c src/git/git_views.c src/buffer/buffer_manager.c src/buffer/buffer.c src/buffer/cursor.c src/layout/split.c src/terminal/terminal.c src/workspace/symbols.c src/input/input.c src/keymap/keymap.c src/keymap/parser.c src/workspace/workspace.c src/workspace/project.c src/workspace/recent.c src/config/config.c src/utils/string_utils.c -o git_test
+	./git_test
+	$(CC) $(CFLAGS) tests/phase10_test.c src/highlight/highlight.c src/buffer/buffer.c src/buffer/row.c src/buffer/cursor.c src/history/history.c src/config/config.c src/utils/string_utils.c src/theme/theme.c src/buffer/buffer_manager.c -o phase10_test
+	./phase10_test
+	$(CC) $(CFLAGS) tests/phase11_test.c src/lsp/lsp.c src/lsp/lsp_views.c src/buffer/buffer.c src/buffer/row.c src/buffer/cursor.c src/history/history.c src/buffer/buffer_manager.c src/workspace/symbols.c src/workspace/workspace.c src/workspace/project.c src/config/config.c src/utils/string_utils.c -o phase11_test
+	./phase11_test
+	$(CC) $(CFLAGS) tests/phase12_test.c src/dap/dap.c src/dap/dap_views.c src/remote/remote.c src/templates/templates.c src/buffer/buffer.c src/buffer/row.c src/buffer/cursor.c src/history/history.c src/buffer/buffer_manager.c src/config/config.c src/utils/string_utils.c -o phase12_test
+	./phase12_test
+	$(CC) $(CFLAGS) tests/phase13_test.c src/marketplace/package.c src/marketplace/marketplace.c src/marketplace/marketplace_views.c src/config/config.c src/utils/string_utils.c -o phase13_test
+	./phase13_test
+	rm -f buffer_test file_test input_test workspace_test session_test bookmark_test phase5_test project_test phase8_test git_test phase10_test phase11_test phase12_test phase13_test
 
 clean:
-	rm -f $(OBJ) $(TARGET) buffer_test file_test input_test workspace_test session_test bookmark_test phase5_test project_test
+	rm -f $(OBJ) $(TARGET) buffer_test file_test input_test workspace_test session_test bookmark_test phase5_test project_test phase8_test git_test phase10_test phase11_test phase12_test phase13_test
 
 rebuild: clean all
+

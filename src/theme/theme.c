@@ -246,7 +246,11 @@ static int ensureThemeDirectory(const char *directory)
             char saved = *p;
             *p = '\0';
 
+#ifdef _WIN32
+            if (*path && mkdir(path) != 0 && errno != EEXIST)
+#else
             if (*path && mkdir(path, 0700) != 0 && errno != EEXIST)
+#endif
                 return 0;
 
             *p = saved;
@@ -1292,7 +1296,11 @@ int themeImportCustom(const char *sourcePath)
      * Both paths are in the managed theme directory.
      */
 
+#ifdef _WIN32
+    if (rename(tempPath, finalPath) != 0)
+#else
     if (link(tempPath, finalPath) != 0)
+#endif
     {
         customThemeCount--;
         remove(tempPath);

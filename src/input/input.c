@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <unistd.h>
 #include <sys/select.h>
 #include <string.h>
@@ -53,6 +54,27 @@ KeyEvent decodeKeyChar(char c)
     if (c >= 1 && c <= 26)
     {
         event.key = 'a' + c - 1;
+        event.modifiers = MOD_CTRL;
+        return event;
+    }
+
+    if (c == 0)
+    {
+        event.key = '`';
+        event.modifiers = MOD_CTRL;
+        return event;
+    }
+
+    if (c == 28)
+    {
+        event.key = '\\';
+        event.modifiers = MOD_CTRL;
+        return event;
+    }
+
+    if (c == 31)
+    {
+        event.key = '-';
         event.modifiers = MOD_CTRL;
         return event;
     }
@@ -126,7 +148,8 @@ KeyEvent readKey(void)
                 break;
 
             if (
-                (seq[len] >= 'A' && seq[len] <= 'D') ||
+                (seq[len] >= 'A' && seq[len] <= 'Z') ||
+                (seq[len] >= 'a' && seq[len] <= 'z') ||
                 seq[len] == '~'
             )
             {
@@ -138,6 +161,51 @@ KeyEvent readKey(void)
         }
 
         seq[len] = '\0';
+
+        /* CSI 27 ; <mod> ; <code> ~ (modifyOtherKeys) */
+        int code = 0, mod = 0;
+        if (sscanf(seq, "[27;%d;%d~", &mod, &code) == 2)
+        {
+            int m = 0;
+            if (mod == 2) m = MOD_SHIFT;
+            else if (mod == 3) m = MOD_ALT;
+            else if (mod == 5) m = MOD_CTRL;
+            else if (mod == 6) m = MOD_CTRL | MOD_SHIFT;
+            event.key = code;
+            event.modifiers = m;
+            return event;
+        }
+
+        /* CSI <code> ; <mod> u (kitty / CSI u) */
+        if (sscanf(seq, "[%d;%du", &code, &mod) == 2)
+        {
+            int m = 0;
+            if (mod == 2) m = MOD_SHIFT;
+            else if (mod == 3) m = MOD_ALT;
+            else if (mod == 5) m = MOD_CTRL;
+            else if (mod == 6) m = MOD_CTRL | MOD_SHIFT;
+            event.key = code;
+            event.modifiers = m;
+            return event;
+        }
+
+        /* CSI 1 ; <mod> I (Tab with modifiers) */
+        if (sscanf(seq, "[1;%dI", &mod) == 1)
+        {
+            int m = (mod == 5) ? MOD_CTRL : (mod == 6 ? (MOD_CTRL | MOD_SHIFT) : 0);
+            event.key = '\t';
+            event.modifiers = m;
+            return event;
+        }
+
+        /* CSI 1 ; <mod> Z (Backtab with modifiers) */
+        if (sscanf(seq, "[1;%dZ", &mod) == 1)
+        {
+            int m = (mod == 5) ? MOD_CTRL : (mod == 6 ? (MOD_CTRL | MOD_SHIFT) : MOD_SHIFT);
+            event.key = '\t';
+            event.modifiers = m;
+            return event;
+        }
 
         /* Plain arrows */
 
@@ -162,6 +230,19 @@ KeyEvent readKey(void)
         if (strcmp(seq, "[D") == 0)
         {
             event.key = ARROW_LEFT;
+            return event;
+        }
+
+        /* Page Up / Page Down */
+        if (strcmp(seq, "[5~") == 0)
+        {
+            event.key = PAGE_UP;
+            return event;
+        }
+
+        if (strcmp(seq, "[6~") == 0)
+        {
+            event.key = PAGE_DOWN;
             return event;
         }
 
@@ -196,6 +277,42 @@ KeyEvent readKey(void)
             event.key = END_KEY;
             return event;
         }
+
+        /* Function Keys F1 - F12 */
+        int fNum = 0, fMod = 0;
+        if (sscanf(seq, "[%d;%d~", &fNum, &fMod) == 2 || sscanf(seq, "[%d~", &fNum) >= 1)
+        {
+            int m = 0;
+            if (fMod == 2) m = MOD_SHIFT;
+            else if (fMod == 3) m = MOD_ALT;
+            else if (fMod == 5) m = MOD_CTRL;
+            else if (fMod == 6) m = MOD_CTRL | MOD_SHIFT;
+
+            int targetKey = 0;
+            if (fNum == 11) targetKey = KEY_F1;
+            else if (fNum == 12) targetKey = KEY_F2;
+            else if (fNum == 13) targetKey = KEY_F3;
+            else if (fNum == 14) targetKey = KEY_F4;
+            else if (fNum == 15) targetKey = KEY_F5;
+            else if (fNum == 17) targetKey = KEY_F6;
+            else if (fNum == 18) targetKey = KEY_F7;
+            else if (fNum == 19) targetKey = KEY_F8;
+            else if (fNum == 20) targetKey = KEY_F9;
+            else if (fNum == 21) targetKey = KEY_F10;
+            else if (fNum == 23) targetKey = KEY_F11;
+            else if (fNum == 24) targetKey = KEY_F12;
+
+            if (targetKey != 0)
+            {
+                event.key = targetKey;
+                event.modifiers = m;
+                return event;
+            }
+        }
+        if (strcmp(seq, "OP") == 0 || strcmp(seq, "[11~") == 0) { event.key = KEY_F1; return event; }
+        if (strcmp(seq, "OQ") == 0 || strcmp(seq, "[12~") == 0) { event.key = KEY_F2; return event; }
+        if (strcmp(seq, "OR") == 0 || strcmp(seq, "[13~") == 0) { event.key = KEY_F3; return event; }
+        if (strcmp(seq, "OS") == 0 || strcmp(seq, "[14~") == 0) { event.key = KEY_F4; return event; }
 
         int modifiers = 0;
 

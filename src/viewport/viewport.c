@@ -6,6 +6,8 @@
 #include "config.h"
 #include "buffer.h"
 #include "layout.h"
+#include "split.h"
+#include "terminal.h"
 #define HSCROLL_MARGIN 10
 extern Cursor cursor;
 extern Buffer buffer;
@@ -40,42 +42,48 @@ void viewportInit(void)
 
 void scrollEditor(void)
 {
-    /* Vertical scrolling */
+    int termRows = terminalIsActive() ? integratedTerminal.height : 0;
+    int availRows = viewport.screenRows - 2 - termRows;
+    int availCols = viewport.screenCols - viewport.gutterWidth;
 
+    if (splitIsActive())
+    {
+        EditorPane *ap = splitGetActivePane();
+        if (ap)
+        {
+            availRows = ap->height;
+            availCols = ap->width - viewport.gutterWidth;
+        }
+    }
+
+    if (availRows < 1)
+        availRows = 1;
+    if (availCols < 1)
+        availCols = 1;
+
+    /* Vertical scrolling */
     if (cursor.y < viewport.rowOffset)
         viewport.rowOffset = cursor.y;
 
-    if (cursor.y >= viewport.rowOffset +
-                    viewport.screenRows - 2)
+    if (cursor.y >= viewport.rowOffset + availRows)
     {
-        viewport.rowOffset =
-            cursor.y - viewport.screenRows + 3;
+        viewport.rowOffset = cursor.y - availRows + 1;
     }
 
     /* Horizontal scrolling */
+    if (cursor.x < viewport.colOffset + HSCROLL_MARGIN)
+    {
+        viewport.colOffset = cursor.x - HSCROLL_MARGIN;
+        if (viewport.colOffset < 0)
+            viewport.colOffset = 0;
+    }
 
-    /* Move viewport left */
-if (cursor.x < viewport.colOffset + HSCROLL_MARGIN)
-{
-    viewport.colOffset =
-        cursor.x - HSCROLL_MARGIN;
-
-    if (viewport.colOffset < 0)
-        viewport.colOffset = 0;
-}
-
-/* Move viewport right */
-if (cursor.x >= viewport.colOffset +
-                viewport.screenCols -
-                viewport.gutterWidth -
-                HSCROLL_MARGIN)
-{
-    viewport.colOffset =
-        cursor.x -
-        viewport.screenCols +
-        viewport.gutterWidth +
-        HSCROLL_MARGIN;
-}
+    if (cursor.x >= viewport.colOffset + availCols - HSCROLL_MARGIN)
+    {
+        viewport.colOffset = cursor.x - availCols + HSCROLL_MARGIN;
+        if (viewport.colOffset < 0)
+            viewport.colOffset = 0;
+    }
 }
 
 static int digitCount(int n)

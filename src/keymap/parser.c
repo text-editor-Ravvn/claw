@@ -60,6 +60,22 @@ int keymapParseKey(const char *str)
     if (strcasecmp(str, "BackTab") == 0)
         return BACKTAB;
 
+    if (strcasecmp(str, "Space") == 0)
+        return ' ';
+
+    if (strcasecmp(str, "F1") == 0) return KEY_F1;
+    if (strcasecmp(str, "F2") == 0) return KEY_F2;
+    if (strcasecmp(str, "F3") == 0) return KEY_F3;
+    if (strcasecmp(str, "F4") == 0) return KEY_F4;
+    if (strcasecmp(str, "F5") == 0) return KEY_F5;
+    if (strcasecmp(str, "F6") == 0) return KEY_F6;
+    if (strcasecmp(str, "F7") == 0) return KEY_F7;
+    if (strcasecmp(str, "F8") == 0) return KEY_F8;
+    if (strcasecmp(str, "F9") == 0) return KEY_F9;
+    if (strcasecmp(str, "F10") == 0) return KEY_F10;
+    if (strcasecmp(str, "F11") == 0) return KEY_F11;
+    if (strcasecmp(str, "F12") == 0) return KEY_F12;
+
     return -1;
 }
 
@@ -182,6 +198,73 @@ static int parseActionName(const char *name)
 
     if (strcmp(name, "project_dashboard") == 0)
         return CMD_PROJECT_DASHBOARD;
+
+    /* Phase 8 IDE Foundation Actions */
+    if (strcmp(name, "buffer_close") == 0)
+        return CMD_BUFFER_CLOSE;
+
+    if (strcmp(name, "buffer_next") == 0)
+        return CMD_BUFFER_NEXT;
+
+    if (strcmp(name, "buffer_prev") == 0)
+        return CMD_BUFFER_PREV;
+
+    if (strcmp(name, "split_vertical") == 0)
+        return CMD_SPLIT_VERTICAL;
+
+    if (strcmp(name, "split_horizontal") == 0)
+        return CMD_SPLIT_HORIZONTAL;
+
+    if (strcmp(name, "pane_switch") == 0)
+        return CMD_PANE_SWITCH;
+
+    if (strcmp(name, "terminal_toggle") == 0)
+        return CMD_TERMINAL_TOGGLE;
+
+    if (strcmp(name, "symbol_search") == 0)
+        return CMD_SYMBOL_SEARCH;
+
+    if (strcmp(name, "buffer_1") == 0) return CMD_BUFFER_1;
+    if (strcmp(name, "buffer_2") == 0) return CMD_BUFFER_2;
+    if (strcmp(name, "buffer_3") == 0) return CMD_BUFFER_3;
+    if (strcmp(name, "buffer_4") == 0) return CMD_BUFFER_4;
+    if (strcmp(name, "buffer_5") == 0) return CMD_BUFFER_5;
+    if (strcmp(name, "buffer_6") == 0) return CMD_BUFFER_6;
+    if (strcmp(name, "buffer_7") == 0) return CMD_BUFFER_7;
+    if (strcmp(name, "buffer_8") == 0) return CMD_BUFFER_8;
+    if (strcmp(name, "buffer_9") == 0) return CMD_BUFFER_9;
+
+    /* Phase 9 Source Control Actions */
+    if (strcmp(name, "git_dashboard") == 0) return CMD_GIT_DASHBOARD;
+    if (strcmp(name, "git_diff") == 0) return CMD_GIT_DIFF;
+    if (strcmp(name, "git_log") == 0) return CMD_GIT_LOG;
+    if (strcmp(name, "git_commit") == 0) return CMD_GIT_COMMIT;
+    if (strcmp(name, "git_branch") == 0) return CMD_GIT_BRANCH;
+    if (strcmp(name, "git_stash") == 0) return CMD_GIT_STASH;
+
+    /* Phase 11 Intelligent IDE Services Actions */
+    if (strcmp(name, "lsp_completion") == 0) return CMD_LSP_COMPLETION;
+    if (strcmp(name, "lsp_definition") == 0) return CMD_LSP_DEFINITION;
+    if (strcmp(name, "lsp_hover") == 0) return CMD_LSP_HOVER;
+    if (strcmp(name, "lsp_references") == 0) return CMD_LSP_REFERENCES;
+    if (strcmp(name, "lsp_code_action") == 0) return CMD_LSP_CODE_ACTION;
+    if (strcmp(name, "lsp_diagnostics") == 0) return CMD_LSP_DIAGNOSTICS;
+
+    /* Phase 12 Advanced Platform Services Actions */
+    if (strcmp(name, "dap_start") == 0 || strcmp(name, "dap_continue") == 0) return CMD_DAP_START_CONTINUE;
+    if (strcmp(name, "dap_stop") == 0) return CMD_DAP_STOP;
+    if (strcmp(name, "dap_pause") == 0) return CMD_DAP_PAUSE;
+    if (strcmp(name, "dap_breakpoint_toggle") == 0) return CMD_DAP_BREAKPOINT_TOGGLE;
+    if (strcmp(name, "dap_step_over") == 0) return CMD_DAP_STEP_OVER;
+    if (strcmp(name, "dap_step_into") == 0) return CMD_DAP_STEP_INTO;
+    if (strcmp(name, "dap_step_out") == 0) return CMD_DAP_STEP_OUT;
+    if (strcmp(name, "dap_dashboard") == 0) return CMD_DAP_DASHBOARD;
+    if (strcmp(name, "remote_open") == 0) return CMD_REMOTE_OPEN;
+    if (strcmp(name, "project_new") == 0) return CMD_PROJECT_NEW;
+
+    /* Phase 13 Claw Ecosystem Actions */
+    if (strcmp(name, "marketplace") == 0) return CMD_MARKETPLACE;
+    if (strcmp(name, "package_manager") == 0) return CMD_PACKAGE_MANAGER;
 
     return CMD_NONE;
 }

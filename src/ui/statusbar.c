@@ -12,6 +12,8 @@
 #include "bookmark.h"
 #include "theme.h"
 #include "config.h"
+#include "buffer_manager.h"
+#include "split.h"
 
 extern Buffer buffer;
 extern Cursor cursor;
@@ -127,6 +129,12 @@ void drawStatusBar(void)
     {
         APPEND_FIELD("[Modified]");
     }
+
+    if (bufferManagerCount() > 1)
+        APPEND_FIELD("Buf %d/%d", bufferManagerActiveIndex() + 1, bufferManagerCount());
+
+    if (splitIsActive())
+        APPEND_FIELD("Split:%s", splitGetMode() == SPLIT_HORIZONTAL ? "H" : "V");
 
     if (configStatusbarShowLanguage())
         APPEND_FIELD("%s", highlightLanguageName());

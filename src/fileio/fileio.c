@@ -46,6 +46,7 @@ static int appendRow(Buffer *target, const char *chars, size_t size)
     target->rows[target->numRows].chars = rowChars;
     target->rows[target->numRows].hl = NULL;
     target->rows[target->numRows].hlSize = 0;
+    target->rows[target->numRows].hlOpenState = 0;
     target->numRows++;
     return 1;
 }

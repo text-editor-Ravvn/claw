@@ -293,7 +293,7 @@ void replaceCurrentMatch(void)
 
     buffer.modified = 1;
 
-    char status[128];
+    char status[320];
 
     performSearch();
 

@@ -125,9 +125,59 @@ enum EditorAction
 
     CMD_PROJECT_DASHBOARD,
 
+    /* Phase 8 — IDE Foundation Actions */
+    CMD_BUFFER_CLOSE,
+    CMD_BUFFER_NEXT,
+    CMD_BUFFER_PREV,
+    CMD_SPLIT_VERTICAL,
+    CMD_SPLIT_HORIZONTAL,
+    CMD_PANE_SWITCH,
+    CMD_TERMINAL_TOGGLE,
+    CMD_SYMBOL_SEARCH,
+    CMD_BUFFER_1,
+    CMD_BUFFER_2,
+    CMD_BUFFER_3,
+    CMD_BUFFER_4,
+    CMD_BUFFER_5,
+    CMD_BUFFER_6,
+    CMD_BUFFER_7,
+    CMD_BUFFER_8,
+    CMD_BUFFER_9,
+
+    /* Phase 9 — Source Control Expansion Actions */
+    CMD_GIT_DASHBOARD,
+    CMD_GIT_DIFF,
+    CMD_GIT_LOG,
+    CMD_GIT_COMMIT,
+    CMD_GIT_BRANCH,
+    CMD_GIT_STASH,
+
+    /* Phase 11 — Intelligent IDE Services Actions */
+    CMD_LSP_COMPLETION,
+    CMD_LSP_DEFINITION,
+    CMD_LSP_HOVER,
+    CMD_LSP_REFERENCES,
+    CMD_LSP_CODE_ACTION,
+    CMD_LSP_DIAGNOSTICS,
+
+    /* Phase 12 — Advanced Platform Services Actions */
+    CMD_DAP_START_CONTINUE,
+    CMD_DAP_STOP,
+    CMD_DAP_PAUSE,
+    CMD_DAP_BREAKPOINT_TOGGLE,
+    CMD_DAP_STEP_OVER,
+    CMD_DAP_STEP_INTO,
+    CMD_DAP_STEP_OUT,
+    CMD_DAP_DASHBOARD,
+    CMD_REMOTE_OPEN,
+    CMD_PROJECT_NEW,
+
+    /* Phase 13 — Claw Ecosystem Actions */
+    CMD_MARKETPLACE,
+    CMD_PACKAGE_MANAGER,
 };
 
-#define KEYMAP_MAX_BINDINGS 128
+#define KEYMAP_MAX_BINDINGS 256
 
 typedef struct
 {

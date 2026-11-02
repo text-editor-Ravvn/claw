@@ -34,6 +34,7 @@ void bufferInit(void)
     buffer.rows[0].chars[0] = '\0';
     buffer.rows[0].hl = NULL;
     buffer.rows[0].hlSize = 0;
+    buffer.rows[0].hlOpenState = 0;
 }
 
 void bufferFree(void)

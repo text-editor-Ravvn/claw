@@ -18,15 +18,15 @@ Current development includes a complete editor foundation, productivity features
 
 |       Property     |                      Value                     |
 |--------------------|------------------------------------------------|
-| Current Version    | v1.9                                           |
-| Active Phase       | Phase 8 — IDE Foundation                       |
-| Development Status | Active Development                             |
-| Completed Phases   | Phase 1, Phase 2, Phase 3, Phase 4, Phase 5, Phase 6, Phase 7 |
-| Current Focus      | IDE Foundation and multi-buffer editing        |
+| Current Version    | v3.0                                           |
+| Active Phase       | All 13 Architecture Phases Completed           |
+| Development Status | Production Ready / Complete Platform           |
+| Completed Phases   | Phase 1 through Phase 13 (All 13 Phases Complete) |
+| Current Focus      | Complete Developer Platform & Operating System Foundation |
 
 ### Summary
 
-Claw has completed its Core Editor Foundation, Productivity Foundation, Developer Platform, Advanced Editing Layer, Workspace Environment, Customization Platform, and Project Tooling phases. Development is now entering Phase 8 (IDE Foundation).
+Claw has completed all 13 architecture phases: Core Editor Foundation, Productivity Foundation, Developer Platform, Advanced Editing Layer, Workspace Environment, Customization Platform, Project Tooling, IDE Foundation, Source Control Platform, Language Ecosystem, Intelligent IDE Services (LSP), Advanced Platform Services (DAP, Remote VFS, Templates), and Claw Ecosystem (Packaging, Signatures, Marketplace). Claw is now a complete terminal-first developer platform.
 
 ### Completed Architecture Phases
 
@@ -44,16 +44,17 @@ Claw has completed its Core Editor Foundation, Productivity Foundation, Develope
 
 ✓ Phase 7 — Project Tooling
 
-### Active Development
+✓ Phase 8 — IDE Foundation
 
-◉ Phase 8 — IDE Foundation
+✓ Phase 9 — Source Control Platform
 
-Current focus areas:
+✓ Phase 10 — Language Ecosystem
 
-- Multiple file buffers
-- Split-screen editing
-- Integrated terminal
-- Workspace coordination
+✓ Phase 11 — Intelligent IDE Services
+
+✓ Phase 12 — Advanced Platform Services
+
+✓ Phase 13 — Claw Ecosystem
 
 ### Implemented Systems
 
@@ -84,20 +85,33 @@ Current focus areas:
 - Task Runner & Output Capture System (Phase 7)
 - Compiler Diagnostics Engine & Code Navigation (Phase 7)
 - Project Dashboard (Phase 7)
-
-### Upcoming Architecture Phases
-
-◉ Phase 8 — IDE Foundation
-
-○ Phase 9 — Source Control Platform
-
-○ Phase 10 — Language Ecosystem
-
-○ Phase 11 — Intelligent IDE Services
-
-○ Phase 12 — Advanced Platform Services
-
-○ Phase 13 — Claw Ecosystem
+- Multi-Buffer Manager & Split-Screen Panes (Phase 8)
+- Integrated Terminal Drawer (Phase 8)
+- Symbol Indexer & Code Navigation (Phase 8)
+- Source Control Platform & Git Engine (Phase 9)
+- Interactive Git Diff & Log Viewers (Phase 9)
+- Repository Dashboard, Stash & Branch Managers (Phase 9)
+- Inline Gutter Change Indicators (Phase 9)
+- Language Ecosystem & Multi-Language Registry (Phase 10)
+- Language-Aware Smart Indentation & Comment Engine (Phase 10)
+- Language Server Protocol (LSP) Client & Transport Engine (Phase 11)
+- Real-time Diagnostics & Gutter Severity Indicators (Phase 11)
+- Context-Aware Code Completion Engine & Interactive Popup (Phase 11)
+- Go-to-Definition & Workspace Symbol Cross-Reference Engine (Phase 11)
+- Interactive Hover Documentation & Type Inspection Overlay (Phase 11)
+- Find All References Multi-Buffer Search & Location Navigator (Phase 11)
+- QuickFix & Refactoring Code Actions Modal (Phase 11)
+- Debug Adapter Protocol (DAP) Engine & Multi-Session Debugger (Phase 12)
+- Visual Breakpoint Management & Execution Pointer Gutter Indicators (Phase 12)
+- Interactive Debugger Stepping Controls (Continue, Step In, Step Over, Step Out, Stop) (Phase 12)
+- Debugger Dashboard (Call Stack, Local Variables, Scopes, Breakpoints) (Phase 12)
+- Remote File System & Protocol Transport Layer (`claw://`, `sftp://`, `ssh://`) (Phase 12)
+- Remote File Caching, Synchronization & Interactive Open Dialog (Phase 12)
+- Project Scaffolding Engine (C, Python, Rust, Go, Web) & Interactive Wizard (Phase 12)
+- Extension Packaging Engine (`.cpkg`), Manifest Parser & Validator (Phase 13)
+- Cryptographic SHA-256 Engine & HMAC-SHA256 Digital Signatures (Phase 13)
+- Extension Marketplace Catalogue, Search, Filtering & Lifecycle Manager (Phase 13)
+- Interactive Extension Marketplace UI Modal & Search Mode (Phase 13)
 
 ## Current Objectives
 
@@ -133,7 +147,7 @@ Current focus areas:
 - Project dashboard with metadata, tasks, output, and diagnostics summary (Ctrl+Shift+P)
 - Tooling state reset and failed-project-load protection
 
-### Active Phase 8 — IDE Foundation
+### Completed Phase 8 — IDE Foundation
 
 - Multiple file buffers and active buffer switching
 - Split-screen editing architecture (horizontal and vertical panes)
@@ -141,6 +155,80 @@ Current focus areas:
 - Workspace file explorer panel
 - Symbol navigation and code structure indexing
 - Workspace-aware editing coordination
+
+### Completed Phase 9 — Source Control Platform
+
+- Interactive Git Diff viewer with syntax color coding (added/modified/removed/headers)
+- Working tree vs staged index diff toggle with Tab / 't'
+- Interactive Git Log viewer with commit history, authors, timestamps, and scrollable diff patch inspector
+- Interactive Git Commit workflow modal with staged files count and commit message editor
+- Branch management modal (list local/remote branches, active branch indicator, branch creation, branch switching, branch deletion)
+- Git stash support (list stashes, pop, apply, drop, and interactive stash saving)
+- Centralized Source Control Dashboard / Overview panel with section tabs (Staged, Unstaged, Untracked, Stashes) and single-key actions
+- Real-time inline change / diff indicators in gutter (+ for added, ~ for modified, _ for deleted)
+- Complete keyboard bindings: `Ctrl+Shift+G` (Dashboard), `Ctrl+Shift+K` (Diff), `Ctrl+Shift+L` (Log), `Ctrl+Shift+C` (Commit), `Ctrl+Shift+R` (Branch), `Ctrl+Shift+Z` (Stash)
+- Full automated test suite in `tests/git_test.c` with zero memory leaks verified via AddressSanitizer (ASan) and UndefinedBehaviorSanitizer (UBSan)
+
+### Completed Phase 10 — Language Ecosystem
+
+- Comprehensive multi-language syntax registry supporting C, C++, Python, JavaScript, TypeScript, Rust, Go, Java, JSON, YAML, Markdown, Shell, HTML
+- Dynamic runtime language registration via `highlightRegisterLanguage()` and querying APIs
+- Dynamic language detection via file extensions, special filenames (`Makefile`, `Dockerfile`), and shebang lines (`#!/usr/bin/env python`, `#!/bin/bash`, `#!/usr/bin/node`)
+- Full Python language support: keywords, builtins/types, single-line `#` comments, multiline docstrings (`"""` and `'''`), decimal/float/hex/binary/octal numbers, formatted strings
+- JavaScript & TypeScript language support: keywords, type keywords, builtins, single-line `//` & block `/* */` comments, multiline template literals (`` `...` ``), and regular expression literals (`/pattern/flags`)
+- Rust language support: keywords, standard types, macro invocation highlighting (`println!`, `vec!`, etc.), lifetime identifiers (`'a`, `'static`), and attributes (`#[derive(...)]`)
+- Go language support: keywords, builtins/types, single-line and multi-line comments, and multiline raw string literals (`` `...` ``)
+- Java and C++ expanded syntax highlighting definitions
+- Structured data languages: JSON (literals, numbers, strings), YAML (keys, scalars, booleans, comments), and Markdown (headings `#`, codeblocks, blockquotes, lists, bold `**text**`, inline code, links `[text](url)`)
+- Cross-row multi-line continuation state tracking (`hlOpenState`) with stack-safe iterative forward scanning across large documents
+- Language-aware smart editing:
+  - Language-specific comment toggling: `# ` for Python/YAML/Shell, `// ` for C/C++/JS/TS/Rust/Go/Java/JSON, `<!-- ... -->` for Markdown/HTML with automatic indentation alignment
+  - Language-specific smart indentation on newline: `:` colon indentation for Python/YAML; `{` curly brace and bracket indentation for C/C++/JS/TS/Rust/Go/Java; comment-aware truncation outside quotes
+- Buffer Manager and Status Bar dynamic language integration (`bufferManagerGetLanguage`, active language indicator in status bar)
+- Comprehensive test suite in `tests/phase10_test.c` covering all 10 test suites with 100% pass rate and stack safety across deep files
+
+### Completed Phase 11 — Intelligent IDE Services
+
+- Language Server Protocol (LSP) client infrastructure with JSON-RPC 2.0 framing and Content-Length serialization
+- Asynchronous language server lifecycle management (register, start, initialize, shutdown) for clangd, pyright, rust-analyzer, gopls, tsserver
+- Document synchronization protocol (`textDocument/didOpen`, `textDocument/didChange`, `textDocument/didClose`)
+- Diagnostics engine storing errors, warnings, info, and hints per file and line
+- Inline gutter diagnostic indicators (`E` red for errors, `W` yellow for warnings, `I` cyan for info, `H` blue for hints)
+- Context-aware code completion engine querying language keywords and workspace identifiers with fuzzy prefix filtering
+- Interactive completion modal popup (`Ctrl+Space`) with category icons, details, and instant insertion
+- Go-to-Definition provider (`F12` / `Ctrl+]`) querying workspace symbols and active buffer declarations with automatic navigation
+- Interactive hover documentation overlay (`Alt+K`) displaying symbol signatures, diagnostics, and documentation
+- Find All References engine (`Shift+F12`) scanning across open buffers and workspace files with scrollable reference browser
+- Code Actions & Refactoring framework (`Alt+Enter`) with QuickFix suggestions, extract variable, and organize imports
+- Comprehensive test suite in `tests/phase11_test.c` covering all 12 test suites with 100% pass rate
+
+### Completed Phase 12 — Advanced Platform Services
+
+- Debug Adapter Protocol (DAP) client infrastructure with JSON-RPC / DAP message serialization
+- Interactive breakpoint management (toggle, list, remove, persistence)
+- DAP gutter visual indicators: `●` red circle for active breakpoints, `▶` yellow arrow for execution pointer
+- Multi-session debugger execution control (Start/Continue `F5`, Step Over `F10`, Step Into `F11`, Step Out `Shift+F11`, Stop `Shift+F5`)
+- Call stack inspector and variable scopes viewer (Locals, Arguments, Globals)
+- Centralized Debugger Dashboard modal (`Alt+D`) displaying thread state, call stack frames, and evaluated variables
+- Remote VFS & File Transport Layer supporting `claw://`, `sftp://`, and `ssh://` URI protocols
+- Remote URI parser and canonical formatter extracting scheme, user, host, port, and remote path
+- Transparent remote file caching in `~/.claw/cache/remote/`, cache synchronization, and remote save
+- Interactive Remote Open modal dialog (`Alt+R`) with path autocomplete and host connection validation
+- Project Scaffolding Engine with built-in templates for C (C99/C11 Makefile), Python (Poetry/pyproject.toml), Rust (Cargo), Go (Go Modules), and Modern Web (HTML5/ES6)
+- Interactive Project Creation Wizard (`Ctrl+Shift+N`) with template selector, project name prompt, and destination folder configuration
+- Comprehensive test suite in `tests/phase12_test.c` covering all 12 test suites with 100% pass rate
+
+### Completed Phase 13 — Claw Ecosystem
+
+- RFC 6234 compliant standalone SHA-256 cryptographic hashing engine for file and buffer integrity verification
+- HMAC-SHA256 digital signature generation and verification for authentic package distribution
+- Structured package manifest parser (`claw-package.json`) and validator checking identifiers, semver versions, entrypoints, and dependencies
+- Archive packaging format (`.cpkg`) bundling manifest, runtime scripts, and digital signature headers
+- Extension Marketplace Catalogue featuring curated extensions across Themes, Languages, Tooling, LSP, and Productivity
+- Fast case-insensitive marketplace search, keyword filtering, and category browsing
+- Complete extension lifecycle management: install, upgrade/update, check updates, and uninstallation
+- Interactive Extension Marketplace UI modal (`Alt+P`) with category tab switching, search input mode (`/`), and single-key install/update commands
+- Comprehensive test suite in `tests/phase13_test.c` covering all 13 test suites with 100% pass rate
 
 ## Completed Features
 
@@ -1540,16 +1628,44 @@ Backspace      Delete Character
 Esc            Cancel Jump
 ```
 
-### Upcoming Controls (Phase 8 — IDE Foundation)
+### IDE Foundation Controls (Phase 8)
 
 ```text
-Ctrl + W       Close Active Buffer / Pane
-Ctrl + Tab     Cycle to Next Open Buffer
-Ctrl + Shift + Tab Cycle to Previous Buffer
-Ctrl + \       Split Viewport Vertically
-Ctrl + -       Split Viewport Horizontally
-Ctrl + `       Toggle Integrated Terminal
-Alt + [1-9]    Direct Jump to Buffer N
+Ctrl + W               Close Active Buffer / Pane
+Ctrl + Tab             Cycle to Next Open Buffer
+Ctrl + Shift + Tab     Cycle to Previous Buffer
+Ctrl + \               Split Viewport Vertically
+Ctrl + -               Split Viewport Horizontally
+Alt + O                Switch Active Pane
+Ctrl + `               Toggle Integrated Terminal Drawer
+Ctrl + Shift + S       Symbol Search & Structure Indexer
+Ctrl + [1-9]           Direct Jump to Buffer N
+```
+
+### Source Control Platform Controls (Phase 9)
+
+```text
+Ctrl + Shift + G / Alt + 5  Open Source Control Dashboard
+Ctrl + Shift + K            Open Git Diff Viewer
+Ctrl + Shift + L            Open Git Log History & Commit Details
+Ctrl + Shift + C            Open Git Commit Dialog Modal
+Ctrl + Shift + R            Open Git Branch Management Modal
+Ctrl + Shift + Z            Open Git Stash Management Modal
+Ctrl + G                    Stage Current File (git add)
+Ctrl + T                    Restore Current File (git restore)
+Ctrl + U                    Unstage Current File (git restore --staged)
+Ctrl + B                    Git Blame Inspector View
+```
+
+#### Source Control Dashboard Shortcuts
+
+```text
+[s] Stage/Unstage File       [S] Stage All Files
+[U] Unstage All Files        [c] Open Commit Dialog
+[d] View Diff for File       [l] View Git Log History
+[b] Branch Management        [z] Stash Management
+[Enter] Open File in Editor  [Tab / Left / Right] Cycle Section
+[r] Refresh Repository       [q / Esc] Exit Dashboard
 ```
 
 ---
@@ -2165,13 +2281,13 @@ Alt + [1-9]    Direct Jump to Buffer N
 
 ### Phase 8 — IDE Foundation
 
-**Status:** In Progress
+**Status:** Complete
 
-- Multiple buffers
-- Split views
-- Integrated terminal
+- Multiple file buffers and switcher
+- Split views (horizontal & vertical)
+- Integrated terminal environment
 - Workspace coordination
-- Project-centric editing
+- Symbol search and structure indexer
 - Advanced navigation systems
 - IDE infrastructure layer
 
@@ -2179,22 +2295,24 @@ Alt + [1-9]    Direct Jump to Buffer N
 
 ### Phase 9 — Source Control Platform
 
-**Status:** Planned
+**Status:** Complete
 
-- Git diff viewer
-- Git log viewer
-- Commit workflows
-- Branch switching
-- Git stash support
-- Inline change indicators
-- Repository dashboard
-- Advanced repository tooling
+- Interactive Git diff viewer with syntax color formatting
+- Working tree vs staged index diff toggle
+- Interactive Git log viewer with commit list and details/patch inspector
+- Interactive commit workflow modal with staging integration
+- Branch management modal (list, create, checkout, delete)
+- Git stash support (list, pop, apply, drop, save)
+- Real-time inline change / diff indicators in gutter (+, ~, _)
+- Centralized repository dashboard / overview panel
+- Full keyboard integration and command dispatching
+- Automated test suite with zero memory leaks (ASan/UBSan verified)
 
 ---
 
 ### Phase 10 — Language Ecosystem
 
-**Status:** Planned
+**Status:** Active Target / In Progress
 
 - Python support
 - Java support
@@ -2574,6 +2692,183 @@ Alt + [1-9]    Direct Jump to Buffer N
 
 ---
 
+### Phase 8 — IDE Foundation
+
+#### Completed
+
+- Multi-buffer management engine (`include/buffer_manager.h`, `src/buffer/buffer_manager.c`) supporting up to 64 concurrent open buffers
+- Fast buffer switching (`Ctrl+Tab` / `Ctrl+Shift+Tab`) with MRU ordering and numeric buffer selection (`Ctrl+1` through `Ctrl+9`)
+- Safe buffer closure (`Ctrl+W`) with dirty checking, buffer eviction, and automatic active pane buffer re-assignment
+- Split-screen pane layout engine (`include/split.h`, `src/layout/split.c`) with vertical (`Ctrl+\`) and horizontal (`Ctrl+-`) splits
+- Dynamic viewport sizing, independent cursors, and active pane switching (`Alt+O`)
+- Integrated bottom terminal drawer (`include/terminal.h`, `src/terminal/terminal.c`) with pseudo-terminal (`forkpty`) subshell execution
+- Interactive terminal drawer toggle (`Ctrl+\``), real-time ANSI terminal rendering, and scrollback support
+- Fast workspace symbol indexer (`include/symbols.h`, `src/workspace/symbols.c`) parsing C functions, structs, enums, unions, macros, and typedefs
+- Interactive symbol search overlay (`Ctrl+Shift+S`) with incremental filtering and direct jump-to-definition
+
+---
+
+### Phase 9 — Source Control Platform
+
+#### Completed
+
+- Interactive Git Repository Dashboard (`Ctrl+Shift+G` / `Alt+5`) with unified view of staged, unstaged, and untracked files
+- Dual-state (`MM`, `AM`, `MD`) file tracking in status engine (`gitRefreshRepo`) ensuring concurrent index and worktree modifications are properly represented
+- Inline file operations in Git Dashboard: stage (`s`), unstage (`u`), discard modifications / delete untracked (`x`), commit (`c`), and refresh (`r`)
+- Interactive Git Diff Viewer (`Ctrl+Shift+K`) with syntax-highlighted unified diffs, hunk jumping (`n` / `p`), and instant staging toggle (`s`)
+- Repository Commit History Log viewer (`Ctrl+Shift+L`) displaying commit SHAs, authors, dates, and commit messages with expandable patch inspection
+- Safe Git Commit Dialog (`Ctrl+Shift+C`) with non-whitespace validation, temporary message file handling (`CLAW_COMMIT_MSG`), and atomic commit invocation
+- Branch Management Modal (`Ctrl+Shift+R`) with branch creation, strict git-ref character validation (`~`, `^`, `:`, `?`, `*`, `[`, `\`, `@`), switching, and safe branch deletion with index clamping
+- Stash Management Modal (`Ctrl+Shift+Z`) supporting stash push with custom messages, stash list inspection, pop, and drop operations
+- Real-time inline gutter change indicators (`+` added, `~` modified, `_` deleted) derived from `git diff -U0` with top-of-file deletion support (`newStart == 0`)
+- Multi-pane gutter status isolation guarding split-screen views so only matching file buffers display git gutter indicators
+- Robust POSIX single-quote shell escaping (`gitEscapeShellArg`) and porcelain unquoting (`gitUnescapePath`) preventing command injection and shell syntax breakages
+- Submodule and worktree `HEAD` resolution parsing `gitdir:` directives and direct commit SHA extraction for detached `HEAD` states
+- Clean editor shutdown hooks guaranteeing all Git modals and resources are freed without memory leaks
+
+---
+
+## Keymaps Reference
+
+### Core Editing
+
+| Keybinding | Action | Description |
+|------------|--------|-------------|
+| `Ctrl+S` | `save` | Save active file buffer to disk |
+| `Ctrl+X` | `quit` | Exit Claw editor (prompts if unsaved changes exist) |
+| `Ctrl+Z` | `undo` | Undo last editing action |
+| `Ctrl+Y` | `redo` | Redo previously undone action |
+| `Ctrl+F` | `search` | Find text in active buffer |
+| `Ctrl+R` | `replace` | Search and replace text interactively |
+| `Ctrl+A` | `replace_all` | Search and replace all occurrences |
+| `Ctrl+N` | `next_match` | Jump to next search match |
+| `Ctrl+P` | `prev_match` | Jump to previous search match |
+| `Alt+D` | `duplicate_line` | Duplicate current line |
+| `Shift+Up` | `move_line_up` | Move current line up |
+| `Shift+Down` | `move_line_down` | Move current line down |
+| `Alt+/` | `comment_line` | Toggle line comment (`//`) |
+| `Alt+J` | `join_lines` | Join current line with next line |
+| `Tab` | `indent` | Insert indentation or indent selected block |
+| `Shift+Tab` / `BackTab` | `unindent` | Unindent current line or selected block |
+| `Alt+]` | `goto_bracket` | Jump to matching delimiter bracket `()`, `[]`, `{}` |
+| `Ctrl+Left` | `word_left` | Navigate cursor one word to the left |
+| `Ctrl+Right` | `word_right` | Navigate cursor one word to the right |
+| `Home` | `home` | Jump to line start (first non-whitespace / column 0) |
+| `End` | `end` | Jump to end of current line |
+
+### Workspace & Navigation (Phase 5)
+
+| Keybinding | Action | Description |
+|------------|--------|-------------|
+| `Alt+G` | `goto_line` | Go to line number |
+| `Alt+B` | `bookmark_toggle` | Toggle bookmark on current line |
+| `Alt+Down` | `bookmark_next` | Jump to next bookmark |
+| `Alt+Up` | `bookmark_prev` | Jump to previous bookmark |
+| `Alt+C` | `bookmark_clear` | Clear all bookmarks across workspace |
+| `Alt+Q` | `quick_switch` | Open Quick File Switcher modal |
+| `Alt+E` | `file_explorer` | Open Workspace File Explorer modal |
+| `Alt+W` | `workspace_open` | Switch active workspace directory |
+| `Alt+S` | `session_save` | Save active workspace session to disk |
+| `Alt+R` | `session_restore` | Restore previously saved workspace session |
+
+### Project Tooling (Phase 7)
+
+| Keybinding | Action | Description |
+|------------|--------|-------------|
+| `Ctrl+Shift+B` | `project_build` | Run project build task (`.claw/project.conf`) |
+| `Ctrl+Shift+T` | `project_test` | Run project test task |
+| `Ctrl+Shift+O` | `project_output` | Toggle captured build/test output log overlay |
+| `Ctrl+Shift+D` | `project_diagnostics` | Open interactive compiler diagnostics navigator |
+| `Ctrl+Down` | `project_diagnostics_next` | Jump to next compiler error / warning |
+| `Ctrl+Up` | `project_diagnostics_previous` | Jump to previous compiler error / warning |
+| `Ctrl+Shift+P` | `project_dashboard` | Open comprehensive project dashboard |
+
+### IDE Foundation (Phase 8)
+
+| Keybinding | Action | Description |
+|------------|--------|-------------|
+| `Ctrl+W` | `buffer_close` | Close current file buffer |
+| `Ctrl+Tab` | `buffer_next` | Switch to next open buffer (MRU order) |
+| `Ctrl+Shift+Tab` | `buffer_prev` | Switch to previous open buffer |
+| `Ctrl+1` .. `Ctrl+9` | `buffer_1` .. `buffer_9` | Direct switch to buffer slots 1 through 9 |
+| `Ctrl+\` | `split_vertical` | Split active viewport vertically into two panes |
+| `Ctrl+-` | `split_horizontal` | Split active viewport horizontally into two panes |
+| `Alt+O` | `pane_switch` | Switch active focus between split panes |
+| `Ctrl+\`` | `terminal_toggle` | Toggle integrated pseudo-terminal drawer |
+| `Ctrl+Shift+S` | `symbol_search` | Open workspace symbol search overlay |
+
+### Source Control Platform (Phase 9)
+
+| Keybinding | Action | Description |
+|------------|--------|-------------|
+| `Ctrl+Shift+G` / `Alt+5` | `git_dashboard` | Open Git Repository Dashboard modal |
+| `Ctrl+Shift+K` | `git_diff` | Open Git Diff Viewer for active buffer or repository |
+| `Ctrl+Shift+L` | `git_log` | Open Git Commit History Log viewer |
+| `Ctrl+Shift+C` | `git_commit` | Open Git Commit Dialog |
+| `Ctrl+Shift+R` | `git_branch` | Open Git Branch Management modal |
+| `Ctrl+Shift+Z` | `git_stash` | Open Git Stash Management modal |
+| `Ctrl+G` | `git_add` | Stage active file in git index |
+| `Ctrl+T` | `git_restore` | Discard / restore changes in active file |
+| `Ctrl+U` | `git_unstage` | Unstage active file from git index |
+| `Ctrl+B` | `git_blame` | Open Git Blame viewer for active file |
+
+### Customization & Plugins (Phases 3 & 6)
+
+| Keybinding | Action | Description |
+|------------|--------|-------------|
+| `Alt+T` | `theme_next` | Cycle to next theme |
+| `Alt+1` | `statusbar_settings` | Open status bar configuration overlay |
+| `Alt+2` | `layout_settings` | Open editor layout configuration overlay |
+| `Alt+3` | `theme_maker` | Open interactive theme designer |
+| `Alt+4` | `theme_manager` | Open installed theme manager |
+| `Ctrl+L` | `plugin_list` | Show loaded plugins in status bar |
+| `Ctrl+K` | `plugin_reload` | Hot-reload all installed plugins |
+| `Alt+I` | `plugin_info` | Display plugin system metadata |
+| `Alt+M` | `plugin_manager` | Open interactive Plugin Dashboard |
+| `Ctrl+V` | `plugin_toggle` | Toggle active plugin state |
+| `Alt+H` | `plugin_health` | Display plugin health diagnostic summary |
+| `Ctrl+Shift+H` | `plugin_help` | Show plugin command quick reference |
+
+### Intelligent IDE Services (Phase 11)
+
+| Keybinding | Action | Description |
+|------------|--------|-------------|
+| `Ctrl+Space` | `lsp_completion` | Trigger context-aware code completion popup |
+| `F12` / `Ctrl+]` | `lsp_definition` | Jump to definition of symbol under cursor |
+| `Alt+K` | `lsp_hover` | Display hover documentation and type signature overlay |
+| `Shift+F12` | `lsp_references` | Find all references across open buffers and workspace |
+| `Alt+Enter` | `lsp_code_action` | Open QuickFix and refactoring code actions modal |
+| `F8` | `lsp_diagnostics_next` | Jump to next LSP diagnostic error / warning |
+| `Shift+F8` | `lsp_diagnostics_prev` | Jump to previous LSP diagnostic error / warning |
+
+### Debug Adapter Protocol (Phase 12)
+
+| Keybinding | Action | Description |
+|------------|--------|-------------|
+| `F9` | `dap_toggle_breakpoint` | Toggle breakpoint on current line with gutter indicator |
+| `F5` | `dap_continue` | Start debugging or continue execution |
+| `F10` | `dap_step_over` | Step over current line / statement |
+| `F11` | `dap_step_into` | Step into function call |
+| `Shift+F11` | `dap_step_out` | Step out of current function scope |
+| `Shift+F5` | `dap_stop` | Stop active debug session and reset state |
+| `Alt+D` | `dap_dashboard` | Open Debugger Dashboard (threads, call stack, variables) |
+
+### Remote VFS & Project Templates (Phase 12)
+
+| Keybinding | Action | Description |
+|------------|--------|-------------|
+| `Alt+R` | `remote_open` | Open remote file prompt (`claw://`, `sftp://`, `ssh://`) |
+| `Ctrl+Shift+N` | `template_new` | Open interactive Project Creation & Scaffolding Wizard |
+
+### Extension Marketplace & Ecosystem (Phase 13)
+
+| Keybinding | Action | Description |
+|------------|--------|-------------|
+| `Alt+P` | `marketplace_open` | Open Extension Marketplace browser modal |
+| `Alt+U` | `marketplace_update` | Check for extension updates across installed catalogue |
+
+---
+
 ## Phase Progress
 
 |  Phase   |        Focus Area           | Status      |                     Description                            |
@@ -2585,12 +2880,12 @@ Alt + [1-9]    Direct Jump to Buffer N
 | Phase 5  | Workspace Environment       | Complete    | Project workspaces, file explorer, session & navigation    |
 | Phase 6  | Customization Platform      | Complete    | Themes, profiles, and editor personalization               |
 | Phase 7  | Project Tooling             | Complete    | Development automation and project utilities               |
-| Phase 8  | IDE Foundation              | In Progress | Multi-buffer editing and IDE infrastructure                |
-| Phase 9  | Source Control Expansion    | Planned     | Advanced repository management capabilities                |
-| Phase 10 | Language Ecosystem          | Planned     | Multi-language support and tooling                         |
-| Phase 11 | Intelligent IDE Services    | Planned     | Code intelligence and developer assistance                 |
-| Phase 12 | Advanced Platform Services  | Planned     | Platform integrations and remote workflows                 |
-| Phase 13 | Claw Ecosystem              | Vision      | Community-driven extension ecosystem                       |
+| Phase 8  | IDE Foundation              | Complete    | Multi-buffer editing and IDE infrastructure                |
+| Phase 9  | Source Control Platform     | Complete    | Git integration, branching, stash, diff and history        |
+| Phase 10 | Language Ecosystem          | Complete    | Multi-language syntax, AST indenter and tooling            |
+| Phase 11 | Intelligent IDE Services    | Complete    | LSP client, diagnostics, completion, hover, references     |
+| Phase 12 | Advanced Platform Services  | Complete    | DAP debugger, remote VFS, project templates & scaffolding  |
+| Phase 13 | Claw Ecosystem              | Complete    | Extension packaging, SHA-256 signatures, marketplace UI    |
 
 ---
 
