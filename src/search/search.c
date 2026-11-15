@@ -23,13 +23,20 @@ static int isWholeWordMatch(
     const char *match,
     size_t queryLength)
 {
-    int leftBoundary =
-        match == line ||
-        !isWordCharacter((unsigned char)match[-1]);
+    if (!line || !match || queryLength == 0)
+        return 0;
 
-    int rightBoundary =
-        match[queryLength] == '\0' ||
-        !isWordCharacter((unsigned char)match[queryLength]);
+    int leftBoundary = 1;
+    if (isWordCharacter((unsigned char)match[0]))
+    {
+        leftBoundary = (match == line) || !isWordCharacter((unsigned char)match[-1]);
+    }
+
+    int rightBoundary = 1;
+    if (isWordCharacter((unsigned char)match[queryLength - 1]))
+    {
+        rightBoundary = (match[queryLength] == '\0') || !isWordCharacter((unsigned char)match[queryLength]);
+    }
 
     return leftBoundary && rightBoundary;
 }
@@ -102,6 +109,9 @@ void performSearch(void)
          row < buffer.numRows;
          row++)
     {
+        if (!buffer.rows || !buffer.rows[row].chars)
+            continue;
+
         char *start =
             buffer.rows[row].chars;
 
@@ -246,7 +256,8 @@ void previousMatch(void)
 
 void replaceCurrentMatch(void)
 {
-    if (searchState.matchCount == 0)
+    if (searchState.matchCount == 0 || searchState.currentMatch < 0 ||
+        searchState.currentMatch >= searchState.matchCount)
     {
         editorSetStatusMessage(
             "Nothing to replace"
@@ -264,32 +275,52 @@ void replaceCurrentMatch(void)
             searchState.currentMatch
         ];
 
-    Row *r = &buffer.rows[row];
+    if (!buffer.rows || row < 0 || row >= buffer.numRows)
+    {
+        editorSetStatusMessage(
+            "Nothing to replace"
+        );
+        return;
+    }
 
-    char newLine[2048];
+    Row *r = &buffer.rows[row];
+    if (!r->chars)
+        return;
 
     int queryLen =
         (int)strlen(
             searchState.query
         );
+    int repLen =
+        (int)strlen(
+            searchState.replacement
+        );
 
-    snprintf(
-        newLine,
-        sizeof(newLine),
-        "%.*s%s%s",
-        col,
-        r->chars,
-        searchState.replacement,
-        r->chars + col + queryLen
-    );
+    if (queryLen <= 0 || col < 0 || col + queryLen > r->size)
+    {
+        editorSetStatusMessage(
+            "Nothing to replace"
+        );
+        return;
+    }
+
+    size_t newSize = (size_t)r->size - (size_t)queryLen + (size_t)repLen;
+    char *newChars = malloc(newSize + 1);
+    if (!newChars)
+        return;
+
+    memcpy(newChars, r->chars, col);
+    memcpy(newChars + col, searchState.replacement, repLen);
+    memcpy(newChars + col + repLen, r->chars + col + queryLen, (size_t)(r->size - col - queryLen));
+    newChars[newSize] = '\0';
 
     free(r->chars);
+    r->chars = newChars;
+    r->size = (int)newSize;
 
-    r->chars =
-        strdup(newLine);
-
-    r->size =
-        (int)strlen(newLine);
+    free(r->hl);
+    r->hl = NULL;
+    r->hlSize = 0;
 
     buffer.modified = 1;
 
@@ -349,6 +380,9 @@ void refreshSearchMatches(void)
 
     for (int row = 0; row < buffer.numRows; row++)
     {
+        if (!buffer.rows || !buffer.rows[row].chars)
+            continue;
+
         char *start = buffer.rows[row].chars;
 
         while (1)
@@ -401,9 +435,7 @@ void refreshSearchMatches(void)
 
 int replaceAllMatches(void)
 {
-    performSearch();
-
-    if (searchState.matchCount == 0)
+    if (searchState.length <= 0)
     {
         editorSetStatusMessage(
             "Nothing to replace"
@@ -412,57 +444,88 @@ int replaceAllMatches(void)
     }
 
     int replacements = 0;
+    size_t qLen = (size_t)searchState.length;
+    size_t repLen = strlen(searchState.replacement);
 
-    while (1)
+    for (int row = 0; row < buffer.numRows; row++)
     {
-        performSearch();
+        Row *r = &buffer.rows[row];
+        if (!r->chars || r->size <= 0)
+            continue;
 
-        if (searchState.matchCount == 0)
-            break;
+        int rowMatches = 0;
+        const char *p = r->chars;
+        while ((p = strstr(p, searchState.query)) != NULL)
+        {
+            if (isWholeWordMatch(r->chars, p, qLen))
+            {
+                rowMatches++;
+                p += qLen;
+            }
+            else
+            {
+                p += 1;
+            }
+        }
 
-        searchState.currentMatch = 0;
+        if (rowMatches == 0)
+            continue;
 
-        int row =
-            searchState.matchRows[0];
+        size_t extraPerMatch = (repLen > qLen) ? (repLen - qLen) : 0;
+        size_t newAlloc = (size_t)r->size + (size_t)rowMatches * extraPerMatch + 1;
+        char *newChars = malloc(newAlloc);
+        if (!newChars)
+            continue;
 
-        int col =
-            searchState.matchCols[0];
+        size_t newLen = 0;
+        size_t srcIdx = 0;
+        while (srcIdx < (size_t)r->size)
+        {
+            char *m = strstr(r->chars + srcIdx, searchState.query);
+            if (!m)
+            {
+                size_t tail = (size_t)r->size - srcIdx;
+                memcpy(newChars + newLen, r->chars + srcIdx, tail);
+                newLen += tail;
+                break;
+            }
 
-        Row *r =
-            &buffer.rows[row];
+            if (isWholeWordMatch(r->chars, m, qLen))
+            {
+                size_t prefixLen = (size_t)(m - (r->chars + srcIdx));
+                memcpy(newChars + newLen, r->chars + srcIdx, prefixLen);
+                newLen += prefixLen;
+                memcpy(newChars + newLen, searchState.replacement, repLen);
+                newLen += repLen;
+                srcIdx = (size_t)(m - r->chars) + qLen;
+                replacements++;
+            }
+            else
+            {
+                size_t copyLen = (size_t)(m - (r->chars + srcIdx)) + 1;
+                memcpy(newChars + newLen, r->chars + srcIdx, copyLen);
+                newLen += copyLen;
+                srcIdx += copyLen;
+            }
+        }
 
-        char newLine[2048];
-
-        int queryLen =
-            (int)strlen(
-                searchState.query
-            );
-
-        snprintf(
-            newLine,
-            sizeof(newLine),
-            "%.*s%s%s",
-            col,
-            r->chars,
-            searchState.replacement,
-            r->chars + col + queryLen
-        );
-
+        newChars[newLen] = '\0';
         free(r->chars);
+        r->chars = newChars;
+        r->size = (int)newLen;
 
-        r->chars =
-            strdup(newLine);
-
-        r->size =
-            (int)strlen(newLine);
-
-        replacements++;
+        free(r->hl);
+        r->hl = NULL;
+        r->hlSize = 0;
     }
 
-    buffer.modified = 1;
+    if (replacements > 0)
+    {
+        buffer.modified = 1;
+        refreshSearchMatches();
+    }
 
     char status[64];
-
     snprintf(
         status,
         sizeof(status),

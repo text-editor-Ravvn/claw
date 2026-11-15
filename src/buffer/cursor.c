@@ -17,11 +17,13 @@ void moveCursorLeft(void)
 void moveCursorRight(void)
 {
     /* The cursor may sit immediately after the final character. */
-    if (cursor.y >= buffer.numRows)
+    if (cursor.y < 0 || cursor.y >= buffer.numRows || !buffer.rows)
         return;
 
     Row *row = &buffer.rows[cursor.y];
 
+    if (cursor.x < 0)
+        cursor.x = 0;
     if (cursor.x < row->size)
         cursor.x++;
 }
@@ -32,11 +34,16 @@ void moveCursorUp(void)
     if (buffer.numRows == 0 || !buffer.rows)
         return;
 
+    if (cursor.y >= buffer.numRows)
+        cursor.y = buffer.numRows - 1;
+
     if (cursor.y > 0)
         cursor.y--;
 
     Row *row = &buffer.rows[cursor.y];
 
+    if (cursor.x < 0)
+        cursor.x = 0;
     if (cursor.x > row->size)
         cursor.x = row->size;
 }
@@ -47,11 +54,16 @@ void moveCursorDown(void)
     if (buffer.numRows == 0 || !buffer.rows)
         return;
 
+    if (cursor.y < 0)
+        cursor.y = 0;
+
     if (cursor.y < buffer.numRows - 1)
         cursor.y++;
 
     Row *row = &buffer.rows[cursor.y];
 
+    if (cursor.x < 0)
+        cursor.x = 0;
     if (cursor.x > row->size)
         cursor.x = row->size;
 }
@@ -61,8 +73,19 @@ void moveCursorWordLeft(void)
     if (buffer.numRows == 0 || !buffer.rows)
         return;
 
+    if (cursor.y >= buffer.numRows)
+        cursor.y = buffer.numRows - 1;
+    if (cursor.y < 0)
+        cursor.y = 0;
+
+    if (cursor.x > buffer.rows[cursor.y].size)
+        cursor.x = buffer.rows[cursor.y].size;
+
     if (cursor.x <= 0 && cursor.y <= 0)
+    {
+        cursor.x = 0;
         return;
+    }
 
     /* Move one step left first */
     if (cursor.x <= 0)
@@ -151,7 +174,15 @@ void moveCursorWordRight(void)
     if (buffer.numRows == 0 || !buffer.rows)
         return;
 
+    if (cursor.y >= buffer.numRows)
+        cursor.y = buffer.numRows - 1;
+    if (cursor.y < 0)
+        cursor.y = 0;
+
     Row *row = &buffer.rows[cursor.y];
+
+    if (cursor.x < 0)
+        cursor.x = 0;
 
     if (cursor.x >= row->size)
     {

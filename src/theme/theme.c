@@ -1090,13 +1090,13 @@ int themeExportCustom(size_t index, const char *destinationPath)
         return 0;
     }
 
-    char buffer[4096];
+    char ioBuf[4096];
     size_t bytesRead;
     int success = 1;
 
-    while ((bytesRead = fread(buffer, 1, sizeof(buffer), source)) > 0)
+    while ((bytesRead = fread(ioBuf, 1, sizeof(ioBuf), source)) > 0)
     {
-        if (fwrite(buffer, 1, bytesRead, destination) != bytesRead)
+        if (fwrite(ioBuf, 1, bytesRead, destination) != bytesRead)
         {
             success = 0;
             break;
@@ -1177,13 +1177,13 @@ int themeImportCustom(const char *sourcePath)
         return 0;
     }
 
-    char buffer[4096];
+    char ioBuf[4096];
     size_t bytesRead;
     int ok = 1;
 
-    while ((bytesRead = fread(buffer, 1, sizeof(buffer), source)) > 0)
+    while ((bytesRead = fread(ioBuf, 1, sizeof(ioBuf), source)) > 0)
     {
-        if (fwrite(buffer, 1, bytesRead, destination) != bytesRead)
+        if (fwrite(ioBuf, 1, bytesRead, destination) != bytesRead)
         {
             ok = 0;
             break;

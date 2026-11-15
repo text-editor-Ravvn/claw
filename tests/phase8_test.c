@@ -251,6 +251,18 @@ int main(void)
     }
     assert(bufferManagerCount() == 1);
 
+    /* Test opening a brand new non-existent file initializes clean buffer and coordinates */
+    int newNonExistent = bufferManagerOpen("tests/non_existent_brand_new_file.c");
+    assert(newNonExistent >= 0);
+    assert(bufferManagerActiveIndex() == newNonExistent);
+    assert(cursor.x == 0);
+    assert(cursor.y == 0);
+    assert(viewport.rowOffset == 0);
+    assert(viewport.colOffset == 0);
+    assert(currentFile != NULL);
+    assert(strcmp(currentFile, "tests/non_existent_brand_new_file.c") == 0);
+    bufferManagerClose(newNonExistent);
+
     remove("tests/sample_p8.txt");
     printf("  -> Buffer Manager tests PASSED.\n");
 
@@ -301,6 +313,137 @@ int main(void)
     splitClose();
     assert(splitIsActive() == 0);
     assert(splitGetMode() == SPLIT_NONE);
+
+    /* Test 2b: Split when only 1 buffer exists creates separate buffer for Pane 1 */
+    while (bufferManagerCount() > 1)
+        bufferManagerClose(bufferManagerCount() - 1);
+    assert(bufferManagerCount() == 1);
+
+    cursor.x = 8;
+    cursor.y = 0;
+    viewport.rowOffset = 2;
+    viewport.colOffset = 1;
+
+    splitVertical();
+    assert(splitIsActive() == 1);
+    assert(splitGetMode() == SPLIT_VERTICAL);
+    assert(bufferManagerCount() == 2);
+    assert(splitLayout.panes[0].bufferIndex != splitLayout.panes[1].bufferIndex);
+    assert(splitLayout.activePane == 0);
+    assert(bufferManagerActiveIndex() == splitLayout.panes[0].bufferIndex);
+    assert(splitLayout.panes[0].cursorX == 8);
+    assert(splitLayout.panes[0].cursorY == 0);
+    assert(splitLayout.panes[0].rowOffset == 2);
+    assert(splitLayout.panes[0].colOffset == 1);
+    assert(cursor.x == 8);
+    assert(viewport.rowOffset == 2);
+
+    /* Pane switching and independent document editing */
+    /* Edit in Pane 0 */
+    assert(buffer.numRows > 0);
+    free(buffer.rows[0].chars);
+    buffer.rows[0].chars = strdup("pane0 content");
+    buffer.rows[0].size = strlen("pane0 content");
+
+    /* Switch to Pane 1 */
+    splitSwitchPane();
+    assert(splitLayout.activePane == 1);
+    assert(bufferManagerActiveIndex() == splitLayout.panes[1].bufferIndex);
+    /* Edit in Pane 1 */
+    assert(buffer.numRows > 0);
+    free(buffer.rows[0].chars);
+    buffer.rows[0].chars = strdup("pane1 separate content");
+    buffer.rows[0].size = strlen("pane1 separate content");
+
+    /* Switch back to Pane 0 and verify contents are separate */
+    splitSwitchPane();
+    assert(splitLayout.activePane == 0);
+    assert(bufferManagerActiveIndex() == splitLayout.panes[0].bufferIndex);
+    assert(strcmp(buffer.rows[0].chars, "pane0 content") == 0);
+
+    /* Switch to Pane 1 again and verify contents are intact */
+    splitSwitchPane();
+    assert(splitLayout.activePane == 1);
+    assert(bufferManagerActiveIndex() == splitLayout.panes[1].bufferIndex);
+    assert(strcmp(buffer.rows[0].chars, "pane1 separate content") == 0);
+
+    /* Test 2c: Opening a new file while in Pane 1 updates ONLY Pane 1's buffer */
+    FILE *sampleP1 = fopen("tests/sample_pane_file.txt", "w");
+    assert(sampleP1 != NULL);
+    fprintf(sampleP1, "file in pane 1\n");
+    fclose(sampleP1);
+
+    int pane0OldBuf = splitLayout.panes[0].bufferIndex;
+    int openedIdx = bufferManagerOpen("tests/sample_pane_file.txt");
+    assert(openedIdx >= 0);
+    assert(splitLayout.panes[1].bufferIndex == openedIdx);
+    assert(splitLayout.panes[0].bufferIndex == pane0OldBuf);
+    assert(splitLayout.activePane == 1);
+    assert(bufferManagerActiveIndex() == openedIdx);
+    assert(strcmp(buffer.rows[0].chars, "file in pane 1") == 0);
+
+    /* Switch to Pane 0 — should be pane0OldBuf with "pane0 content" */
+    splitSwitchPane();
+    assert(splitLayout.activePane == 0);
+    assert(bufferManagerActiveIndex() == pane0OldBuf);
+    assert(strcmp(buffer.rows[0].chars, "pane0 content") == 0);
+
+    /* Test 2d: Toggling split mode preserves both panes' buffers */
+    splitHorizontal();
+    assert(splitGetMode() == SPLIT_HORIZONTAL);
+    assert(splitLayout.panes[0].bufferIndex == pane0OldBuf);
+    assert(splitLayout.panes[1].bufferIndex == openedIdx);
+
+    splitVertical();
+    assert(splitGetMode() == SPLIT_VERTICAL);
+    assert(splitLayout.panes[0].bufferIndex == pane0OldBuf);
+    assert(splitLayout.panes[1].bufferIndex == openedIdx);
+
+    /* Close Split returns to single pane with active buffer */
+    splitClose();
+    assert(splitIsActive() == 0);
+    assert(splitGetMode() == SPLIT_NONE);
+    assert(bufferManagerActiveIndex() == pane0OldBuf);
+
+    /* Test 2e: Multi-buffer closure in split view preserves pane separation */
+    while (bufferManagerCount() < 3)
+        bufferManagerNew(NULL);
+    assert(bufferManagerCount() >= 3);
+    bufferManagerSwitchTo(0);
+    splitVertical();
+    assert(splitLayout.panes[0].bufferIndex == 0);
+    assert(splitLayout.panes[1].bufferIndex == 1);
+    bufferManagerClose(1);
+    /* Pane 0 and Pane 1 must not collapse to the same buffer */
+    assert(splitLayout.panes[0].bufferIndex != splitLayout.panes[1].bufferIndex);
+    assert(splitLayout.panes[0].bufferIndex == 0);
+    assert(splitLayout.panes[1].bufferIndex == 1); /* previous buffer 2 is now 1 */
+
+    /* Critical regression: closing Buffer 0 must NOT collapse both panes to 0 */
+    bufferManagerNew("third_buf.txt");
+    assert(bufferManagerCount() == 3);
+    assert(splitLayout.panes[0].bufferIndex != splitLayout.panes[1].bufferIndex);
+    bufferManagerClose(0);
+    /* After closing buffer 0, panes must still hold distinct buffers */
+    assert(splitLayout.panes[0].bufferIndex != splitLayout.panes[1].bufferIndex);
+    assert(bufferManagerActiveIndex() == splitLayout.panes[splitLayout.activePane].bufferIndex);
+
+    /* Test 2f: Buffer cycling (Next/Prev) in split mode skips other pane's buffer */
+    bufferManagerNew("fourth_buf.txt");
+    assert(bufferManagerCount() >= 3);
+    int p0_buf = splitLayout.panes[0].bufferIndex;
+    int p1_buf = splitLayout.panes[1].bufferIndex;
+    splitLayout.activePane = 0;
+    bufferManagerSwitchTo(p0_buf);
+    bufferManagerNext();
+    /* Pane 0 must not cycle into Pane 1's buffer */
+    assert(splitLayout.panes[0].bufferIndex != p1_buf);
+    bufferManagerPrev();
+    assert(splitLayout.panes[0].bufferIndex != p1_buf);
+
+    splitClose();
+
+    remove("tests/sample_pane_file.txt");
     printf("  -> Split-Screen tests PASSED.\n");
 
     /* -------------------------------------------------- */

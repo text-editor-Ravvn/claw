@@ -42,5 +42,6 @@ int historyUndo(void);
 void historyRedo(void);
 
 void historySetRecording(int enabled);
+int historyIsRecording(void);
 
 #endif

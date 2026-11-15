@@ -507,7 +507,7 @@ int symbolsJumpToSelected(void)
         }
         else
         {
-            cursor.y = targetLine - 1;
+            cursor.y = 0;
         }
         cursor.x = 0;
         viewport.rowOffset = cursor.y - (viewport.screenRows / 2);

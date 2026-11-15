@@ -105,10 +105,12 @@ test:
 	./phase12_test
 	$(CC) $(CFLAGS) tests/phase13_test.c src/marketplace/package.c src/marketplace/marketplace.c src/marketplace/marketplace_views.c src/config/config.c src/utils/string_utils.c -o phase13_test
 	./phase13_test
-	rm -f buffer_test file_test input_test workspace_test session_test bookmark_test phase5_test project_test phase8_test git_test phase10_test phase11_test phase12_test phase13_test
+	$(CC) $(CFLAGS) tests/bugfixes_test.c src/buffer/buffer.c src/buffer/row.c src/buffer/cursor.c src/history/history.c src/fileio/fileio.c src/search/search.c src/viewport/viewport.c src/config/config.c src/utils/string_utils.c -o bugfixes_test
+	./bugfixes_test
+	rm -f buffer_test file_test input_test workspace_test session_test bookmark_test phase5_test project_test phase8_test git_test phase10_test phase11_test phase12_test phase13_test bugfixes_test
 
 clean:
-	rm -f $(OBJ) $(TARGET) buffer_test file_test input_test workspace_test session_test bookmark_test phase5_test project_test phase8_test git_test phase10_test phase11_test phase12_test phase13_test
+	rm -f $(OBJ) $(TARGET) buffer_test file_test input_test workspace_test session_test bookmark_test phase5_test project_test phase8_test git_test phase10_test phase11_test phase12_test phase13_test bugfixes_test
 
 rebuild: clean all
 

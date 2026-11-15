@@ -39,10 +39,12 @@ static int welcomeSplashDismissed = 0;
 int welcomeSplashIsActive(void)
 {
     return getenv("CLAW_GRAPHICAL_SPLASH_SHOWN") == NULL &&
+           !splitIsActive() &&
            !welcomeSplashDismissed &&
            layoutState.showWelcome &&
            currentFile == NULL &&
            buffer.numRows == 1 &&
+           buffer.rows &&
            buffer.rows[0].size == 0;
 }
 
@@ -128,7 +130,7 @@ void drawPluginDetails(void);
 void drawFileExplorer(void);
 void drawFileSwitcher(void);
 
-void drawSymbolNavigator(void)
+static void drawSymbolNavigator(void)
 {
     printf("\033[2J\033[H");
     int rows = viewport.screenRows;
@@ -168,9 +170,10 @@ void drawSymbolNavigator(void)
 
     printf("\033[%d;1H\033[90m[Enter] Jump  [Up/Down] Select  [Esc] Cancel  (%d matches)\033[0m",
            rows, symbolState.filteredCount);
+    printf("\033[2;%dH", (int)strlen("Query: ") + (int)strlen(symbolState.query) + 1);
 }
 
-void drawTerminalPanel(int startRow, int numRows)
+static void drawTerminalPanel(int startRow, int numRows)
 {
     printf("\033[%d;1H\033[1;34m─── Terminal: %s (Ctrl+` or Esc to close) ───\033[0m\033[K\r\n",
            startRow, integratedTerminal.workingDir);
@@ -446,7 +449,7 @@ static void renderPaneTextRow(Buffer *doc, int fileRow, int colOffset, int textC
     if (textCols <= 0)
         return;
 
-    if (!doc || fileRow >= doc->numRows)
+    if (!doc || fileRow < 0 || fileRow >= doc->numRows)
     {
         putchar('~');
         if (padEnd)
@@ -464,11 +467,10 @@ static void renderPaneTextRow(Buffer *doc, int fileRow, int colOffset, int textC
     int len = row->size - colOffset;
     if (len < 0)
         len = 0;
-    if (len > textCols)
-        len = textCols;
 
+    int printedCols = 0;
     int prevColor = -1;
-    for (int j = 0; j < len; j++)
+    for (int j = 0; j < len && printedCols < textCols; j++)
     {
         int fileCol = colOffset + j;
         int highlight = 0;
@@ -510,7 +512,7 @@ static void renderPaneTextRow(Buffer *doc, int fileRow, int colOffset, int textC
                 prevColor = HL_BRACKET_MATCH;
             }
         }
-        else if (row->hl && fileCol < row->size)
+        else if (row->hl && fileCol < row->size && fileCol < row->hlSize)
         {
             int hlType = row->hl[fileCol];
             if (hlType != prevColor)
@@ -528,7 +530,25 @@ static void renderPaneTextRow(Buffer *doc, int fileRow, int colOffset, int textC
             }
         }
 
-        putchar(row->chars[fileCol]);
+        char ch = row->chars[fileCol];
+        if (ch == '\r')
+            continue;
+
+        if (ch == '\t')
+        {
+            int tabStop = 4;
+            int tabSpaces = tabStop - (printedCols % tabStop);
+            if (printedCols + tabSpaces > textCols)
+                tabSpaces = textCols - printedCols;
+            for (int t = 0; t < tabSpaces; t++)
+                putchar(' ');
+            printedCols += tabSpaces;
+        }
+        else
+        {
+            putchar(ch);
+            printedCols++;
+        }
     }
 
     if (prevColor != HL_NORMAL && prevColor != -1)
@@ -536,8 +556,11 @@ static void renderPaneTextRow(Buffer *doc, int fileRow, int colOffset, int textC
 
     if (padEnd)
     {
-        for (int s = len; s < textCols; s++)
+        while (printedCols < textCols)
+        {
             putchar(' ');
+            printedCols++;
+        }
     }
 }
 
@@ -766,7 +789,8 @@ else
 }
 
     int showWelcome =
-        (layoutState.showWelcome &&
+        (!splitIsActive() &&
+         layoutState.showWelcome &&
          currentFile == NULL &&
          buffer.numRows == 1 &&
          buffer.rows[0].size == 0);
@@ -843,7 +867,7 @@ else
             /* Pane 0 Gutter */
             if (g0 > 0)
             {
-                if (fileRow0 < doc0->numRows)
+                if (fileRow0 >= 0 && fileRow0 < doc0->numRows)
                 {
                     FileBuffer *fb0 = bufferManagerGet(splitLayout.panes[0].bufferIndex);
                     int showGit0 = (fb0 && fb0->filename[0] != '\0' && currentFile && strcmp(fb0->filename, currentFile) == 0);
@@ -874,7 +898,7 @@ else
             /* Pane 1 Gutter */
             if (g1 > 0)
             {
-                if (fileRow1 < doc1->numRows)
+                if (fileRow1 >= 0 && fileRow1 < doc1->numRows)
                 {
                     FileBuffer *fb1 = bufferManagerGet(splitLayout.panes[1].bufferIndex);
                     int showGit1 = (fb1 && fb1->filename[0] != '\0' && currentFile && strcmp(fb1->filename, currentFile) == 0);
@@ -908,11 +932,19 @@ else
             {
                 FileBuffer *fb0 = bufferManagerGet(splitLayout.panes[0].bufferIndex);
                 FileBuffer *fb1 = bufferManagerGet(splitLayout.panes[1].bufferIndex);
-                printf("\033[K\033[7m─── Pane 1: %s %s─── Pane 2: %s %s───\033[0m\r\n",
-                       fb0 ? fb0->displayName : "[Untitled]",
-                       splitLayout.activePane == 0 ? "(Active) " : "",
-                       fb1 ? fb1->displayName : "[Untitled]",
-                       splitLayout.activePane == 1 ? "(Active) " : "");
+                char title[512];
+                int titleLen = snprintf(title, sizeof(title),
+                                        "--- Pane 1: %s %s--- Pane 2: %s %s---",
+                                        fb0 ? fb0->displayName : "[Untitled]",
+                                        splitLayout.activePane == 0 ? "(Active) " : "",
+                                        fb1 ? fb1->displayName : "[Untitled]",
+                                        splitLayout.activePane == 1 ? "(Active) " : "");
+                if (titleLen > viewport.screenCols)
+                    titleLen = viewport.screenCols;
+                printf("\033[K\033[7m%.*s", titleLen, title);
+                for (int p = titleLen; p < viewport.screenCols; p++)
+                    putchar('-');
+                printf("\033[0m\r\n");
                 continue;
             }
         }
@@ -945,7 +977,7 @@ else
         /* Draw line number gutter */
         if (gutter > 0)
         {
-            if (fileRow < curDoc->numRows)
+            if (fileRow >= 0 && fileRow < curDoc->numRows)
             {
                 FileBuffer *fbCur = splitIsActive() ? bufferManagerGet(splitLayout.panes[paneIdx].bufferIndex) : NULL;
                 int showGit = !splitIsActive() || (fbCur && fbCur->filename[0] != '\0' && currentFile && strcmp(fbCur->filename, currentFile) == 0);
@@ -1062,6 +1094,14 @@ else
             (int)strlen("claw:~$ ") + integratedTerminal.cursorCol + 1
         );
     }
+    else if (savePrompt.active)
+    {
+        printf(
+            "\033[%d;%dH",
+            viewport.screenRows,
+            (int)strlen("Save as: ") + savePrompt.length + 1
+        );
+    }
     else if (gotoPrompt.active)
     {
         printf(
@@ -1069,6 +1109,25 @@ else
             viewport.screenRows,
             (int)strlen("Go to line: ") + gotoPrompt.length + 1
         );
+    }
+    else if (searchState.active)
+    {
+        if (searchState.replaceMode)
+        {
+            printf(
+                "\033[%d;%dH",
+                viewport.screenRows,
+                (int)strlen("Replace: ") + searchState.replacementLength + 1
+            );
+        }
+        else
+        {
+            printf(
+                "\033[%d;%dH",
+                viewport.screenRows,
+                (int)strlen("Search: ") + searchState.length + 1
+            );
+        }
     }
     else
     {
@@ -1102,17 +1161,20 @@ else
                 {
                     screenRow = cursor.y - viewport.rowOffset + 1;
                     screenCol = cursor.x - viewport.colOffset + g0 + 1;
+                    if (screenCol < g0 + 1)
+                        screenCol = g0 + 1;
                     if (screenCol > splitLayout.panes[0].width)
                         screenCol = splitLayout.panes[0].width;
                 }
                 else
                 {
                     screenRow = cursor.y - viewport.rowOffset + 1;
+                    int minCol1 = splitLayout.panes[0].width + 1 + g1 + 1;
                     screenCol = splitLayout.panes[0].width + 1 + g1 + (cursor.x - viewport.colOffset) + 1;
+                    if (screenCol < minCol1)
+                        screenCol = minCol1;
                     if (screenCol > viewport.screenCols)
                         screenCol = viewport.screenCols;
-                    if (screenCol < splitLayout.panes[0].width + 2)
-                        screenCol = splitLayout.panes[0].width + 2;
                 }
             }
         }
@@ -1524,6 +1586,11 @@ void drawFileExplorer(void)
 
     printf("----------------------------------------------------------------------\r\n");
     printf(" [Enter] Open/Descend  [Backspace/Left] Parent Dir  [Up/Down] Navigate  [Esc] Close\r\n");
+    if (explorerState.count > 0)
+    {
+        int cursorLine = 5 + (explorerState.selectedIndex - start);
+        printf("\033[%d;2H", cursorLine);
+    }
 }
 
 void drawFileSwitcher(void)
@@ -1575,4 +1642,5 @@ void drawFileSwitcher(void)
 
     printf("----------------------------------------------------------------------\r\n");
     printf(" [Enter] Select  [Up/Down] Navigate  [Type to Filter]  [Esc] Cancel\r\n");
+    printf("\033[3;%dH", (int)strlen(" Filter: ") + (int)strlen(fileSwitcherState.query) + 1);
 }

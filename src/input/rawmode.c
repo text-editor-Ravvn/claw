@@ -1,6 +1,7 @@
 #include <termios.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include "rawmode.h"
 
 static struct termios original;
 static int rawModeEnabled = 0;

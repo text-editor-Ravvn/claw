@@ -52,7 +52,8 @@ void scrollEditor(void)
         if (ap)
         {
             availRows = ap->height;
-            availCols = ap->width - viewport.gutterWidth;
+            int paneGutter = (layoutState.showLineNumbers && ap->width >= 15) ? viewport.gutterWidth : 0;
+            availCols = ap->width - paneGutter;
         }
     }
 
@@ -70,17 +71,26 @@ void scrollEditor(void)
         viewport.rowOffset = cursor.y - availRows + 1;
     }
 
+    if (viewport.rowOffset < 0)
+        viewport.rowOffset = 0;
+
     /* Horizontal scrolling */
-    if (cursor.x < viewport.colOffset + HSCROLL_MARGIN)
+    int hMargin = HSCROLL_MARGIN;
+    if (hMargin > availCols / 3)
+        hMargin = availCols / 3;
+    if (hMargin < 0)
+        hMargin = 0;
+
+    if (cursor.x < viewport.colOffset + hMargin)
     {
-        viewport.colOffset = cursor.x - HSCROLL_MARGIN;
+        viewport.colOffset = cursor.x - hMargin;
         if (viewport.colOffset < 0)
             viewport.colOffset = 0;
     }
 
-    if (cursor.x >= viewport.colOffset + availCols - HSCROLL_MARGIN)
+    if (cursor.x >= viewport.colOffset + availCols - hMargin)
     {
-        viewport.colOffset = cursor.x - availCols + HSCROLL_MARGIN;
+        viewport.colOffset = cursor.x - availCols + hMargin + 1;
         if (viewport.colOffset < 0)
             viewport.colOffset = 0;
     }

@@ -1,6 +1,9 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
+#include "buffer.h"
+#include "cursor.h"
+
 #define CLAW_VERSION "2.1"
 
 /* Path of the file currently being edited, or NULL for a new buffer. */
@@ -24,6 +27,11 @@ typedef struct
     int pluginLog;
 
     char originalFile[512];
+
+    Buffer savedBuffer;
+    Cursor savedCursor;
+    int savedRowOffset;
+    int savedColOffset;
 
 } GitViewState;
 

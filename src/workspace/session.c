@@ -16,6 +16,10 @@
 EditorSession currentSession = {0};
 extern char *currentFile;
 
+__attribute__((weak)) void bufferManagerSyncFromGlobal(void)
+{
+}
+
 static void getDefaultSessionPath(char *outPath, size_t outSize)
 {
     if (workspaceIsActive())
@@ -180,6 +184,7 @@ int sessionRestore(const char *path)
             viewport.rowOffset = rowOff;
             viewport.colOffset = colOff;
 
+            bufferManagerSyncFromGlobal();
             recentAddFile(filePath);
             return 1;
         }

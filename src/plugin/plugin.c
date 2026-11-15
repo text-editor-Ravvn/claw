@@ -49,7 +49,7 @@ int pluginLoad(const char *path)
     p.autoLoad = 1;
     p.allowEvents = 1;
 
-    strcpy(p.filename, path);
+    snprintf(p.filename, sizeof(p.filename), "%s", path);
 
     char line[256];
 

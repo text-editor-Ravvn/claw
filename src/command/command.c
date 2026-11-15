@@ -588,7 +588,9 @@ case CMD_PLUGIN_RELOAD:
             case CMD_THEME_NEXT:
             {
                 themeNext();
-                editorSetStatusMessage("");
+                char themeMsg[64];
+                snprintf(themeMsg, sizeof(themeMsg), "Theme: %s", themeCurrentName());
+                editorSetStatusMessage(themeMsg);
 
                 break;
             }
@@ -617,7 +619,15 @@ case CMD_PLUGIN_RELOAD:
                 }
                 else
                 {
-                    bufferManagerCloseActive();
+                    int closed = bufferManagerCloseActive();
+                    if (closed)
+                    {
+                        char bmsg[128];
+                        snprintf(bmsg, sizeof(bmsg), "Buffer closed. Active [%d/%d]: %s",
+                                 bufferManagerActiveIndex() + 1, bufferManagerCount(),
+                                 bufferManagerGetDisplayName(bufferManagerActiveIndex()));
+                        editorSetStatusMessage(bmsg);
+                    }
                 }
                 break;
 

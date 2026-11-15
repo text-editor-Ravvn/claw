@@ -25,6 +25,11 @@ void historySetRecording(int enabled)
     recordingEnabled = enabled;
 }
 
+int historyIsRecording(void)
+{
+    return recordingEnabled;
+}
+
 void historyPushInsert(
     int row,
     int col,

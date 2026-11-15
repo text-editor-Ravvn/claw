@@ -6,6 +6,7 @@
 #include "editor.h"
 #include "buffer.h"
 #include <time.h>
+#include <sys/stat.h>
 
 extern Buffer buffer;
 extern GitViewState gitView;
@@ -15,6 +16,12 @@ static void pluginLog(
     const char *message
 )
 {
+#ifdef _WIN32
+    mkdir("logs");
+#else
+    mkdir("logs", 0755);
+#endif
+
     FILE *fp =
         fopen(
             "logs/plugins.log",
@@ -306,6 +313,12 @@ void pluginOpenLog(void)
 
 void pluginClearLogs(void)
 {
+#ifdef _WIN32
+    mkdir("logs");
+#else
+    mkdir("logs", 0755);
+#endif
+
     FILE *fp =
         fopen(
             "logs/plugins.log",

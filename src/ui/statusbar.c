@@ -57,28 +57,29 @@ void drawStatusBar(void)
         cursor.x + 1
     );
 
-    int leftLen =
-        (int)strlen(left);
+    int leftLen = (int)strlen(left);
+    int rightLen = (int)strlen(right);
 
-    int rightLen =
-        (int)strlen(right);
+    int maxLeft = viewport.screenCols - rightLen;
+    if (maxLeft < 0)
+        maxLeft = 0;
+    if (leftLen > maxLeft)
+        leftLen = maxLeft;
+
+    int padding = viewport.screenCols - leftLen - rightLen;
+    if (padding < 0)
+        padding = 0;
 
     printf("\033[7m");
+    printf("%.*s", leftLen, left);
 
-    printf("%s", left);
-
-    int padding =
-        viewport.screenCols -
-        leftLen -
-        rightLen;
-
-    if (padding < 1)
-        padding = 1;
-
+    int padCount = padding;
     while (padding-- > 0)
         putchar(' ');
 
-    printf("%s", right);
+    int maxRight = viewport.screenCols - leftLen - padCount;
+    if (maxRight > 0)
+        printf("%.*s", maxRight, right);
 
     printf("\033[K");
     printf("\033[m");
@@ -134,7 +135,7 @@ void drawStatusBar(void)
         APPEND_FIELD("Buf %d/%d", bufferManagerActiveIndex() + 1, bufferManagerCount());
 
     if (splitIsActive())
-        APPEND_FIELD("Split:%s", splitGetMode() == SPLIT_HORIZONTAL ? "H" : "V");
+        APPEND_FIELD("Split:%s (Pane %d)", splitGetMode() == SPLIT_HORIZONTAL ? "H" : "V", splitLayout.activePane + 1);
 
     if (configStatusbarShowLanguage())
         APPEND_FIELD("%s", highlightLanguageName());
@@ -189,22 +190,26 @@ void drawStatusBar(void)
     int leftLen = (int)strlen(left);
     int rightLen = (int)strlen(right);
 
+    int maxLeft = viewport.screenCols - rightLen;
+    if (maxLeft < 0)
+        maxLeft = 0;
+    if (leftLen > maxLeft)
+        leftLen = maxLeft;
+
+    int padding = viewport.screenCols - leftLen - rightLen;
+    if (padding < 0)
+        padding = 0;
+
     printf("\033[7m");
+    printf("%.*s", leftLen, left);
 
-    printf("%s", left);
-
-    int padding =
-        viewport.screenCols -
-        leftLen -
-        rightLen;
-
-    if (padding < 1)
-        padding = 1;
-
+    int padCount = padding;
     while (padding-- > 0)
         putchar(' ');
 
-    printf("%s", right);
+    int maxRight = viewport.screenCols - leftLen - padCount;
+    if (maxRight > 0)
+        printf("%.*s", maxRight, right);
 
     printf("\033[K");
     printf("\033[m");

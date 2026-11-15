@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #ifndef _WIN32
 #include <sys/wait.h>
 #endif
@@ -253,6 +254,14 @@ static int runProjectCommand(const char *commandText)
 
     if (!currentProject.active || !commandText || commandText[0] == '\0')
         return 0;
+
+    char clawDir[PROJECT_PATH_MAX + 16];
+    snprintf(clawDir, sizeof(clawDir), "%s/.claw", currentProject.rootPath);
+#ifdef _WIN32
+    mkdir(clawDir);
+#else
+    mkdir(clawDir, 0755);
+#endif
 
     if (snprintf(outputPath, sizeof(outputPath),
                  "%s/.claw/project-output.log",

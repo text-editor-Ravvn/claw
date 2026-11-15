@@ -728,7 +728,7 @@ void editorRun(void)
                 {
                     recentAddFile(currentFile);
                     bookmarkClearAll();
-                    if (diag->line > 0 && diag->line <= buffer.numRows)
+                    if (buffer.rows && diag->line > 0 && diag->line <= buffer.numRows)
                     {
                         cursor.y = diag->line - 1;
                         int rowLen = buffer.rows[cursor.y].size;
@@ -1067,7 +1067,7 @@ void editorRun(void)
 
         if (themeMakerMenu.selected == 0)
         {
-            if (key == 127)
+            if (key == 127 || key == 8)
             {
                 if (themeMakerMenu.nameLength > 1)
                 {
@@ -1481,7 +1481,7 @@ if (pluginManager.active)
             continue;
         }
 
-        if (key == 127 || key == ARROW_LEFT)
+        if (key == 127 || key == 8 || key == ARROW_LEFT)
         {
             explorerGoUp();
             continue;
@@ -1541,7 +1541,7 @@ if (pluginManager.active)
             continue;
         }
 
-        if (key == 127)
+        if (key == 127 || key == 8)
         {
             fileSwitcherBackspace();
             continue;
@@ -1596,7 +1596,7 @@ if (pluginManager.active)
             continue;
         }
 
-        if (key == 127)
+        if (key == 127 || key == 8)
         {
             if (gotoPrompt.length > 0)
             {
@@ -1679,7 +1679,7 @@ if (pluginManager.active)
             continue;
         }
 
-        if (key == 127)
+        if (key == 127 || key == 8)
         {
             if (savePrompt.length > 0)
             {
@@ -1755,7 +1755,7 @@ if (pluginManager.active)
     }
 }
 
-    if (key == 127)
+    if (key == 127 || key == 8)
     {
         if (searchState.replaceMode)
         {
@@ -1907,6 +1907,7 @@ if (pluginManager.active)
             break;
 
         case 127:
+        case 8:
             deleteChar();
             break;
 
@@ -1937,6 +1938,10 @@ void editorShutdown(void)
     printf("\033[H");      // move to top-left
     fflush(stdout);
 
+    if (gitView.active)
+        closeGitView();
+
+    bufferManagerSyncFromGlobal();
     bufferManagerFreeAll();
     bufferFree();
 
@@ -1990,29 +1995,43 @@ void openGitView(
         gitView.originalFile[0] = '\0';
     }
 
+    bufferManagerSyncFromGlobal();
+    gitView.savedBuffer = buffer;
+    gitView.savedCursor = cursor;
+    gitView.savedRowOffset = viewport.rowOffset;
+    gitView.savedColOffset = viewport.colOffset;
+    memset(&buffer, 0, sizeof(buffer));
     openFile(tempFile);
+    if (!buffer.rows)
+        bufferInit();
 }
-
-
 
 void closeGitView(void)
 {
     if (!gitView.active)
         return;
 
-    if (strlen(gitView.originalFile) > 0)
+    bufferFree();
+    if (gitView.savedBuffer.rows)
     {
-        openFile(
-            gitView.originalFile
-        );
+        buffer = gitView.savedBuffer;
+        cursor = gitView.savedCursor;
+        viewport.rowOffset = gitView.savedRowOffset;
+        viewport.colOffset = gitView.savedColOffset;
+        memset(&gitView.savedBuffer, 0, sizeof(Buffer));
+        if (bufferManager.activeIndex >= 0 && bufferManager.activeIndex < bufferManager.count)
+        {
+            bufferManager.buffers[bufferManager.activeIndex].doc = buffer;
+        }
     }
     else
     {
-        bufferFree();
-        bufferInit();
-        cursor.x = 0;
-        cursor.y = 0;
+        bufferManagerSyncToGlobal();
+        if (!buffer.rows)
+            bufferInit();
     }
+    highlightInit();
+    gitRefreshStatus(currentFile);
 
     gitView.active = 0;
     gitView.pluginLog = 0;

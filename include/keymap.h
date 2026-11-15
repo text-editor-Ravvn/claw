@@ -205,4 +205,7 @@ int keymapLookup(
    Returns -1 if the string cannot be parsed. */
 int keymapParseKey(const char *str);
 
+/* Parse a keymap configuration file with a setter callback. */
+int keymapParseFile(const char *path, void (*setter)(int action, int key, int modifiers));
+
 #endif

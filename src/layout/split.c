@@ -7,6 +7,11 @@
 #include "cursor.h"
 #include "editor.h"
 #include "terminal.h"
+#include "render.h"
+
+__attribute__((weak)) void renderForceClear(void)
+{
+}
 
 SplitLayout splitLayout = {0};
 
@@ -88,18 +93,33 @@ void splitHorizontal(void)
 {
     bufferManagerSyncFromGlobal();
 
-    splitLayout.mode = SPLIT_HORIZONTAL;
-    splitLayout.panes[0].bufferIndex = bufferManagerActiveIndex();
-    splitLayout.panes[0].cursorX = cursor.x;
-    splitLayout.panes[0].cursorY = cursor.y;
-    splitLayout.panes[0].rowOffset = viewport.rowOffset;
-    splitLayout.panes[0].colOffset = viewport.colOffset;
+    if (splitLayout.mode != SPLIT_NONE)
+    {
+        splitLayout.mode = SPLIT_HORIZONTAL;
+        splitUpdateDimensions(viewport.screenRows, viewport.screenCols);
+        renderForceClear();
+        editorSetStatusMessage("Split view: Horizontal pane active (Ctrl+W to close, Alt+O to switch)");
+        return;
+    }
 
-    /* Assign second buffer to Pane 1 if available, or create/reuse */
+    int savedX = cursor.x;
+    int savedY = cursor.y;
+    int savedRowOff = viewport.rowOffset;
+    int savedColOff = viewport.colOffset;
+    int origBuf = bufferManagerActiveIndex();
+
+    splitLayout.mode = SPLIT_HORIZONTAL;
+    splitLayout.panes[0].bufferIndex = origBuf;
+    splitLayout.panes[0].cursorX = savedX;
+    splitLayout.panes[0].cursorY = savedY;
+    splitLayout.panes[0].rowOffset = savedRowOff;
+    splitLayout.panes[0].colOffset = savedColOff;
+
+    /* Assign second buffer to Pane 1 if available, or create a separate buffer */
     int bCount = bufferManagerCount();
     if (bCount > 1)
     {
-        int other = (bufferManagerActiveIndex() + 1) % bCount;
+        int other = (origBuf + 1) % bCount;
         splitLayout.panes[1].bufferIndex = other;
         FileBuffer *fb = bufferManagerGet(other);
         if (fb)
@@ -109,18 +129,54 @@ void splitHorizontal(void)
             splitLayout.panes[1].rowOffset = fb->rowOffset;
             splitLayout.panes[1].colOffset = fb->colOffset;
         }
+        else
+        {
+            splitLayout.panes[1].cursorX = 0;
+            splitLayout.panes[1].cursorY = 0;
+            splitLayout.panes[1].rowOffset = 0;
+            splitLayout.panes[1].colOffset = 0;
+        }
     }
     else
     {
-        splitLayout.panes[1].bufferIndex = splitLayout.panes[0].bufferIndex;
-        splitLayout.panes[1].cursorX = 0;
-        splitLayout.panes[1].cursorY = 0;
-        splitLayout.panes[1].rowOffset = 0;
-        splitLayout.panes[1].colOffset = 0;
+        /* Temporarily disable split mode during bufferManagerNew so it does not overwrite Pane 0 */
+        splitLayout.mode = SPLIT_NONE;
+        int newIdx = bufferManagerNew(NULL);
+        splitLayout.mode = SPLIT_HORIZONTAL;
+
+        if (newIdx >= 0)
+        {
+            splitLayout.panes[1].bufferIndex = newIdx;
+            splitLayout.panes[1].cursorX = 0;
+            splitLayout.panes[1].cursorY = 0;
+            splitLayout.panes[1].rowOffset = 0;
+            splitLayout.panes[1].colOffset = 0;
+
+            splitLayout.activePane = 0;
+            bufferManagerSwitchTo(origBuf);
+            splitLayout.panes[0].bufferIndex = origBuf;
+            splitLayout.panes[0].cursorX = savedX;
+            splitLayout.panes[0].cursorY = savedY;
+            splitLayout.panes[0].rowOffset = savedRowOff;
+            splitLayout.panes[0].colOffset = savedColOff;
+            cursor.x = savedX;
+            cursor.y = savedY;
+            viewport.rowOffset = savedRowOff;
+            viewport.colOffset = savedColOff;
+        }
+        else
+        {
+            splitLayout.panes[1].bufferIndex = origBuf;
+            splitLayout.panes[1].cursorX = 0;
+            splitLayout.panes[1].cursorY = 0;
+            splitLayout.panes[1].rowOffset = 0;
+            splitLayout.panes[1].colOffset = 0;
+        }
     }
 
     splitLayout.activePane = 0;
     splitUpdateDimensions(viewport.screenRows, viewport.screenCols);
+    renderForceClear();
     editorSetStatusMessage("Split view: Horizontal pane opened (Ctrl+W to close, Alt+O to switch)");
 }
 
@@ -128,17 +184,32 @@ void splitVertical(void)
 {
     bufferManagerSyncFromGlobal();
 
+    if (splitLayout.mode != SPLIT_NONE)
+    {
+        splitLayout.mode = SPLIT_VERTICAL;
+        splitUpdateDimensions(viewport.screenRows, viewport.screenCols);
+        renderForceClear();
+        editorSetStatusMessage("Split view: Vertical pane active (Ctrl+W to close, Alt+O to switch)");
+        return;
+    }
+
+    int savedX = cursor.x;
+    int savedY = cursor.y;
+    int savedRowOff = viewport.rowOffset;
+    int savedColOff = viewport.colOffset;
+    int origBuf = bufferManagerActiveIndex();
+
     splitLayout.mode = SPLIT_VERTICAL;
-    splitLayout.panes[0].bufferIndex = bufferManagerActiveIndex();
-    splitLayout.panes[0].cursorX = cursor.x;
-    splitLayout.panes[0].cursorY = cursor.y;
-    splitLayout.panes[0].rowOffset = viewport.rowOffset;
-    splitLayout.panes[0].colOffset = viewport.colOffset;
+    splitLayout.panes[0].bufferIndex = origBuf;
+    splitLayout.panes[0].cursorX = savedX;
+    splitLayout.panes[0].cursorY = savedY;
+    splitLayout.panes[0].rowOffset = savedRowOff;
+    splitLayout.panes[0].colOffset = savedColOff;
 
     int bCount = bufferManagerCount();
     if (bCount > 1)
     {
-        int other = (bufferManagerActiveIndex() + 1) % bCount;
+        int other = (origBuf + 1) % bCount;
         splitLayout.panes[1].bufferIndex = other;
         FileBuffer *fb = bufferManagerGet(other);
         if (fb)
@@ -148,18 +219,54 @@ void splitVertical(void)
             splitLayout.panes[1].rowOffset = fb->rowOffset;
             splitLayout.panes[1].colOffset = fb->colOffset;
         }
+        else
+        {
+            splitLayout.panes[1].cursorX = 0;
+            splitLayout.panes[1].cursorY = 0;
+            splitLayout.panes[1].rowOffset = 0;
+            splitLayout.panes[1].colOffset = 0;
+        }
     }
     else
     {
-        splitLayout.panes[1].bufferIndex = splitLayout.panes[0].bufferIndex;
-        splitLayout.panes[1].cursorX = 0;
-        splitLayout.panes[1].cursorY = 0;
-        splitLayout.panes[1].rowOffset = 0;
-        splitLayout.panes[1].colOffset = 0;
+        /* Temporarily disable split mode during bufferManagerNew so it does not overwrite Pane 0 */
+        splitLayout.mode = SPLIT_NONE;
+        int newIdx = bufferManagerNew(NULL);
+        splitLayout.mode = SPLIT_VERTICAL;
+
+        if (newIdx >= 0)
+        {
+            splitLayout.panes[1].bufferIndex = newIdx;
+            splitLayout.panes[1].cursorX = 0;
+            splitLayout.panes[1].cursorY = 0;
+            splitLayout.panes[1].rowOffset = 0;
+            splitLayout.panes[1].colOffset = 0;
+
+            splitLayout.activePane = 0;
+            bufferManagerSwitchTo(origBuf);
+            splitLayout.panes[0].bufferIndex = origBuf;
+            splitLayout.panes[0].cursorX = savedX;
+            splitLayout.panes[0].cursorY = savedY;
+            splitLayout.panes[0].rowOffset = savedRowOff;
+            splitLayout.panes[0].colOffset = savedColOff;
+            cursor.x = savedX;
+            cursor.y = savedY;
+            viewport.rowOffset = savedRowOff;
+            viewport.colOffset = savedColOff;
+        }
+        else
+        {
+            splitLayout.panes[1].bufferIndex = origBuf;
+            splitLayout.panes[1].cursorX = 0;
+            splitLayout.panes[1].cursorY = 0;
+            splitLayout.panes[1].rowOffset = 0;
+            splitLayout.panes[1].colOffset = 0;
+        }
     }
 
     splitLayout.activePane = 0;
     splitUpdateDimensions(viewport.screenRows, viewport.screenCols);
+    renderForceClear();
     editorSetStatusMessage("Split view: Vertical pane opened (Ctrl+W to close, Alt+O to switch)");
 }
 
@@ -169,22 +276,40 @@ void splitClose(void)
         return;
 
     bufferManagerSyncFromGlobal();
-    int remainingPane = 0;
+    int remainingPane = splitLayout.activePane;
+
+    /* Update current active pane coordinates before collapsing */
+    splitLayout.panes[remainingPane].cursorX = cursor.x;
+    splitLayout.panes[remainingPane].cursorY = cursor.y;
+    splitLayout.panes[remainingPane].rowOffset = viewport.rowOffset;
+    splitLayout.panes[remainingPane].colOffset = viewport.colOffset;
+    splitLayout.panes[remainingPane].bufferIndex = bufferManagerActiveIndex();
+
     int targetBuffer = splitLayout.panes[remainingPane].bufferIndex;
+    int savedX = splitLayout.panes[remainingPane].cursorX;
+    int savedY = splitLayout.panes[remainingPane].cursorY;
+    int savedRowOff = splitLayout.panes[remainingPane].rowOffset;
+    int savedColOff = splitLayout.panes[remainingPane].colOffset;
 
     splitLayout.mode = SPLIT_NONE;
     splitLayout.activePane = 0;
+    splitLayout.panes[0].bufferIndex = targetBuffer;
+    splitLayout.panes[0].cursorX = savedX;
+    splitLayout.panes[0].cursorY = savedY;
+    splitLayout.panes[0].rowOffset = savedRowOff;
+    splitLayout.panes[0].colOffset = savedColOff;
 
     if (bufferManagerActiveIndex() != targetBuffer)
     {
         bufferManagerSwitchTo(targetBuffer);
     }
-    cursor.x = splitLayout.panes[remainingPane].cursorX;
-    cursor.y = splitLayout.panes[remainingPane].cursorY;
-    viewport.rowOffset = splitLayout.panes[remainingPane].rowOffset;
-    viewport.colOffset = splitLayout.panes[remainingPane].colOffset;
+    cursor.x = savedX;
+    cursor.y = savedY;
+    viewport.rowOffset = savedRowOff;
+    viewport.colOffset = savedColOff;
 
     splitUpdateDimensions(viewport.screenRows, viewport.screenCols);
+    renderForceClear();
     editorSetStatusMessage("Split pane closed");
 }
 
@@ -206,11 +331,25 @@ void splitSwitchPane(void)
     splitLayout.activePane = 1 - splitLayout.activePane;
     EditorPane *in = &splitLayout.panes[splitLayout.activePane];
 
+    if (in->bufferIndex < 0 || in->bufferIndex >= bufferManagerCount())
+    {
+        in->bufferIndex = bufferManagerActiveIndex();
+    }
+
+    int targetX = in->cursorX;
+    int targetY = in->cursorY;
+    int targetRowOff = in->rowOffset;
+    int targetColOff = in->colOffset;
+
     bufferManagerSwitchTo(in->bufferIndex);
-    cursor.x = in->cursorX;
-    cursor.y = in->cursorY;
-    viewport.rowOffset = in->rowOffset;
-    viewport.colOffset = in->colOffset;
+    cursor.x = targetX;
+    cursor.y = targetY;
+    viewport.rowOffset = targetRowOff;
+    viewport.colOffset = targetColOff;
+    in->cursorX = targetX;
+    in->cursorY = targetY;
+    in->rowOffset = targetRowOff;
+    in->colOffset = targetColOff;
 
     /* Clamp cursor to document bounds */
     if (buffer.numRows > 0)
@@ -225,6 +364,16 @@ void splitSwitchPane(void)
         if (cursor.x < 0)
             cursor.x = 0;
     }
+    else
+    {
+        cursor.x = 0;
+        cursor.y = 0;
+    }
+
+    if (viewport.rowOffset < 0)
+        viewport.rowOffset = 0;
+    if (viewport.colOffset < 0)
+        viewport.colOffset = 0;
 
     char msg[128];
     snprintf(msg, sizeof(msg), "Active Pane: %s (%s)",

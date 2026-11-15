@@ -196,12 +196,28 @@ void bufferManagerSyncToGlobal(void)
 
 int bufferManagerSwitchTo(int index)
 {
-    if (index < 0 || index >= bufferManager.count || index == bufferManager.activeIndex)
+    if (index < 0 || index >= bufferManager.count)
+        return 0;
+
+    if (splitIsActive())
+    {
+        splitLayout.panes[splitLayout.activePane].bufferIndex = index;
+    }
+
+    if (index == bufferManager.activeIndex)
         return 0;
 
     bufferManagerSyncFromGlobal();
     bufferManager.activeIndex = index;
     bufferManagerSyncToGlobal();
+
+    if (splitIsActive())
+    {
+        splitLayout.panes[splitLayout.activePane].cursorX = cursor.x;
+        splitLayout.panes[splitLayout.activePane].cursorY = cursor.y;
+        splitLayout.panes[splitLayout.activePane].rowOffset = viewport.rowOffset;
+        splitLayout.panes[splitLayout.activePane].colOffset = viewport.colOffset;
+    }
 
     highlightInit();
     gitRefreshStatus(currentFile);
@@ -213,7 +229,12 @@ int bufferManagerNext(void)
     if (bufferManager.count <= 1)
         return 0;
 
+    int otherBuf = splitIsActive() ? splitLayout.panes[1 - splitLayout.activePane].bufferIndex : -1;
     int nextIdx = (bufferManager.activeIndex + 1) % bufferManager.count;
+    if (splitIsActive() && bufferManager.count > 2 && nextIdx == otherBuf)
+    {
+        nextIdx = (nextIdx + 1) % bufferManager.count;
+    }
     return bufferManagerSwitchTo(nextIdx);
 }
 
@@ -222,7 +243,12 @@ int bufferManagerPrev(void)
     if (bufferManager.count <= 1)
         return 0;
 
+    int otherBuf = splitIsActive() ? splitLayout.panes[1 - splitLayout.activePane].bufferIndex : -1;
     int prevIdx = (bufferManager.activeIndex - 1 + bufferManager.count) % bufferManager.count;
+    if (splitIsActive() && bufferManager.count > 2 && prevIdx == otherBuf)
+    {
+        prevIdx = (prevIdx - 1 + bufferManager.count) % bufferManager.count;
+    }
     return bufferManagerSwitchTo(prevIdx);
 }
 
@@ -260,6 +286,15 @@ int bufferManagerNew(const char *optionalName)
     bufferManager.activeIndex = newIdx;
     bufferManagerSyncToGlobal();
 
+    if (splitIsActive())
+    {
+        splitLayout.panes[splitLayout.activePane].bufferIndex = newIdx;
+        splitLayout.panes[splitLayout.activePane].cursorX = 0;
+        splitLayout.panes[splitLayout.activePane].cursorY = 0;
+        splitLayout.panes[splitLayout.activePane].rowOffset = 0;
+        splitLayout.panes[splitLayout.activePane].colOffset = 0;
+    }
+
     highlightInit();
     gitRefreshStatus(currentFile);
     return newIdx;
@@ -275,6 +310,14 @@ int bufferManagerOpen(const char *filename)
     if (existing >= 0)
     {
         bufferManagerSwitchTo(existing);
+        if (splitIsActive())
+        {
+            splitLayout.panes[splitLayout.activePane].bufferIndex = existing;
+            splitLayout.panes[splitLayout.activePane].cursorX = cursor.x;
+            splitLayout.panes[splitLayout.activePane].cursorY = cursor.y;
+            splitLayout.panes[splitLayout.activePane].rowOffset = viewport.rowOffset;
+            splitLayout.panes[splitLayout.activePane].colOffset = viewport.colOffset;
+        }
         return existing;
     }
 
@@ -283,10 +326,12 @@ int bufferManagerOpen(const char *filename)
     /* If current buffer is single, untitled, empty, and unmodified, reuse it */
     FileBuffer *cur = bufferManagerGetActive();
     int targetIdx = -1;
-    if (bufferManager.count == 1 && cur && cur->filename[0] == '\0' &&
-        cur->doc.modified == 0 && cur->doc.numRows == 1 && cur->doc.rows[0].size == 0)
+    int otherPaneBuffer = splitIsActive() ? splitLayout.panes[1 - splitLayout.activePane].bufferIndex : -1;
+    if (cur && cur->filename[0] == '\0' &&
+        cur->doc.modified == 0 && cur->doc.numRows == 1 && cur->doc.rows[0].size == 0 &&
+        (!splitIsActive() || bufferManager.activeIndex != otherPaneBuffer))
     {
-        targetIdx = 0;
+        targetIdx = bufferManager.activeIndex;
         freeDocRows(&cur->doc);
     }
     else if (bufferManager.count < BUFFER_MAX_COUNT)
@@ -314,15 +359,51 @@ int bufferManagerOpen(const char *filename)
 
     bufferManagerSyncToGlobal();
 
+    if (splitIsActive())
+    {
+        splitLayout.panes[splitLayout.activePane].bufferIndex = targetIdx;
+        splitLayout.panes[splitLayout.activePane].cursorX = 0;
+        splitLayout.panes[splitLayout.activePane].cursorY = 0;
+        splitLayout.panes[splitLayout.activePane].rowOffset = 0;
+        splitLayout.panes[splitLayout.activePane].colOffset = 0;
+    }
+
     if (openFile(filename))
     {
+        viewport.rowOffset = 0;
+        viewport.colOffset = 0;
+        cursor.x = 0;
+        cursor.y = 0;
         bufferManagerSyncFromGlobal();
+        if (splitIsActive())
+        {
+            splitLayout.panes[splitLayout.activePane].bufferIndex = targetIdx;
+            splitLayout.panes[splitLayout.activePane].cursorX = 0;
+            splitLayout.panes[splitLayout.activePane].cursorY = 0;
+            splitLayout.panes[splitLayout.activePane].rowOffset = 0;
+            splitLayout.panes[splitLayout.activePane].colOffset = 0;
+        }
         highlightInit();
         gitRefreshStatus(currentFile);
         return targetIdx;
     }
 
     /* Fallback: open failed, keep empty doc with filename */
+    viewport.rowOffset = 0;
+    viewport.colOffset = 0;
+    cursor.x = 0;
+    cursor.y = 0;
+    bufferManagerSyncFromGlobal();
+    if (splitIsActive())
+    {
+        splitLayout.panes[splitLayout.activePane].bufferIndex = targetIdx;
+        splitLayout.panes[splitLayout.activePane].cursorX = 0;
+        splitLayout.panes[splitLayout.activePane].cursorY = 0;
+        splitLayout.panes[splitLayout.activePane].rowOffset = 0;
+        splitLayout.panes[splitLayout.activePane].colOffset = 0;
+    }
+    highlightInit();
+    gitRefreshStatus(currentFile);
     return targetIdx;
 }
 
@@ -375,17 +456,49 @@ int bufferManagerClose(int index)
     /* Update split panes if active */
     if (splitIsActive())
     {
+        int needsReassign[2] = {0, 0};
         for (int p = 0; p < 2; p++)
         {
             if (splitLayout.panes[p].bufferIndex == index)
             {
-                splitLayout.panes[p].bufferIndex = bufferManager.activeIndex;
+                needsReassign[p] = 1;
             }
             else if (splitLayout.panes[p].bufferIndex > index)
             {
                 splitLayout.panes[p].bufferIndex--;
             }
         }
+
+        for (int p = 0; p < 2; p++)
+        {
+            if (needsReassign[p])
+            {
+                int otherPane = 1 - p;
+                int otherBuf = needsReassign[otherPane] ? -1 : splitLayout.panes[otherPane].bufferIndex;
+                int chosen = -1;
+                for (int b = 0; b < bufferManager.count; b++)
+                {
+                    if (b != otherBuf)
+                    {
+                        chosen = b;
+                        break;
+                    }
+                }
+                if (chosen >= 0)
+                    splitLayout.panes[p].bufferIndex = chosen;
+                else
+                    splitLayout.panes[p].bufferIndex = 0;
+
+                splitLayout.panes[p].cursorX = 0;
+                splitLayout.panes[p].cursorY = 0;
+                splitLayout.panes[p].rowOffset = 0;
+                splitLayout.panes[p].colOffset = 0;
+                needsReassign[p] = 0;
+            }
+        }
+
+        /* Ensure activeIndex tracks the active pane's buffer */
+        bufferManager.activeIndex = splitLayout.panes[splitLayout.activePane].bufferIndex;
     }
 
     bufferManagerSyncToGlobal();

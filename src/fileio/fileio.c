@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include "fileio.h"
 #include "plugin.h"
 #include "buffer.h"
 #include "cursor.h"
@@ -53,6 +54,9 @@ static int appendRow(Buffer *target, const char *chars, size_t size)
 
 int openFile(const char *filename)
 {
+    if (!filename)
+        return 0;
+
     /* Load into a temporary buffer and replace the active document only at EOF. */
     FILE *fp = fopen(filename, "rb");
     Buffer loaded = {0, NULL, 0, 0};
@@ -120,6 +124,9 @@ failure:
 
 int saveFile(const char *filename)
 {
+    if (!filename)
+        return 0;
+
     /* Binary output preserves embedded NUL bytes and the final newline choice. */
     char temporaryName[4096];
     int nameLength = snprintf(

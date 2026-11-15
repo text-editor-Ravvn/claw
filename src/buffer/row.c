@@ -207,7 +207,7 @@ int handleSmartCharacter(char c)
 
 void insertChar(char c)
 {
-    if (cursor.y >= buffer.numRows)
+    if (cursor.y < 0 || cursor.y >= buffer.numRows || !buffer.rows)
         return;
 
     historyPushInsert(
@@ -220,6 +220,8 @@ void insertChar(char c)
 
     Row *row = &buffer.rows[cursor.y];
 
+    if (cursor.x < 0)
+        cursor.x = 0;
     if (cursor.x > row->size)
         cursor.x = row->size;
 
@@ -254,6 +256,9 @@ void insertChar(char c)
 
 static int handleSmartBackspace(void)
 {
+    if (!historyIsRecording())
+        return 0;
+
     if (cursor.y < 0 || cursor.y >= buffer.numRows)
         return 0;
 
@@ -276,6 +281,11 @@ static int handleSmartBackspace(void)
     if (cursor.x >= tabWidth)
     {
         int removeCount = tabWidth;
+
+        for (int i = 0; i < removeCount; i++)
+        {
+            historyPushDelete(cursor.y, cursor.x - 1 - i, ' ');
+        }
 
         memmove(
             &row->chars[cursor.x - removeCount],
@@ -305,10 +315,13 @@ void deleteChar(void)
         return;
 
     /* Backspace removes left; at column zero it joins with the prior row. */
-    if (cursor.y >= buffer.numRows)
+    if (cursor.y < 0 || cursor.y >= buffer.numRows || !buffer.rows)
         return;
 
     Row *row = &buffer.rows[cursor.y];
+
+    if (cursor.x > row->size)
+        cursor.x = row->size;
 
     /* Normal backspace inside a line */
     if (cursor.x > 0)
@@ -405,6 +418,9 @@ void deleteForward(void)
 
     Row *row = &buffer.rows[cursor.y];
 
+    if (cursor.x < 0)
+        cursor.x = 0;
+
     if (cursor.x < row->size)
     {
         historyPushDelete(
@@ -468,13 +484,14 @@ void deleteForward(void)
 
 void insertNewLine(void)
 {
-    historyPushNewLine(
-    cursor.y,
-    cursor.x
-);
     /* Move the text after the cursor into a newly inserted row. */
-    if (cursor.y >= buffer.numRows)
+    if (cursor.y < 0 || cursor.y >= buffer.numRows || !buffer.rows)
         return;
+
+    historyPushNewLine(
+        cursor.y,
+        cursor.x
+    );
 
     Row *current = &buffer.rows[cursor.y];
 
@@ -649,10 +666,11 @@ void duplicateLine(void)
     cursor.y++;
 
     buffer.modified = 1;
+    refreshSearchMatches();
 }
 void moveLineUp(void)
 {
-    if (cursor.y <= 0)
+    if (cursor.y <= 0 || cursor.y >= buffer.numRows || !buffer.rows)
         return;
 
     Row temp =
@@ -675,13 +693,15 @@ void moveLineUp(void)
     cursor.y--;
 
     buffer.modified = 1;
+    refreshSearchMatches();
 }
 
 void moveLineDown(void)
 {
     if (
         cursor.y < 0 ||
-        cursor.y >= buffer.numRows - 1
+        cursor.y >= buffer.numRows - 1 ||
+        !buffer.rows
     )
         return;
 
@@ -705,6 +725,7 @@ void moveLineDown(void)
     cursor.y++;
 
     buffer.modified = 1;
+    refreshSearchMatches();
 }
 void toggleCommentLine(void)
 {
@@ -838,10 +859,11 @@ void toggleCommentLine(void)
     row->hlOpenState = 0;
 
     buffer.modified = 1;
+    refreshSearchMatches();
 }
 void joinLineWithNext(void)
 {
-    if (cursor.y >= buffer.numRows - 1)
+    if (cursor.y < 0 || cursor.y >= buffer.numRows - 1 || !buffer.rows)
         return;
 
     Row *current =
@@ -897,6 +919,7 @@ void joinLineWithNext(void)
     buffer.numRows--;
 
     buffer.modified = 1;
+    refreshSearchMatches();
 }
 
 void splitLineAtCursor(void)
