@@ -339,5 +339,33 @@ A comprehensive static analysis and operational review of the Claw C11 codebase 
   If a symbol jump was triggered into a buffer with `buffer.numRows == 0`, `cursor.y = targetLine - 1` set `cursor.y` to a positive value in an empty document, leading to out-of-bounds row dereferences in subsequent edits.
 - **Fix**: Assigned `cursor.y = 0` whenever `buffer.numRows == 0`.
 
+Arrow functions not working Shift+ up , shift+ down , 
+alt+] not working matching delimiters
+undo , redo not working for duplicate word , joining lines
+ctrl+tab colliding with actual vscode same with ctrl+shift+tab
+ctrl+1 , ctrl+3 not working
+ctrl + - 
+help command not working
+Esc: Closes the terminal panel. not working
+Ctrl+Shift+S not working 
+Alt+Up	Jumps to previous bookmark not working
+Alt+Down	Jumps to next bookmark not working
+Ctrl+Shift+G colliding
+Ctrl+Space not working Expected completion suggestions
+Alt+V not working Test debugger dashboard
+Test debugger controls
+Shortcut	Expected action
+F5	Start or continue
+F10	Step over
+F11	Step into
+Shift+F11	Step out
+F6	Pause
+Shift+F5	Stop not working
+
+
+
+
+
+
 
 

@@ -1,7 +1,7 @@
 # Claw Editor Session
-workspace=/home/kinshuk/claw
-file=test.c
-cursor_x=5
-cursor_y=8
-row_offset=0
+workspace=/Users/aryanguptasamanagmail.com/Desktop/Major Project/claw
+file=src/main.c
+cursor_x=0
+cursor_y=27
+row_offset=12
 col_offset=0
